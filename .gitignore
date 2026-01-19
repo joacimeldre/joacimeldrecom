@@ -24,6 +24,7 @@ pnpm-debug.log*
 .git/
 .gitconfig
 .gitignore
+README.md
 
 # Other editor/IDE settings
 .idea/
