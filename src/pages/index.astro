@@ -7,7 +7,7 @@ const allPosts = await getCollection("posts");
 const tags = [...new Set(allPosts.map((post) => post.data.tags).flat())];
 // Sort posts by date in descending order (newest first)
 const sortedPosts = allPosts.sort(
-  (a, b) => new Date(b.data.pubDate) - new Date(a.data.pubDate)
+  (a, b) => new Date(b.data.pubDate) - new Date(a.data.pubDate),
 );
 ---
 
@@ -17,7 +17,8 @@ const sortedPosts = allPosts.sort(
       <h1
         class="text-4xl text-balance font-medium font-display text-base-900 max-w-xl"
       >
-        A simple blog built with Astro and Tailwind CSS
+        Hei! I'm Joacim. I design software in public healthcare. And draw icons,
+        logos, and apps for fine people.
       </h1>
       <div class="flex flex-wrap gap-3 mt-8">
         {
