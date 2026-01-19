@@ -25,16 +25,6 @@
   font-family: Inter, sans-serif;
 }
 
-::selection {
-  background-color: var(--color-amber-200);
-  color: var(--color-base-950);
-}
-
-::-moz-selection {
-  background-color: var(--color-amber-200);
-  color: var(--color-base-950);
-}
-
 @supports (font-variation-settings: normal) {
 
   /* Use variable font if supported */
@@ -55,4 +45,20 @@
   --astro-code-token-string-expression: #2522fc;
   --astro-code-token-punctuation: #ffffff;
   --astro-code-token-link: #ffffff;
+}
+
+::-moz-selection {
+  background-color: #FFE699;
+}
+
+::selection {
+  background-color: #FFE699;
+}
+
+a {
+  transition: text-decoration 0.3s ease;
+}
+
+a:hover {
+  text-decoration: wavy underline;
 }
