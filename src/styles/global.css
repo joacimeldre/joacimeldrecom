@@ -17,7 +17,6 @@
   --color-base-800: oklch(35.42% 0.009 285.95);
   --color-base-900: oklch(23.48% 0.004 264.49);
   --color-base-950: oklch(16.89% 0.002 286.18);
-  --color-amber-200: oklch(93.73% 0.013 91.53 101.64);
 }
 
 /* CSS */
@@ -47,10 +46,11 @@
   --astro-code-token-link: #ffffff;
 }
 
-::-moz-selection {
-  background-color: #FFE699;
+@layer base {
+  ::-moz-selection {
+    @apply bg-amber-200;
+  }
+  ::selection {
+    @apply bg-amber-200;
 }
-
-::selection {
-  background-color: #FFE699;
 }
