@@ -1,12 +1,11 @@
 ---
 import "../styles/global.css";
 import { AstroSeo } from "@astrolib/seo";
-import defaultOgImage from "../images/ogdefault.png";
 
 interface Props {
   title?: string;
   description?: string;
-  image?: ImageMetadata | string;
+  image?: string; // Changed to just string
   canonical?: string;
   type?: "website" | "article";
 }
@@ -14,24 +13,15 @@ interface Props {
 const {
   title = "Joacim Eldre",
   description = "Uhuuu, fancy website is fancy",
-  image = defaultOgImage,
+  image = "/ogdefault.png", // Changed to public path
   canonical = Astro.url.href,
   type = "website",
 } = Astro.props;
 
-// Handle image - if it's an ImageMetadata object, use .src, otherwise use as string
-const imageUrl = image
-  ? typeof image === "string"
-    ? image
-    : image.src
-  : undefined;
-
 // Construct full URL for OG tags (they need absolute URLs)
-const fullImageUrl = imageUrl
-  ? imageUrl.startsWith("http")
-    ? imageUrl
-    : new URL(imageUrl, Astro.site || Astro.url.origin).href
-  : undefined;
+const fullImageUrl = image.startsWith("http")
+  ? image
+  : new URL(image, Astro.site || Astro.url.origin).href;
 ---
 
 <AstroSeo
@@ -42,17 +32,15 @@ const fullImageUrl = imageUrl
     url: canonical,
     title: title,
     description: description,
-    images: fullImageUrl
-      ? [
-          {
-            url: fullImageUrl,
-            width: 1200,
-            height: 630,
-            alt: title,
-            type: "image/jpeg",
-          },
-        ]
-      : undefined,
+    images: [
+      {
+        url: fullImageUrl,
+        width: 1200,
+        height: 630,
+        alt: title,
+        type: "image/png", // Changed to png
+      },
+    ],
     site_name: "Joacim Eldre",
     type: type,
     locale: "en_US",
