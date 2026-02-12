@@ -14,7 +14,7 @@ interface Props {
 const {
   title = "Joacim Eldre",
   description = "Uhuuu, fancy website is fancy",
-  image,
+  image = defaultOgImage,
   canonical = Astro.url.href,
   type = "website",
 } = Astro.props;
@@ -65,13 +65,11 @@ const fullImageUrl = imageUrl
 <meta name="description" content={description} />
 
 <!-- Favicons -->
-<link rel="icon" href="/favicon.ico" sizes="any" />
-<link rel="icon" href="/icon.svg" type="image/svg+xml" />
-<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-<link rel="manifest" href="/manifest.webmanifest" />
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-<link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
+<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<link rel="manifest" href="/site.webmanifest" />
 
 <!-- Canonical URL -->
 <link rel="canonical" href={canonical} />
@@ -81,11 +79,5 @@ const fullImageUrl = imageUrl
 <meta name="googlebot" content="index, follow" />
 <meta name="theme-color" content="#ffffff" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-
-<!-- Fonts -->
-<link
-  href="https://api.fontshare.com/v2/css?f[]=jet-brains-mono@1,2&display=swap"
-  rel="stylesheet"
-/>
 
 <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
