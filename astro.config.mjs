@@ -6,7 +6,7 @@ import mdx from "@astrojs/mdx";
 
 // https://astro.build/config
 export default defineConfig({
-   vite: {
+  vite: {
     plugins: [tailwindcss()],
   },
   markdown: {
@@ -20,6 +20,6 @@ export default defineConfig({
     skipInline: false,
     drafts: true
   },
-  site: 'https://yourwebsite.com',
+  site: 'https://joacimeldrecom.vercel.app',
   integrations: [sitemap(), mdx()]
 });
