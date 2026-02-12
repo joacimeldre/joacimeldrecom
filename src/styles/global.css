@@ -76,8 +76,4 @@
   .prose a {
     @apply underline hover:decoration-wavy text-base-900;
   }
-
-  li {
-    @apply
-  }
 }
