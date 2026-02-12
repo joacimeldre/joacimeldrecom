@@ -5,23 +5,30 @@ import tomAndJerry from "../images/page/404/tomAndJerryAnimation.gif";
 ---
 
 <BaseLayout>
-    <section
-        class="min-h-screen flex flex-col items-center justify-center text-center px-4 gap-4"
-    >
-        <h1 class="text-6xl font-bold text-base-900">404</h1>
-        <p class="text-xl text-base-900">
-            Oh, no! The page you're looking for had a falling out of existence.
-        </p>
-        <Image
-            src={tomAndJerry}
-            alt="Tom the cat lays on a yellow couch, using Jerry the mouse as a ball with a ping pong racket"
-            class="max-w-3/4 rounded-lg"
-        />
-        <a
-            href="/"
-            class="py-2 px-4 mt-2 bg-base-900 text-white rounded-full hover:bg-base-900/90 transition duration-200"
-        >
-            Return to base!
-        </a>
+    <section>
+        <div class="py-24">
+            <h1
+                class="text-center text-4xl text-balance font-medium font-display text-base-900 max-w-xl mb-2 mx-auto"
+            >
+                404
+            </h1>
+            <p class="text-center text-xl text-base-900 mb-8 text-balance">
+                Oh, no! The page you're looking for doesn't exist.
+            </p>
+            <div class="text-center">
+                <a
+                    href="/"
+                    class="py-2 px-6 bg-yellow-200 text-black rounded-full hover:bg-white hover:text-base-900 transition duration-200"
+                >
+                    Return to base!
+                </a>
+            </div>
+            <Image
+                src={tomAndJerry}
+                alt="An animation of Tom the cat laying on a yellow couch, using Jerry the mouse as a ball with a ping pong racket"
+                title="Tom and Jerry - 404"
+                class="mt-12 max-w-3/4 rounded-lg mx-auto"
+            />
+        </div>
     </section>
 </BaseLayout>

@@ -12,11 +12,11 @@ export async function getStaticPaths() {
   return uniqueTags.map((tag) => {
     // Filter posts by tag
     const filteredPosts = allPosts.filter((post) =>
-      post.data.tags.includes(tag)
+      post.data.tags.includes(tag),
     );
     // Sort filtered posts by date in descending order
     const sortedPosts = filteredPosts.sort(
-      (a, b) => new Date(b.data.pubDate) - new Date(a.data.pubDate)
+      (a, b) => new Date(b.data.pubDate) - new Date(a.data.pubDate),
     );
 
     return {
@@ -26,6 +26,13 @@ export async function getStaticPaths() {
   });
 }
 
+const allPosts = await getCollection("posts");
+
+// Sort tags by name in alphabetical order, ignoring case sensitivity
+const tags = [...new Set(allPosts.map((post) => post.data.tags).flat())].sort(
+  (a, b) => a.toLowerCase().localeCompare(b.toLowerCase()),
+);
+
 const { tag } = Astro.params;
 const { posts } = Astro.props;
 ---
@@ -33,23 +40,44 @@ const { posts } = Astro.props;
 <BaseLayout pageTitle={tag}>
   <section>
     <div class="py-24">
-      <h1
-        class="text-4xl text-balance font-medium font-display text-base-900 max-w-xl"
+      <h2
+        class="text-3xl text-balance font-medium font-display text-base-900 mb-2"
       >
-        All tags
+        Show posts tagged with
+      </h2>
+      <div class="flex flex-wrap gap-3 mt-2">
+        {
+          tags.map((t) => {
+            const isActive = t === tag;
+            const classes = isActive
+              ? "font-bold"
+              : "underline hover:decoration-wavy font-medium text-base-900";
+
+            return (
+              <a class={classes} href={`/tags/${t}`}>
+                {t}
+              </a>
+            );
+          })
+        }
+      </div>
+      <h1
+        class="text-4xl text-balance font-medium font-display text-base-900 max-w-xl mt-8"
+      >
+        ö <span class="bg-amber-200 px-2 rounded">{tag}</span>
       </h1>
-      <div class="grid grid-cols-1 mt-4 gap-8 gap-y-24 sm:grid-cols-2">
+      <div class="gap-4">
         {
           posts.map((post) => (
             <BlogEntries
               url={"/posts/" + post.slug}
-              title={post.data.title}
-              description={post.data.description}
               alt={post.data.title}
-              pubDate={post.data.pubDate.toString().slice(0, 10)}
+              tags={post.data.tags}
+              title={post.data.title}
               author={post.data.author}
               image={post.data.image.url}
-              tags={post.data.tags}
+              description={post.data.description}
+              pubDate={post.data.pubDate.toISOString().split("T")[0]}
             />
           ))
         }

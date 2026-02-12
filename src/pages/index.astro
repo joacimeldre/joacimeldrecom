@@ -4,7 +4,10 @@ import BlogEntries from "@/components/entries/BlogEntry.astro";
 import Cta from "@/components/global/Cta.astro";
 import { getCollection } from "astro:content";
 const allPosts = await getCollection("posts");
-const tags = [...new Set(allPosts.map((post) => post.data.tags).flat())];
+// Sort tags by name in alphabetical order, ignoring case sensitivity
+const tags = [...new Set(allPosts.map((post) => post.data.tags).flat())].sort(
+  (a, b) => a.toLowerCase().localeCompare(b.toLowerCase()),
+);
 // Sort posts by date in descending order (newest first)
 const sortedPosts = allPosts.sort(
   (a, b) => new Date(b.data.pubDate) - new Date(a.data.pubDate),
@@ -14,41 +17,56 @@ const sortedPosts = allPosts.sort(
 <BaseLayout>
   <section>
     <div class="py-24">
-      <h1
-        class="text-4xl text-balance font-medium font-display text-base-900 max-w-xl"
-      >
-        Hei! I'm Joacim. I design software in public healthcare. And draw icons,
-        logos, and apps for fine people.
+      <h1 class="text-4xl text-balance font-medium font-display text-base-900">
+        Hei! I'm Joacim. I design software in public healthcare. Once in a while
+        I draw icons, logos, and apps for fine people.
       </h1>
-      <div class="flex flex-wrap gap-3 mt-8">
+      <h2
+        class="mt-8 text-3xl text-balance font-medium font-display text-base-900"
+      >
+        These days I'm
+      </h2>
+      <ul
+        class="list-disc list-inside mt-3 text-base-900 text-balance space-y-2"
+      >
+        <li>drawing <i>Miu</i> and <i>icons</i>.</li>
+        <li>reading <i>Flourish</i> by Martin Seligman.</li>
+        <li>listening to <i>Vulfpeck</i>.</li>
+        <li>watching <i>Andor</i>.</li>
+        <li>playing <i>The Last Guardian</i> by Team Ico.</li>
+        <!-- prettier-ignore -->
+        <li>designing <i>Bloob</i>, a video game about <abbr title="Maybe keys, definitely **not** dragons.">dungeons & jellies</abbr>.</li>
+      </ul>
+      <h2
+        class="mt-8 text-3xl text-balance font-medium font-display text-base-900"
+      >
+        Recent posts
+      </h2>
+      <div class="gap-4">
         {
-          tags.map((tag) => (
-            <a
-              class=" hover:text-blue-500 text-xs font-medium text-base-600"
-              href={`/tags/${tag}`}
-            >
-              {tag}
-            </a>
-          ))
+          sortedPosts
+            .slice(0, 5)
+            .map((post) => (
+              <BlogEntries
+                url={"/posts/" + post.slug}
+                alt={post.data.title}
+                tags={post.data.tags}
+                title={post.data.title}
+                author={post.data.author}
+                image={post.data.image.url}
+                description={post.data.description}
+                pubDate={post.data.pubDate.toISOString().split("T")[0]}
+              />
+            ))
         }
       </div>
-      <div class="grid grid-cols-1 mt-4 gap-8 gap-y-8 sm:grid-cols-2">
-        {
-          sortedPosts.map((post) => (
-            <BlogEntries
-              url={"/posts/" + post.slug}
-              alt={post.data.title}
-              tags={post.data.tags}
-              title={post.data.title}
-              author={post.data.author}
-              image={post.data.image.url}
-              description={post.data.description}
-              pubDate={post.data.pubDate.toString().slice(0, 10)}
-            />
-          ))
-        }
-      </div>
+      <p class="mt-4">
+        Or if you're curious, you can find <a
+          href="/tags/All"
+          class="underline hover:decoration-wavy"
+          >all the <span class="line-through">things</span> posts</a
+        >.
+      </p>
     </div>
   </section>
-  <Cta />
 </BaseLayout>

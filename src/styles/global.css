@@ -50,7 +50,30 @@
   ::-moz-selection {
     @apply bg-amber-200;
   }
+
   ::selection {
     @apply bg-amber-200;
+  }
+
+  img {
+    @apply block;
+    @apply rounded-lg;
+    @apply ml-auto;
+    @apply mr-auto;
+  }
+
+  html {
+    @apply antialiased;
+    @apply bg-orange-50;
+  }
+
+  abbr {
+    @apply cursor-pointer;
+  }
 }
+
+@layer utilities {
+  .prose a {
+    @apply underline hover:decoration-wavy text-base-900;
+  }
 }
