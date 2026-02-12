@@ -4,7 +4,7 @@
 
 @theme {
   --font-sans: Inter, sans-serif;
-  --font-display: InterDisplay, monospace;
+  --font-display: InterDisplay, sans-serif;
   --font-mono: JetBrains Mono, monospace;
   --color-base-50: oklch(96.74% 0.001 286.38);
   --color-base-100: oklch(93.73% 0.001 286.37);
@@ -75,5 +75,9 @@
 @layer utilities {
   .prose a {
     @apply underline hover:decoration-wavy text-base-900;
+  }
+
+  li {
+    @apply
   }
 }
