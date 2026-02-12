@@ -1,104 +1,88 @@
 ---
 import "../styles/global.css";
 import { AstroSeo } from "@astrolib/seo";
+import defaultOgImage from "../images/ogdefault.png";
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: ImageMetadata | string;
+  canonical?: string;
+  type?: "website" | "article";
+}
+
+const {
+  title = "Joacim Eldre",
+  description = "Uhuuu, fancy website is fancy",
+  image,
+  canonical = Astro.url.href,
+  type = "website",
+} = Astro.props;
+
+// Handle image - if it's an ImageMetadata object, use .src, otherwise use as string
+const imageUrl = image
+  ? typeof image === "string"
+    ? image
+    : image.src
+  : undefined;
+
+// Construct full URL for OG tags (they need absolute URLs)
+const fullImageUrl = imageUrl
+  ? imageUrl.startsWith("http")
+    ? imageUrl
+    : new URL(imageUrl, Astro.site || Astro.url.origin).href
+  : undefined;
 ---
 
 <AstroSeo
-  title="Your Page Title"
-  description="A detailed description of your page content."
-  canonical="https://yoursite.com/current-page"
+  title={title}
+  description={description}
+  canonical={canonical}
   openGraph={{
-    url: "https://yoursite.com/current-page",
-    title: "Your Page Title",
-    description: "A detailed description of your page content.",
-    images: [
-      {
-        url: "https://yoursite.com/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Open Graph Image Alt",
-        type: "image/jpeg",
-      },
-    ],
-    site_name: "Your Site Name",
-    type: "website",
+    url: canonical,
+    title: title,
+    description: description,
+    images: fullImageUrl
+      ? [
+          {
+            url: fullImageUrl,
+            width: 1200,
+            height: 630,
+            alt: title,
+            type: "image/jpeg",
+          },
+        ]
+      : undefined,
+    site_name: "Joacim Eldre",
+    type: type,
     locale: "en_US",
-  }}
-  twitter={{
-    handle: "@yourhandle",
-    site: "@yoursite",
-    cardType: "summary_large_image",
   }}
 />
 
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-<!-- Basic Meta Tags -->
-<title>Your Website Title</title>
-<meta
-  name="description"
-  content="A brief description of your website content."
-/>
-<meta name="keywords" content="keyword1, keyword2, keyword3" />
-<meta name="author" content="Your Name or Company Name" />
+<title>{title}</title>
+<meta name="description" content={description} />
 
 <!-- Favicons -->
 <link rel="icon" href="/favicon.ico" sizes="any" />
 <link rel="icon" href="/icon.svg" type="image/svg+xml" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 <link rel="manifest" href="/manifest.webmanifest" />
-
-<!-- Favicon for IE -->
-<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
-
-<!-- Favicons for different sizes -->
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
 <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
 
-<!-- Open Graph / Facebook -->
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://www.yourwebsite.com/" />
-<meta property="og:title" content="Your Website Title" />
-<meta
-  property="og:description"
-  content="A brief description of your website content."
-/>
-<meta
-  property="og:image"
-  content="https://www.yourwebsite.com/path/to/image.jpg"
-/>
-
-<!-- Twitter -->
-<meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:url" content="https://www.yourwebsite.com/" />
-<meta property="twitter:title" content="Your Website Title" />
-<meta
-  property="twitter:description"
-  content="A brief description of your website content."
-/>
-<meta
-  property="twitter:image"
-  content="https://www.yourwebsite.com/path/to/image.jpg"
-/>
-
 <!-- Canonical URL -->
-<link rel="canonical" href="https://www.yourwebsite.com/" />
+<link rel="canonical" href={canonical} />
 
 <!-- Additional SEO -->
 <meta name="robots" content="index, follow" />
 <meta name="googlebot" content="index, follow" />
-
-<!-- Apple Touch Icon (already included in favicons, but keeping for backwards compatibility) -->
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-
-<!-- Theme Color for Mobile Browsers -->
 <meta name="theme-color" content="#ffffff" />
-
-<!-- For IE -->
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<!-- HTML in your document's head -->
+
+<!-- Fonts -->
 <link rel="preconnect" href="https://rsms.me/" />
 <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
 <link
