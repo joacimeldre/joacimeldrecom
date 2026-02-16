@@ -15,7 +15,7 @@ My intention with this website is to write down my thoughts, kind of as they hap
 
 ## Detour about code and video games
 
-Lately I've rediscovered code, early in my life (I was 7 years old with access to a computer with MS-DOS) I attempted to code a video game, but I gave up somewhere along the way when it didn't do what I wanted it to do. And everything was text! Code isn't visual, that takes a while for me to process, and definitely when said text doesn't make.. sense? I'm in an existential quarrel with myself, because my work require me to understand and write a small amount of `real code`, so I'm doing the *everything all at once* method to learn. It's not great, but I'm jamming everything in and shutting my flaps to see what stays.
+Lately I've rediscovered code, early in my life (I was 7 years old with access to a MS-DOS computer) I attempted to code a video game, but I gave up somewhere along the way when it didn't do what I wanted it to do. And everything was text! Code isn't visual, that takes a while for me to process, and definitely when said text doesn't make.. sense? I'm in an existential quarrel with myself, because my work require me to understand and write a small amount of `real code`, so I'm doing the *everything all at once* method to learn. It's not great, but I'm jamming everything in and shutting my flaps to see what stays.
 
 I'm learning **Python** and (maybe) **Lua** by making video games.
 
