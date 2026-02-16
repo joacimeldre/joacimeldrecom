@@ -4,7 +4,7 @@ author: Joacim Eldre
 title: Fun icons
 description: "Icons designed just for fun."
 image:
-  url: "/src/images/blog/fun_icons/icons_joacim_eldre.png"
+  url: "../images/posts/icons_joacim_eldre.png"
   alt: "A bunch of icons made by Joacim Eldre"
 tags: ["All", "Icon", "Design"]
 ---
@@ -19,7 +19,7 @@ Sometimes I sketch on paper and see what pops up. All of the icons in this post 
 
 Other times fine people ask me to design icons for their thing. Sometimes they know what they want, then we go from there.
 
-![Four vector icons, from top left to bottom right: totem pole, three stars, potted plant, robot head](/src/images/blog/fun_icons/fun_icons_1.png "Four vector icons")
+![Four vector icons, from top left to bottom right: totem pole, three stars, potted plant, robot head](../images/posts/fun_icons_1.png "Four vector icons")
 
 ## Tools
 

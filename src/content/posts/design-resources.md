@@ -4,7 +4,7 @@ author: Joacim Eldre
 title: Design resources
 description: "Design resources that make me a finer designer."
 image:
-  url: "/src/images/blog/fun_icons/icons_joacim_eldre.png"
+  url: "../images/posts/design_resources_joacim_eldre.png"
   alt: "Icons made by Joacim Eldre"
 tags: ["All", "Design", "Resource"]
 ---

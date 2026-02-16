@@ -4,7 +4,7 @@ author: Joacim Eldre
 title: Hello World!
 description: "First post on my microblog, whoo! Maybe of many."
 image:
-  url: "/src/images/blog/hello_world/hello_world_joacim_eldre.png"
+  url: "../images/posts/hello_world_joacim_eldre.png"
   alt: "An icon of a conch (a swirly seashell), made by me (Joacim Eldre)!"
 tags: ["All"]
 ---
@@ -13,15 +13,15 @@ I'm a visual thinker. If you say "glorbulorp", I see *glorbulorp* in my head, th
 
 My intention with this website is to write down my thoughts, kind of as they happen, I try to just let it go, with little editing. To write more like me as my head goes. Mostly for myself, like a journal. Perhaps it can be fun for others to discover, and maybe learn something from. *Whoo!* Maybe *Whee?*
 
-## This is a detour about coding
+## Detour about code and video games
 
-Lately I've rediscovered code, early in my life (I was 7 years old and with access to a computer with MS-DOS) I attempted to code a video game, but I gave up somewhere along the way when it didn't do what I wanted it to do. And everything was text! Code isn't visual, for me it takes time to really understand text, especially when the text doesn't really make.. sense. I guess I'm in some sort of existential quarrel, because at my job I have to understand and write a small amount of *real code* (TM), so I'm doing the *everything all at once* method to learn. It's not a great method, but I'm jamming everything in and shutting the flaps to see what sticks.
+Lately I've rediscovered code, early in my life (I was 7 years old with access to a computer with MS-DOS) I attempted to code a video game, but I gave up somewhere along the way when it didn't do what I wanted it to do. And everything was text! Code isn't visual, that takes a while for me to process, and definitely when said text doesn't make.. sense? I'm in an existential quarrel with myself, because my work require me to understand and write a small amount of `real code`, so I'm doing the *everything all at once* method to learn. It's not great, but I'm jamming everything in and shutting my flaps to see what stays.
 
-So I'm learning **Python** and (maybe) **Lua** by making video games.
+I'm learning **Python** and (maybe) **Lua** by making video games.
 
-In Python I'm making *Stable* together with a colleague. He's coding, I'm arting, and together we're moving the game along. Stable is a game where you sort blocks into boxes, there's also a creature that eats, and bombs! It's currently in an early playable stage, with a lot of content to go before it's finished.
+In Python I'm making *Stable* together with a colleague. He's coding, I'm arting and coding tiny bits, together we're moving the game along. Stable is a game where you sort blocks into boxes, there's also a creature that eats, and bombs! It's currently in an early playable stage, with a lot of content to go before it's finished.
 
-In Lua (PICO-8) I'm going to make *Bloob*. *Bloob* is a dungeon & jellies game, where you move a blob made of jelly (not a human being made of jelly like me (see footer)) that wants to escape the dungeon to the land of jellies. It's in the *idea stage* where there's only words and sketches, nothing playable yet.
+In Lua (PICO-8) I'm attempting to make *Bloob* on my own. *Bloob* is going to be a *dungeons & jellies* game, where you move a blob made of jelly (not a human being made of jelly like me, see footer) that wants to escape the dungeon to get to the land of jellies. It's in the *Joacim has no idea what he has got himself into stage* where there's thoughts, words, and sketches. Nothing playable yet. It's a comfortable place to be, perhaps too comfortable.
 
 Long story about one thing, leading into another thing, and then coming back to itself.
 
@@ -29,7 +29,7 @@ Anyway.
 
 ## Back to my website
 
-I previously used Google Sites to "build" and host my website. But that was too restricting, I couldn't format and style my web pages how I wanted them to look. And I didn't learn much from simply publishing through it.
+I previously used Google Sites to write and host my website. It was super restrictive, I couldn't format and style the web pages how I wanted them to look and feel. And I didn't learn much from simply publishing through a content management system.
 
 This website is another adventure in learning, so far it's using **MD**, **JSX**, **Astro**, **React** and **Tailwind CSS**.
 
