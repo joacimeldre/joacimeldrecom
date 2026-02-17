@@ -2,9 +2,17 @@
 import { Image } from "astro:assets";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 const { frontmatter } = Astro.props;
+
+// Get the resolved image src for meta tags
+const imageUrl = frontmatter.image?.url?.src || "/ogdefault.png";
 ---
 
-<BaseLayout>
+<BaseLayout
+  title={`${frontmatter.title} - Joacim Eldre`}
+  description={frontmatter.description}
+  image={imageUrl}
+  type="article"
+>
   <section>
     <div class="py-24">
       <div class="lg:text-center">
