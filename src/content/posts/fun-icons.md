@@ -1,6 +1,5 @@
 ---
 pubDate: 2026-01-20
-author: Joacim Eldre
 title: Fun icons
 description: "Icons designed just for fun."
 image:
@@ -13,11 +12,11 @@ Icons are used to visually represent concepts, actions, figures, or objects in a
 
 ## Inspiration
 
-I get inspiration for icon design by life around me. Nature, human made objects, and other random things on the internet.
+I get inspiration for icon design by life around me. Nature, human made objects, and things on the internet.
 
-Sometimes I sketch on paper and see what pops up. All of the icons in this post are made purely for the fun I get from creating them.
+I typically sketch icons with a pen on paper. It's fun to see what pops up. When I have the look and feel that I want, I finalize the icon in a vector format. All of the icons in this post are made purely for the fun I get from creating them.
 
-Other times fine people ask me to design icons for their thing. Sometimes they know what they want, then we go from there.
+Other times fine people ask me to design icons to visually describe their thing. Once in a while they know what they want, or we find out together. Then we go from there.
 
 ![Four vector icons, from top left to bottom right: totem pole, three stars, potted plant, robot head](../images/posts/fun_icons_1.png "Four vector icons")
 

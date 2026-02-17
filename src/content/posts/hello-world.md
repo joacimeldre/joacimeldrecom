@@ -1,6 +1,5 @@
 ---
 pubDate: 2026-01-19
-author: Joacim Eldre
 title: Hello World!
 description: "First post on my microblog, whoo! Maybe of many."
 image:

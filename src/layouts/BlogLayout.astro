@@ -35,9 +35,7 @@ const imageUrl = frontmatter.image?.url?.src || "/ogdefault.png";
         />
         <div class="flex flex-col justify-between mt-4 md:flex-row">
           <p class="text-xs text-base-600">
-            {frontmatter.pubDate.toString().slice(0, 15)} - Written by: {
-              frontmatter.author
-            }
+            {frontmatter.pubDate.toString().slice(0, 15)}
           </p>
           <div class="flex gap-3">
             {

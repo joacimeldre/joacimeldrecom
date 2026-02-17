@@ -1,6 +1,5 @@
 ---
 pubDate: 2026-02-06
-author: Joacim Eldre
 title: Design resources
 description: "Design resources that make me a finer designer."
 image:
@@ -8,6 +7,8 @@ image:
   alt: "Icons made by Joacim Eldre"
 tags: ["All", "Design", "Resource"]
 ---
+
+Some of the links in this post go to wrong places. I'm sorry about that. I'll fix them eventually. In the meantime, if you find a wrong link, poke me so I'll do it now instead of later.
 
 ## Fun, Inspiration
 
