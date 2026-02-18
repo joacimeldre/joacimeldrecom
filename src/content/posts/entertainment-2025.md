@@ -21,3 +21,5 @@ Throughout the game you meet various attachments that lets you do different thin
 Astro Bot is playable on PlayStation 5.
 
 - [ ] Play Astro Bot.
+
+## I'll add more later
