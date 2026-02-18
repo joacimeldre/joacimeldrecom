@@ -55,3 +55,28 @@ const imageUrl = frontmatter.image?.url?.src || "/ogdefault.png";
     </div>
   </section>
 </BaseLayout>
+
+<script>
+  // Enable checkboxes and handle state
+  document
+    .querySelectorAll('.prose input[type="checkbox"]')
+    .forEach((checkbox) => {
+      const input = checkbox as HTMLInputElement;
+
+      // Enable the checkbox
+      input.disabled = false;
+
+      // Load saved state from localStorage
+      const taskId = input.parentElement?.textContent?.trim() || "";
+      const savedState = localStorage.getItem(`task-${taskId}`);
+      if (savedState === "true") {
+        input.checked = true;
+      }
+
+      // Save state when changed
+      input.addEventListener("change", (e) => {
+        const target = e.target as HTMLInputElement;
+        localStorage.setItem(`task-${taskId}`, target.checked.toString());
+      });
+    });
+</script>

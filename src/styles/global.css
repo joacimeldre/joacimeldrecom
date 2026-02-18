@@ -114,4 +114,25 @@
   .prose a {
     @apply underline hover:decoration-wavy text-base-900;
   }
+
+  .prose code::before,
+  .prose code::after {
+    @apply content-none;
+  }
+
+  .prose ul:has(input[type="checkbox"]) {
+    @apply pl-0 ml-0;
+  }
+
+  .prose li:has(input[type="checkbox"]) {
+    @apply list-none pl-0 ml-0;
+  }
+
+  .prose input[type="checkbox"] {
+    @apply w-4 h-4 rounded cursor-pointer border-2 border-base-900 mr-1 ring-base-900 !accent-transparent;
+  }
+
+  .prose input[type="checkbox"]:checked {
+    @apply bg-base-900 ring-base-900 ring-2;
+  }
 }
