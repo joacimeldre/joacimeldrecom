@@ -4,13 +4,11 @@ title: Design resources
 description: "Design resources that make me a finer designer."
 image:
   url: "../images/posts/design_resources_joacim_eldre.png"
-  alt: "Icons made by Joacim Eldre"
+  alt: "A triangle, square, and circle on a gray background, the triangle is black, the square has the bottom traced with a mouse cursor on the end. Made by Joacim Eldre."
 tags: ["All", "Design", "Resource"]
 ---
 
-Some of the links in this post go to wrong places. I'm sorry about that. I'll fix them eventually. In the meantime, if you find a wrong link, poke me so I'll do it now instead of later.
-
-# Fun, Inspiration
+## Fun, Inspiration
 
 [Color Match](https://colormatch.pages.dev/) is a browser game where you match colors on time.
 
@@ -32,11 +30,7 @@ Some of the links in this post go to wrong places. I'm sorry about that. I'll fi
 
 [Teenage Engineering](https://teenage.engineering/) make hardware products for audio engineering.
 
-[Unhinged](https://www.unhinged.life/) is an app to journal and track your mood from day to day.
-
 [Good Enough](https://goodenough.us/) is a company who make software that is good enough.
-
-[Floor 796](https://floor796.com/) is an animated scene showing the lives of characters from various works on the 796th floor of a huge space station.
 
 [The Hardest Working Font In Manhattan](https://aresluna.org/the-hardest-working-font-in-manhattan/) is a deep dive article about a font called Gorton.
 
@@ -52,7 +46,7 @@ Some of the links in this post go to wrong places. I'm sorry about that. I'll fi
 
 [Playables](https://playables.net/) create playful strange things, like video games.
 
-# Hardware
+## Hardware
 
 Pen. My favourite pen is the Copic Multiliner SP 0.5.
 
@@ -64,25 +58,25 @@ Tablet stylus. I use an Apple Pencil.
 
 Computer. I use a MacBook.
 
-# Software, Apps, Web apps
+## Software, Apps, Web apps
 
-[Figma](https://www.lexaloffle.com/account.php?page=new_user) is a collaborative web application for wireframe and prototype design.
+[Figma](https://www.figma.com/) is a collaborative web application for wireframe and prototype design.
 
-[Frame0](https://www.lexaloffle.com/account.php?page=new_user) is a MacOS, Windows, and Linux application to design wireframes.
+[Frame0](https://frame0.app/) is a MacOS, Windows, and Linux application to design wireframes.
 
-[Affinity Studio](https://www.lexaloffle.com/account.php?page=new_user) is a MacOS and Windows application suite for raster and vector graphics.
+[Affinity Studio](https://www.affinity.studio/) is a MacOS and Windows application suite for raster and vector graphics.
 
 [Squoosh](https://squoosh.app/) is a website for optimizing images.
 
-[Spline](https://squoosh.app/) is a collaborative web application for 3D sculpting, modeling, and animation.
+[Spline](https://spline.design/) is a collaborative web application for 3D sculpting, modeling, and animation.
 
-[Cavalry](https://squoosh.app/) is a Windows and MacOS application for 2D animation.
+[Cavalry](https://cavalry.app/) is a Windows and MacOS application for 2D animation.
 
 [Rive](https://rive.app/) is a collaborative web application for 2D animation.
 
 [Procreate](https://procreate.com/) is an iPad application for raster graphics.
 
-[Nomad Sculpt](https://procreate.com/) is an iPad application for 3D sculpting and modeling.
+[Nomad Sculpt](https://nomadsculpt.com/) is an iPad application for 3D sculpting and modeling.
 
 [Raycast](https://www.raycast.com/) is a launcher application for MacOS and Windows.
 
@@ -90,13 +84,7 @@ Computer. I use a MacBook.
 
 [Tabular](https://tabular.email/) is a web application to build responsive emails.
 
-[Rotato](https://rotato.app/) is a web application to generate 3D mockups with support for animation.
-
-[Ghost House](https://www.tedwiggin.com/MIMT.html) is a 2D design tool for animation that interpolates frames between one shape and another.
-
-# Learn
-
-[Figma on YouTube](https://www.tedwiggin.com/MIMT.html).
+## Learn
 
 [Visual Design](https://anthonyhobday.com/books/visualdesign) is website book about how to improve your visual design.
 
@@ -104,7 +92,7 @@ Computer. I use a MacBook.
 
 [Smart Interface Design Patterns](https://smart-interface-design-patterns.com/) is a course with guidelines and best practices for common components in user interfaces.
 
-# Accessibility
+## Accessibility
 
 [a11y, Accessibility Project](https://www.a11yproject.com/).
 
@@ -112,7 +100,7 @@ Computer. I use a MacBook.
 
 [Empathy Prompts](http://empathyprompts.net/).
 
-# Design System
+## Design System
 
 [Atomic Design](https://atomicdesign.bradfrost.com/) is a free web book on how to build reusable parts, from small to large.
 
@@ -122,13 +110,7 @@ Computer. I use a MacBook.
 
 [Storybook](https://storybook.js.org/) is a web tool to present user interface components for development, testing, and documentation.
 
-# Design Thinking
-
-[The Core Model](https://www.thecoremodel.com/) is a method for creating digital services and products.
-
-[Design Better](https://www.designbetter.co/podcast) is a podcast about product design.
-
-[99% Invisible](https://99percentinvisible.org/) is a podcast about how designers see the world.
+## Design Thinking
 
 [Untools](https://untools.co/) is a website to learn methods for practical problem solution.
 
@@ -136,7 +118,7 @@ Computer. I use a MacBook.
 
 [Mindful Design](https://mindfuldesign.xyz/) is the responsible designer’s survival guide.
 
-# Product Thinking
+## Product Thinking
 
 [Agile Manifesto](https://agilemanifesto.org/) is how you should develop software.
 
@@ -144,7 +126,7 @@ Computer. I use a MacBook.
 
 [Shape Up](https://basecamp.com/shapeup) is a free web book that makes you stop running in circles to ship work that matters.
 
-# User Interface
+## User Interface
 
 [Practical UI](https://practical-ui.com/) is a book about making user interfaces that work.
 
@@ -152,15 +134,13 @@ Computer. I use a MacBook.
 
 [Blocks](https://www.blocks.pm/) is a low fidelity wireframe design kit for Figma.
 
-[Mobbin](https://mobbin.com/) is a website with design inspiration for apps and websites.
-
 [Layers](https://layers.to/) is a website with design inspiration for apps and websites.
 
 [Complementary](https://podcasts.apple.com/us/podcast/complementary/id1671376839) is a podcast about interface design.
 
 [Game User Interface Database](https://www.gameuidatabase.com/) is a website with a lot of examples of user interfaces from video games.
 
-# User Experience
+## User Experience
 
 [Laws of UX](http://lawsofux.com/) is a book about the principles of user experience design.
 
@@ -176,7 +156,7 @@ Computer. I use a MacBook.
 
 [Deceptive Patterns](https://www.deceptive.design/) is a website that shame intentionally bad design patterns that manipulate the user in a bad way.
 
-# Test, Research, Analyse
+## Test, Research, Analyse
 
 [Rocket Surgery Made Easy](https://sensible.com/rocket-surgery-made-easy/) is a book about testing what you build with your users, to verify that what you make is usable for your users. Explained in a simple and practical way that you can start doing right now.
 
@@ -184,31 +164,27 @@ Computer. I use a MacBook.
 
 [Posthog](https://posthog.com/).
 
-[Dovetail](https://posthog.com/).
+[Dovetail](https://dovetail.com/).
 
 [Tally](https://tally.so/) is a web tool for building forms to collect feedback from users.
 
 [A/B Test Design](https://abtest.design/) is a website with A/B test results from apps and websites.
 
-# Communicate, Plan, Document, Note
+## Communicate, Plan, Document, Note
 
 [FigJam](https://www.figma.com/figjam/).
 
-[Slack](https://www.figma.com/figjam/).
+[Slack](https://slack.com/).
 
 [Obsidian](https://obsidian.md/).
 
 [Linear](https://linear.app/).
 
-[Notion](https://notion.so/).
+## Type, Typography, Font
 
-[Loom](https://notion.so/).
+[Free Faces](https://www.freefaces.gallery/) is a collection of free, open source fonts.
 
-# Type, Typography, Font
-
-[Free Faces](https://notion.so/).
-
-[Google Fonts](https://notion.so/).
+[Google Fonts](https://fonts.google.com/) is a collection of free, open source fonts. Curated by Google.
 
 [Legible Typography](https://legible-typography.com/) is a book about writing readable text.
 
@@ -216,30 +192,26 @@ Computer. I use a MacBook.
 
 [Flexible Typesetting](https://flexibletypesetting.com/).
 
-# Color
+## Color
 
 [Color and Contrast](http://colorandcontrast.com/).
 
-[Poline](https://www.randoma11y.com/).
+[Poline](https://meodai.github.io/poline/).
 
 [Color Palette Pro](https://colorpalette.pro/).
 
-[Inclusive Colors ](https://www.inclusivecolors.com/)is a website that uses HSLuv to explore WCAG compatible accessible color combinations.
+[Inclusive Colors](https://www.inclusivecolors.com/) is a website that uses HSLuv to explore WCAG compatible accessible color combinations.
 
-# Icon, Logo, Illustration
+## Icon, Logo, Illustration
 
 [The Noun Project](http://thenounproject.com/).
 
 [Google Material Icons and Symbols](https://fonts.google.com/icons).
 
-[Logo Design Love](https://www.logodesignlove.com/book) is a book with logo design.
-
 [Streamline icons](https://blog.streamlinehq.com/tag/icons/) is a collection of icon design guidelines.
-
-[Nintendo Icons](https://www.vgmuseum.com/features/icons/) is a collection of all the Nintendo DS, 3DS, PSP, and PS Vita icons shown at the system's home screen.
 
 [Derek Yu: Pixel Art Basics Tutorial](https://www.derekyu.com/makegames/pixelart.html) is a great page with solid advice on tools and process on how to make pixel art with depth for use in video games. Derek also has a guide with [common mistakes when making pixel art](https://www.derekyu.com/makegames/pixelart2.html).
 
-# Code
+## Code
 
 [Invent with Python](https://inventwithpython.com/) is a series of books written by Al Sweigart on Python. They're available for free to read online, and they're written in a practical way to code along with.

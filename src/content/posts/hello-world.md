@@ -14,9 +14,9 @@ My intention with this website is to write down my thoughts, kind of as they hap
 
 Perhaps fun for others to discover, and maybe learn something from. *Whoo!* Maybe *Whee?*
 
-# Small code and video game detour
+## Small code and video game detour
 
-Lately I've rediscovered code, early in my life (I was 7 years old with access to a MS-DOS computer) I attempted to code a video game, but I gave up somewhere along the way when it didn't do what I wanted it to do. And everything was text! Code isn't visual, that takes a while for me to process, and definitely when said text doesn't make.. sense? I'm in an existential quarrel with myself, because my work require me to understand and write a small amount of `real code`, so I'm doing the *everything all at once* method to learn. It's not great, but I'm jamming everything in and shutting my flaps to see what stays.
+Lately I've rediscovered code, early in my life (I was 7 years old with access to a MS-DOS computer) I attempted to code a video game, but I gave up somewhere along the way when it didn't do what I wanted it to do. And everything was text! Code isn't visual, that takes a while for me to process, and definitely when said text doesn't make.. sense? I'm in an existential quarrel with myself, because my work require me to understand and write a small amount of `real code`, so I'm doing the *everything all at once* method to learn. I'm jamming everything in and shutting my flaps to see what stays.
 
 I'm learning **Python** and (maybe) **Lua** by making video games.
 
@@ -28,11 +28,11 @@ Long story about one thing, leading into another thing, and then coming back to 
 
 Anyway.
 
-# Back to my website
+## Back to my website
 
 I previously used Google Sites to write and host my website. It was super restrictive, I couldn't format and style the web pages how I wanted them to look and feel. And I didn't learn much from simply publishing through a content management system.
 
-This website is another adventure in learning, so far it's using **MD**, **JSX**, **Astro**, **React** and **Tailwind CSS**.
+This website is another adventure in learning, so far it's using **MD**, **JSX**, **Astro**, **React** and **Tailwind CSS**. The possibilities feel almost endless, I can make the website look and feel however I want, and add whatever features I want. It's fun to learn how to use these tools, and to make something with them. I've already learned a lot.
 
 I make sure to always find time to do personal projects. At least 15 minutes every day. My ongoing projects are [fun icons](/posts/fun-icons) and Miu the cat.
 
@@ -42,7 +42,7 @@ I'm not going anywhere with this post. It's just exciting to have a place where 
 
 I don't want that. So I'm just gonna write whatever I want on here, and I'll have fun doing it.
 
-# ~Pancake~ Website stack
+## ~Pancake~ Website stack 🥞
 
 This website is built on several technologies to be able to float into your eyes and/or ears, like it's doing now.
 
@@ -55,6 +55,6 @@ This website is built on several technologies to be able to float into your eyes
 * [Vercel](https://vercel.com/ "Vercel is a platform for frontend frameworks and static sites, built to integrate with your headless content, commerce, or database.") for deployment and hosting the build.
 * [Cloudflare](https://www.cloudflare.com/ "Cloudflare provides content delivery network services, DDoS mitigation, Internet security, and distributed domain name server services.") for domain management and email forwarding.
 
-# Have fun, play video games
+## Have fun, play video games
 
 That's a wrap for my first post. I'm off on my adventure in *The Last Guardian*! That's a video game. Yes, I like video games!
