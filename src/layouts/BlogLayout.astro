@@ -5,6 +5,19 @@ const { frontmatter } = Astro.props;
 
 // Get the resolved image src for meta tags
 const imageUrl = frontmatter.image?.url?.src || "/ogdefault.png";
+
+const formattedDate = (() => {
+  const pubDate = frontmatter.pubDate;
+
+  // If it's already a Date object, use it directly
+  const date = pubDate instanceof Date ? pubDate : new Date(pubDate);
+
+  const year = date.getFullYear();
+  const monthName = date.toLocaleDateString("en-US", { month: "short" });
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year} ${monthName} ${day}`;
+})();
 ---
 
 <BaseLayout
@@ -14,69 +27,74 @@ const imageUrl = frontmatter.image?.url?.src || "/ogdefault.png";
   type="article"
 >
   <section>
-    <div class="py-24">
-      <div class="lg:text-center">
-        <div class="max-w-xl mx-auto">
-          <h1
-            class="text-4xl text-balance font-medium font-display text-base-900"
-          >
+    <div class="py-24 max-w-3xl">
+      <div>
+        <div class="mx-auto">
+          <h1 class="text-4xl font-medium font-display text-base-900">
             {frontmatter.title}
           </h1>
-          <p class="max-w-2xl mx-auto mt-4 text-base-600 text-sm text-balance">
-            <em>{frontmatter.description}</em>
+          <p class="mt-4 text-base-900 text-xl">
+            {frontmatter.description}
           </p>
-        </div>
-        <Image
-          width={1280}
-          height={720}
-          src={frontmatter.image.url}
-          alt={frontmatter.image.alt}
-          class="object-cover object-center w-full aspect-12/7 rounded-xl mt-4"
-        />
-        <div class="flex flex-col justify-between mt-4 md:flex-row">
-          <p class="text-xs text-base-600">
-            {frontmatter.pubDate.toString().slice(0, 15)}
+          <Image
+            width={1280}
+            height={720}
+            src={frontmatter.image.url}
+            alt={frontmatter.image.alt}
+            class="object-cover object-center w-full aspect-12/7 rounded-xl mt-4"
+          />
+          <p class="mx-auto mt-4 text-base-900 text-sm">
+            Published on <time datetime={frontmatter.pubDate}
+              >{formattedDate}</time
+            >
           </p>
-          <div class="flex gap-3">
+          <p class="flex gap-1 mx-auto mt-2 text-base-900 text-sm">
+            Tagged as
             {
-              frontmatter.tags.map((tag) => (
-                <span class="underline hover:decoration-wavy text-xs font-medium text-base-600">
-                  <a href={`/tags/${tag}`}>{tag}</a>
+              frontmatter.tags.map((tag, index) => (
+                <span>
+                  <a
+                    href={`/tags/${tag}`}
+                    class="underline hover:decoration-wavy"
+                  >
+                    {tag}
+                  </a>
+                  {index < frontmatter.tags.length - 1 && " & "}
                 </span>
               ))
             }
-          </div>
+          </p>
         </div>
-      </div>
 
-      <div class="prose prose-sm max-w-md mt-12 mx-auto text-base-900">
-        <slot />
+        <div class="prose max-w-3xl mt-12 mx-auto text-base-900">
+          <slot />
+        </div>
       </div>
     </div>
   </section>
-</BaseLayout>
 
-<script>
-  // Enable checkboxes and handle state
-  document
-    .querySelectorAll('.prose input[type="checkbox"]')
-    .forEach((checkbox) => {
-      const input = checkbox as HTMLInputElement;
+  <script>
+    // Enable checkboxes and handle state
+    document
+      .querySelectorAll('.prose input[type="checkbox"]')
+      .forEach((checkbox) => {
+        const input = checkbox as HTMLInputElement;
 
-      // Enable the checkbox
-      input.disabled = false;
+        // Enable the checkbox
+        input.disabled = false;
 
-      // Load saved state from localStorage
-      const taskId = input.parentElement?.textContent?.trim() || "";
-      const savedState = localStorage.getItem(`task-${taskId}`);
-      if (savedState === "true") {
-        input.checked = true;
-      }
+        // Load saved state from localStorage
+        const taskId = input.parentElement?.textContent?.trim() || "";
+        const savedState = localStorage.getItem(`task-${taskId}`);
+        if (savedState === "true") {
+          input.checked = true;
+        }
 
-      // Save state when changed
-      input.addEventListener("change", (e) => {
-        const target = e.target as HTMLInputElement;
-        localStorage.setItem(`task-${taskId}`, target.checked.toString());
+        // Save state when changed
+        input.addEventListener("change", (e) => {
+          const target = e.target as HTMLInputElement;
+          localStorage.setItem(`task-${taskId}`, target.checked.toString());
+        });
       });
-    });
-</script>
+  </script>
+</BaseLayout>

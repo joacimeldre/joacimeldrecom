@@ -115,6 +115,11 @@
     @apply underline hover:decoration-wavy text-base-900;
   }
 
+  /* marker is bullet point */
+  .prose ul li::marker {
+    @apply text-base-900/60;
+  }
+
   .prose code::before,
   .prose code::after {
     @apply content-none;
@@ -129,7 +134,7 @@
   }
 
   .prose input[type="checkbox"] {
-    @apply w-4 h-4 rounded cursor-pointer border-2 border-base-900 mr-1 ring-base-900 !accent-transparent;
+    @apply w-4 h-4 rounded cursor-pointer border-2 border-base-900 mr-1 ring-base-900 !accent-transparent align-middle;
   }
 
   .prose input[type="checkbox"]:checked {

@@ -2,9 +2,6 @@
 import { Image } from "astro:assets";
 const { title, url, description, pubDate, author, image, tags } = Astro.props;
 
-console.log("pubDate value:", pubDate);
-console.log("pubDate type:", typeof pubDate);
-
 const formattedDate = (() => {
   // pubDate comes in as a string like "2026-01-19"
   const [year, month, day] = pubDate.split("-");
@@ -14,15 +11,13 @@ const formattedDate = (() => {
 
   return `${year} ${monthName} ${day}`;
 })();
-
-console.log("formattedDate:", formattedDate);
 ---
 
-<article>
-  <h3 class="mt-4 text-base text-base-900 text-balance">
-    <time datetime={pubDate} class="inline-block w-25 text-base-900/50"
-      >{formattedDate}</time
-    >
-    <a href={url} class="underline hover:decoration-wavy">{title}</a>
+<article class="mt-4">
+  <h3 class="text-base text-base-900 text-balance table w-full">
+    <time datetime={pubDate} class="text-base-900/60 table-cell w-26">
+      {formattedDate}
+    </time>
+    <a href={url} class="underline hover:decoration-wavy table-cell">{title}</a>
   </h3>
 </article>

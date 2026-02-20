@@ -10,7 +10,7 @@ tags: ["All", "Icon", "Design"]
 
 Icons are used to visually represent concepts, actions, figures, or objects in a compact and easily recognizable form. You can use icons in your product to make it easier to understand and visually appealing for whoever uses it.
 
-## Inspiration
+# Inspiration
 
 I get inspiration for icon design by life around me. Nature, human made objects, and things on the internet.
 
@@ -20,6 +20,6 @@ Other times fine people ask me to design icons to visually describe their thing.
 
 ![Four vector icons, from top left to bottom right: totem pole, three stars, potted plant, robot head](../images/posts/fun_icons_1.png "Four vector icons")
 
-## Tools
+# Tools
 
 I use a Copic Multiliner pen, chunky gritty paper, and [Procreate](https://procreate.com/ "Procreate is an app for raster drawing on iPad") to sketch icon ideas. And I use [Figma](https://figma.com/ "Figma is a web application for prototyping with vector graphics and allows for easy collaboration") to finalize the icon designs.
