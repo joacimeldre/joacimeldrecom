@@ -111,6 +111,15 @@
 }
 
 @layer utilities {
+
+  .prose h1 {
+    @apply mt-12 mb-8;
+  }
+
+  .prose h2 {
+    @apply mt-8 mb-4;
+  }
+
   .prose a {
     @apply underline hover:decoration-wavy text-base-900;
   }

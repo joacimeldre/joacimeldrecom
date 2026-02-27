@@ -8,6 +8,8 @@ image:
 tags: ["All", "Entertainment"]
 ---
 
+# Video Games
+
 ## Astro Bot
 
 Astro Bot is **one of my favourite video games, ever**. I picked it up in the end of 2024, and played through 2025. I still play from time to time. Family friendly too.
@@ -37,5 +39,15 @@ During most of my playthrough, I sat on the edge of my couch, gripping the contr
 If I had to pick one thing I enjoyed the most in Dredge, I'd say the inventory management. It's slot based, so you have to carefully choose which equipment and items to bring with you on your trips. It adds an extra layer of strategy to the game.
 
 Dredge is playable on Nintendo Switch, PlayStation 4 and 5, Xbox One and Series X and S, PC, iOS, and Android.
+
+# Books
+
+## The Convenience Store by the Sea
+
+Written by Sonoko Machida is a warm novel about finding joy in the small every day things in life and the connections we make. The story follows Tenderness, a convenience store in Mojiko, Japan, the people who work there, and its customers.
+
+![The Convenience Store by the Sea cover](../images/posts/the_convenience_store_by_the_sea.png "The Convenience Store by the Sea cover")
+
+The convenience store has a quirky manager with his own fanclub, and one of the employees writes and draws a manga about the manager. It's super quirky and really wholesome. It gave me comfort during a time in my life when I had just gone through a break up with the person I was closest to, I needed all of the pick me ups.
 
 I'll add more later.
