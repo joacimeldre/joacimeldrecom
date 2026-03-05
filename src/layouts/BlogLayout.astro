@@ -74,26 +74,42 @@ const formattedDate = (() => {
   </section>
 
   <script>
-    // Enable checkboxes and handle state
     document
       .querySelectorAll('.prose input[type="checkbox"]')
       .forEach((checkbox) => {
         const input = checkbox as HTMLInputElement;
-
-        // Enable the checkbox
         input.disabled = false;
 
-        // Load saved state from localStorage
-        const taskId = input.parentElement?.textContent?.trim() || "";
+        // Wrap checkbox text in a label
+        const listItem = input.closest("li");
+        if (listItem && !input.parentElement?.matches("label")) {
+          const label = document.createElement("label");
+
+          // Get the text after the checkbox
+          const textContent = Array.from(listItem.childNodes)
+            .filter(
+              (node) => node !== input && node.nodeType === Node.TEXT_NODE,
+            )
+            .map((node) => node.textContent)
+            .join("")
+            .trim();
+
+          listItem.textContent = "";
+          label.appendChild(input);
+          label.appendChild(document.createTextNode(" " + textContent));
+          listItem.appendChild(label);
+        }
+
+        // Load and save state
+        const taskId = input.closest("li")?.textContent?.trim() || "";
         const savedState = localStorage.getItem(`task-${taskId}`);
         if (savedState === "true") {
           input.checked = true;
         }
 
-        // Save state when changed
-        input.addEventListener("change", (e) => {
-          const target = e.target as HTMLInputElement;
-          localStorage.setItem(`task-${taskId}`, target.checked.toString());
+        input.addEventListener("change", () => {
+          const taskId = input.closest("li")?.textContent?.trim() || "";
+          localStorage.setItem(`task-${taskId}`, input.checked.toString());
         });
       });
   </script>

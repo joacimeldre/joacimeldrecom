@@ -142,11 +142,19 @@
     @apply list-none pl-0 ml-0;
   }
 
+  .prose li:has(input[type="checkbox"]) label {
+    @apply cursor-pointer select-none w-fit;
+  }
+
   .prose input[type="checkbox"] {
-    @apply w-4 h-4 rounded cursor-pointer border-2 border-base-900 mr-1 ring-base-900 !accent-transparent align-middle;
+    @apply w-4 h-4 rounded border-2 border-base-900 mr-1 ring-base-900 !accent-transparent align-middle;
   }
 
   .prose input[type="checkbox"]:checked {
     @apply bg-base-900 ring-base-900 ring-2;
+  }
+
+  .prose mark {
+    @apply bg-amber-200 px-1 rounded;
   }
 }

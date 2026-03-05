@@ -3,8 +3,8 @@ pubDate: 2026-02-17
 title: My favourite entertainment in 2025
 description: "The video games, books, music, movies, and shows that were my favourites in 2025."
 image:
-  url: "../images/posts/default_image_joacim_eldre.png"
-  alt: "A simplified face on a solid colored light orange background, the face is made up of two dots for eyes, an uppercase J for a nose, and a curved line forming a lowercase E for a mouth."
+  url: "../images/posts/entertainment_2025_joacim_eldre.png"
+  alt: "Simple faces forming a J and E on a circle, square, squiggly circle, and triangle, representing my initials, on a beige background."
 tags: ["All", "Entertainment"]
 ---
 
@@ -24,9 +24,9 @@ Astro Bot is playable on PlayStation 5.
 
 - [ ] Play Astro Bot.
 
-I included the checkbox above, because I just managed to make it interactable. You can check and uncheck it!
+I included the checkbox above, because I made it interactable. You can check and uncheck it!
 
-Now I'm curious if I can make it so that you can write your own checklist, and check it off as you go. That would be fun! Maybe I'll make a tiny to do app.
+Haha, it's a novel little thing, I had fun designing it. Now I'm curious if I can make it so that you can write your own checklist, and check it off as you go. That would be fun! Maybe I'll make a tiny to do app somewhere on my website.
 
 ## Dredge
 
@@ -48,6 +48,18 @@ Written by Sonoko Machida is a warm novel about finding joy in the small every d
 
 ![The Convenience Store by the Sea cover](../images/posts/the_convenience_store_by_the_sea.png "The Convenience Store by the Sea cover")
 
-The convenience store has a quirky manager with his own fanclub, and one of the employees writes and draws a manga about the manager. It's super quirky and really wholesome. It gave me comfort during a time in my life when I had just gone through a break up with the person I was closest to, I needed all of the pick me ups.
+The convenience store has a strange manager with his own fanclub. One of the employees writes and draws a manga about the manager. The story is quirky and wholesome. The book gave me comfort during a time when I was left by *the person* I've been closest to, I needed all the pick me ups I could get.
+
+# Music 
+
+## Glass Animals - I Love You So F***ing Much
+
+I liked Glass Animals from the moment I heard their hit song, Heat Waves. I Love You So F\*\*\*ing Much is their fourth studio album, it sounds very different to their previous albums. I think that's a good thing. It's great when artists experiment and discover new ways to express themselves. 
+
+![Glass Animals - I Love You So F***ing Much album cover](../images/posts/glass_animals_i_love_you_so_fing_much.png "Glass Animals - I Love You So F***ing Much album cover")
+
+Their sound for this album is a mix of indie pop rock and electronic music, with clever lyrics about human connections.
+
+In the same way that The Convenience Store by the Sea was a comfort read for me, I Love You So F\*\*\*ing Much was a comfort album. I listened to it a lot during the same time. There's an underlying sadness with deeper meaning if you want to go there, but overall it's an uplifting and feel good album that goes into the complexity of relationships.
 
 I'll add more later.
