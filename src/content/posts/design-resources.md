@@ -8,7 +8,7 @@ image:
 tags: ["All", "Design", "Resource"]
 ---
 
-## Fun, Inspiration
+# Fun, Inspiration
 
 [Color Match](https://colormatch.pages.dev/) is a browser game where you match colors on time.
 
@@ -46,7 +46,7 @@ tags: ["All", "Design", "Resource"]
 
 [Playables](https://playables.net/) create playful strange things, like video games.
 
-## Hardware
+# Hardware
 
 Pen. My favourite pen is the Copic Multiliner SP 0.5.
 
@@ -58,7 +58,7 @@ Tablet stylus. I use an Apple Pencil.
 
 Computer. I use a MacBook.
 
-## Software, Apps, Web apps
+# Software, Apps, Web apps
 
 [Figma](https://www.figma.com/) is a collaborative web application for wireframe and prototype design.
 
@@ -84,7 +84,7 @@ Computer. I use a MacBook.
 
 [Tabular](https://tabular.email/) is a web application to build responsive emails.
 
-## Learn
+# Learn
 
 [Visual Design](https://anthonyhobday.com/books/visualdesign) is website book about how to improve your visual design.
 
@@ -92,7 +92,7 @@ Computer. I use a MacBook.
 
 [Smart Interface Design Patterns](https://smart-interface-design-patterns.com/) is a course with guidelines and best practices for common components in user interfaces.
 
-## Accessibility
+# Accessibility
 
 [a11y, Accessibility Project](https://www.a11yproject.com/).
 
@@ -100,7 +100,7 @@ Computer. I use a MacBook.
 
 [Empathy Prompts](http://empathyprompts.net/).
 
-## Design System
+# Design System
 
 [Atomic Design](https://atomicdesign.bradfrost.com/) is a free web book on how to build reusable parts, from small to large.
 
@@ -110,7 +110,7 @@ Computer. I use a MacBook.
 
 [Storybook](https://storybook.js.org/) is a web tool to present user interface components for development, testing, and documentation.
 
-## Design Thinking
+# Design Thinking
 
 [Untools](https://untools.co/) is a website to learn methods for practical problem solution.
 
@@ -118,7 +118,7 @@ Computer. I use a MacBook.
 
 [Mindful Design](https://mindfuldesign.xyz/) is the responsible designer’s survival guide.
 
-## Product Thinking
+# Product Thinking
 
 [Agile Manifesto](https://agilemanifesto.org/) is how you should develop software.
 
@@ -126,7 +126,7 @@ Computer. I use a MacBook.
 
 [Shape Up](https://basecamp.com/shapeup) is a free web book that makes you stop running in circles to ship work that matters.
 
-## User Interface
+# User Interface
 
 [Practical UI](https://practical-ui.com/) is a book about making user interfaces that work.
 
@@ -140,7 +140,7 @@ Computer. I use a MacBook.
 
 [Game User Interface Database](https://www.gameuidatabase.com/) is a website with a lot of examples of user interfaces from video games.
 
-## User Experience
+# User Experience
 
 [Laws of UX](http://lawsofux.com/) is a book about the principles of user experience design.
 
@@ -156,7 +156,7 @@ Computer. I use a MacBook.
 
 [Deceptive Patterns](https://www.deceptive.design/) is a website that shame intentionally bad design patterns that manipulate the user in a bad way.
 
-## Test, Research, Analyse
+# Test, Research, Analyse
 
 [Rocket Surgery Made Easy](https://sensible.com/rocket-surgery-made-easy/) is a book about testing what you build with your users, to verify that what you make is usable for your users. Explained in a simple and practical way that you can start doing right now.
 
@@ -170,7 +170,7 @@ Computer. I use a MacBook.
 
 [A/B Test Design](https://abtest.design/) is a website with A/B test results from apps and websites.
 
-## Communicate, Plan, Document, Note
+# Communicate, Plan, Document, Note
 
 [FigJam](https://www.figma.com/figjam/).
 
@@ -180,7 +180,7 @@ Computer. I use a MacBook.
 
 [Linear](https://linear.app/).
 
-## Type, Typography, Font
+# Type, Typography, Font
 
 [Free Faces](https://www.freefaces.gallery/) is a collection of free, open source fonts.
 
@@ -192,7 +192,7 @@ Computer. I use a MacBook.
 
 [Flexible Typesetting](https://flexibletypesetting.com/).
 
-## Color
+# Color
 
 [Color and Contrast](http://colorandcontrast.com/).
 
@@ -202,7 +202,7 @@ Computer. I use a MacBook.
 
 [Inclusive Colors](https://www.inclusivecolors.com/) is a website that uses HSLuv to explore WCAG compatible accessible color combinations.
 
-## Icon, Logo, Illustration
+# Icon, Logo, Illustration
 
 [The Noun Project](http://thenounproject.com/).
 
@@ -212,6 +212,6 @@ Computer. I use a MacBook.
 
 [Derek Yu: Pixel Art Basics Tutorial](https://www.derekyu.com/makegames/pixelart.html) is a great page with solid advice on tools and process on how to make pixel art with depth for use in video games. Derek also has a guide with [common mistakes when making pixel art](https://www.derekyu.com/makegames/pixelart2.html).
 
-## Code
+# Code
 
 [Invent with Python](https://inventwithpython.com/) is a series of books written by Al Sweigart on Python. They're available for free to read online, and they're written in a practical way to code along with.

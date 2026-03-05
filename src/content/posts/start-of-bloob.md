@@ -8,11 +8,11 @@ image:
 tags: ["All", "Game Development", "PICO-8"]
 ---
 
-## Bloob
+# Bloob?
 
 What's a bloob? It's a blob made of jelly. A bloob can have bloobs inside of itself.
 
-## Game design notes
+# Game design notes
 
 The list below is copy paste from my notes. I just wanted to make it public. I'll definitely refine it as I start making the video game.
 
@@ -41,7 +41,7 @@ The list below is copy paste from my notes. I just wanted to make it public. I'l
 - Secrets: palettes, music?
 - Bosses? Maybe not, maybe just fun levels.
 
-## Next steps
+# Next steps
 
 Get a playable prototype going in PICO-8. I have no idea how PICO-8 works, so I'll be learning as I go. I'll start with the basics, and then add more features and mechanics as I go.
 

@@ -14,7 +14,7 @@ My intention with this website is to write down my thoughts, kind of as they hap
 
 Perhaps fun for others to discover, and maybe learn something from. *Whoo!* Maybe *Whee?*
 
-## Small code and video game detour
+# A code and video game detour
 
 Lately I've rediscovered code, early in my life (I was 7 years old with access to a MS-DOS computer) I attempted to code a video game, but I gave up somewhere along the way when it didn't do what I wanted it to do. And everything was text! Code isn't visual, that takes a while for me to process, and definitely when said text doesn't make.. sense? I'm in an existential quarrel with myself, because my work require me to understand and write a small amount of `real code`, so I'm doing the *everything all at once* method to learn. I'm jamming everything in and shutting my flaps to see what stays.
 
@@ -42,7 +42,7 @@ I'm not going anywhere with this post. It's just exciting to have a place where 
 
 I don't want that. So I'm just gonna write whatever I want on here, and I'll have fun doing it.
 
-## ~Pancake~ Website stack 🥞
+# ~Pancake~ Website stack 🥞
 
 This website is built on several technologies to be able to float into your eyes and/or ears, like it's doing now.
 
@@ -55,6 +55,6 @@ This website is built on several technologies to be able to float into your eyes
 * [Vercel](https://vercel.com/ "Vercel is a platform for frontend frameworks and static sites, built to integrate with your headless content, commerce, or database.") for deployment and hosting the build.
 * [Cloudflare](https://www.cloudflare.com/ "Cloudflare provides content delivery network services, DDoS mitigation, Internet security, and distributed domain name server services.") for domain management and email forwarding.
 
-## Have fun, play video games
+# Have fun, play video games
 
 That's a wrap for my first post. I'm off on my adventure in *The Last Guardian*! That's a video game. Yes, I like video games!
