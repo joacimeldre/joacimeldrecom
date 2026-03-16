@@ -8,7 +8,7 @@ image:
 tags: ["All", "Entertainment"]
 ---
 
-Okay, hold on. I drew that image up above for this post, I wanted something abstract that was colorful, that would convey a sense of playfullness and fun. Now that I've seen the image over and over, it's inspiring me want to create a game where you have to match shapes and colors on time. I can imagine how it would play. Maybe I'll make that one day!
+Okay, hold on. I drew that image up above for this post, I wanted something abstract that was colorful, that would convey a sense of playfullness and fun. Now that I've seen the image over and over, it's inspiring me to want to create a game where you have to match shapes and colors on time. I can imagine how it would play. Maybe I'll make that one day!
 
 Okay, now I'll yap about my favourite entertainment in 2025!
 
