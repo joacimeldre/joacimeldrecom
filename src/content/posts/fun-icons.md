@@ -28,7 +28,7 @@ Other times fine people ask me to design icons to visually describe whatever the
 
 Then we go from there.
 
-# Dream 🔮
+# Dream 🦄
 
 A dream of mine is to design icons for a video game or physical toy.
 
