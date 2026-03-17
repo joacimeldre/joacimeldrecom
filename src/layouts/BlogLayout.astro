@@ -107,9 +107,25 @@ const formattedDate = (() => {
           input.checked = true;
         }
 
+        // Function to toggle strikethrough
+        const toggleStrikethrough = () => {
+          const label = input.closest("label");
+          if (label) {
+            if (input.checked) {
+              label.style.textDecoration = "line-through";
+            } else {
+              label.style.textDecoration = "none";
+            }
+          }
+        };
+
+        // Apply initial state
+        toggleStrikethrough();
+
         input.addEventListener("change", () => {
           const taskId = input.closest("li")?.textContent?.trim() || "";
           localStorage.setItem(`task-${taskId}`, input.checked.toString());
+          toggleStrikethrough();
         });
       });
   </script>
