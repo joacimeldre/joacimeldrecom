@@ -22,7 +22,45 @@ import logo from "../../content/images/logo.svg";
       aria-label="Contact me"
       href="mailto:hei@joacimeldre.com"
       class="bg-amber-200 text-base-900 py-2 px-4 rounded-full text-sm transition duration-200 hover:bg-white hover:text-base-900"
-      >Hello <span aria-hidden="true">👋🏻</span></a
+      >Hello <span aria-hidden="true" class="inline-block wave-hand">👋🏻</span
+      ></a
     >
   </nav>
 </div>
+
+<style>
+  @keyframes wave {
+    0% {
+      transform: rotate(0deg);
+    }
+    10% {
+      transform: rotate(14deg);
+    }
+    20% {
+      transform: rotate(-8deg);
+    }
+    30% {
+      transform: rotate(14deg);
+    }
+    40% {
+      transform: rotate(-4deg);
+    }
+    50% {
+      transform: rotate(10deg);
+    }
+    60% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(0deg);
+    }
+  }
+
+  .wave-hand {
+    transform-origin: 50% 50%;
+  }
+
+  a:hover .wave-hand {
+    animation: wave 2s ease-in-out infinite;
+  }
+</style>
