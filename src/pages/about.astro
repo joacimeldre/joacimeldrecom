@@ -1,5 +1,7 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import { Image } from "astro:assets";
+import Adventure from "../content/images/page/about/Adventure.jpg";
 ---
 
 <BaseLayout
@@ -24,6 +26,12 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
                 In my spare time I spend as much time as I can with family and
                 friends, draw, play video games, and go on adventures.
             </p>
+            <Image
+                src={Adventure}
+                alt="A photo of my son and me on a hiking adventure in a forest, I've drawn a bunch doodles around us."
+                title="My son and me on an adventure"
+                class="mt-12 max-w-3/4 rounded-lg mx-auto"
+            />
             <h2
                 class="mt-8 text-3xl font-medium font-display text-base-900 mb-4"
             >
