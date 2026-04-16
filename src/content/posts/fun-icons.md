@@ -14,7 +14,7 @@ I've designed icons for fun for a long time, and I enjoy it a lot. I like the ch
 
 Let's work together or just say hello, [send me an email](mailto:hei@joacimeldre.com).
 
-![Four vector icons, from top left to bottom right: totem pole, three stars, potted plant, robot head](../images/posts/fun_icons_1.png "Four vector icons")
+![Four vector icons, from top left to bottom right: totem pole, three stars, potted plant, robot head](../images/posts/fun_icons_1.png "Totem pole, three stars, potted plant, and a robot head vector icon")
 
 # Inspiration
 
@@ -22,7 +22,7 @@ I get inspiration for icon design by life around me. Nature, human made objects,
 
 I typically sketch icons with a pen on paper and it's always fun to see what pops up. When I have the look and feel that I want, I finalize the icon in vector graphics. All of the icons in this post are made purely for the fun I get from creating them.
 
-![Four vector icons, from top left to bottom right: scallop shell, rubber duck, key, lightning bolt](../images/posts/fun_icons_2.png "Four more vector icons")
+![Four vector icons, from top left to bottom right: scallop shell, rubber duck, key, lightning bolt](../images/posts/fun_icons_2.png "Scallop shell, rubber duck, key, and a lightning bolt vector icon")
 
 Other times fine people ask me to design icons to visually describe whatever they need for their thing. Once in a while they know what they want, and if they don't, we find out together.
 
@@ -32,7 +32,7 @@ Then we go from there.
 
 A dream of mine is to design icons for a video game or physical toy.
 
-![Four vector icons, from top left to bottom right: a washing machine, a bear, a smiling face sun, a bat](../images/posts/fun_icons_3.png "Four more more vector icons")
+![Four vector icons, from top left to bottom right: a washing machine, a bear, a smiling face sun, a bat](../images/posts/fun_icons_3.png "Washing machine, bear, smiling face sun, and a bat vector icon")
 
 And to make an icon font or library and package it in a way that's makes it easy to use for people in their own projects. Kind of like Font Awesome! Oh, it would be incredible to contribute to their icon library.
 
