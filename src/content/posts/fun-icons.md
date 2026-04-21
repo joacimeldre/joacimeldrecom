@@ -38,10 +38,10 @@ I typically sketch icons with a pen on paper and it's always fun to see what pop
 
 To sketch, I use a Copic Multiliner pen and thick paper, or [Procreate](https://procreate.com/ "Procreate is an app for raster drawing on iPad") on my iPad.
 
-To finalize, I use [Figma](https://figma.com/ "Figma is a web application for prototyping with vector graphics and allows for easy collaboration"). Or [Affinity Studio](https://affinity.serif.com/en-us/studio/ "Affinity Studio is a desktop application suite for vector and raster graphics") if I need more features. I enjoy limitation, so Figma is often more than enough.
+To finalize, I use [Figma](https://figma.com/ "Figma is a web application for prototyping with vector graphics and allows for easy collaboration") or [Affinity Studio](https://affinity.serif.com/en-us/studio/ "Affinity Studio is a desktop application suite for vector and raster graphics") if I need more features. I enjoy limitation, so Figma is often more than enough.
 
 # One more thing
 
 About mental models from the start of this post. In the grid below, do you see what all of the icons are?
 
-![A bunch of vector icons](../images/posts/icon_grid.png "A bunch of vector icons, too many to describe, I'm sorry screen readers!")
+![A bunch of vector icons, too many to describe. I'm sorry screen readers!](../images/posts/icon_grid.png "A bunch of vector icons")
