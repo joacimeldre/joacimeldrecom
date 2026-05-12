@@ -34,4 +34,4 @@ If your breath is rapidly increasing and your pants are tightening while you rea
 
 Instead you should get up and out of your chair, and make the right thing by talking to humans. Preferably drawing squiggly lines while you talk to them, so you truly understand each other. You know humans? Those strange upright creatures on two legs and an O in the middle of their face that open and close. And sometimes, or often depending on how self-centered the human is, there’s noise coming out of the hole. Oh no, run! No, really though, test the solution on the people (or robots, robots have feelings too according to some CEOs) who use the thing or are going to use the thing. Get their feedback on the thing. Use their feedback to make the thing better than what they need. Not good enough. Better. Then test it again and keep improving until it’s done. Is it ever done? It is if you’re good.
 
-Then make the next thing that someone needs. Not that you need, that they need.
+So make the next good thing that someone needs. Not that you need, that they need.
