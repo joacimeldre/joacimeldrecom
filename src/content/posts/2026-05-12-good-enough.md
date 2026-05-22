@@ -32,6 +32,10 @@ Have you ever heard about the worst concept (method, framework, or whatever) to 
 
 If your breath is rapidly increasing and your pants are tightening while you read this. Stop.
 
-Instead you should get up and out of your chair, and make the right thing by talking to humans. Preferably drawing squiggly lines while you talk to them, so you truly understand each other. You know humans? Those strange upright creatures on two legs and an O in the middle of their face that open and close. And sometimes, or often depending on how self-centered the human is, there’s noise coming out of the hole. Oh no, run! No, really though, test the solution on the people (or robots, robots have feelings too according to some CEOs) who use the thing or are going to use the thing. Get their feedback on the thing. Use their feedback to make the thing better than what they need. Not good enough. Better. Then test it again and keep improving until it’s done. Is it ever done? It is if you’re good.
+Instead you should get up and out of your chair, and make the right thing by talking to humans. Preferably drawing squiggly lines while you talk to them, so you truly understand each other. You know humans? Those strange upright creatures on two legs and an O in the middle of their face that open and close. And sometimes, or often depending on how self-centered the human is, there’s noise coming out of the hole. Oh no, run!
+
+![Two hairy legs, two dots and a smile for a face. Also known as a human or hooman. Drawn by Joacim Eldre](../images/posts/hooman.png "Hooman")
+
+No, really though, test the solution on the people (or robots, robots have feelings too according to some CEOs) who use the thing or are going to use the thing. Get their feedback on the thing. Use their feedback to make the thing better than what they need. Not good enough. Better. Then test it again and keep improving until it’s done. Is it ever done? It is if you’re good.
 
 So make the next good thing that someone needs. Not that you need, that they need.
