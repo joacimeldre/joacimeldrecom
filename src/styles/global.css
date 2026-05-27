@@ -22,39 +22,39 @@
 
 /* CSS */
 @font-face {
-  font-family: 'Inter';
+  font-family: "Inter";
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
-  src: url('/fonts/InterVariable.woff2') format('woff2');
+  src: url("/fonts/InterVariable.woff2") format("woff2");
 }
 
 @font-face {
-  font-family: 'Inter';
+  font-family: "Inter";
   font-style: italic;
   font-weight: 100 900;
   font-display: swap;
-  src: url('/fonts/InterVariable-Italic.woff2') format('woff2');
+  src: url("/fonts/InterVariable-Italic.woff2") format("woff2");
 }
 
 @font-face {
-  font-family: 'JetBrains Mono';
+  font-family: "JetBrains Mono";
   font-style: normal;
   font-weight: 100 800;
   font-display: swap;
-  src: url('/fonts/JetBrainsMono[wght].ttf') format('truetype');
+  src: url("/fonts/JetBrainsMono[wght].ttf") format("truetype");
 }
 
 @font-face {
-  font-family: 'JetBrains Mono';
+  font-family: "JetBrains Mono";
   font-style: italic;
   font-weight: 100 800;
   font-display: swap;
-  src: url('/fonts/JetBrainsMono-Italic[wght].ttf') format('truetype');
+  src: url("/fonts/JetBrainsMono-Italic[wght].ttf") format("truetype");
 }
 
 :root {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-feature-settings: normal;
   font-variation-settings: normal;
 }
@@ -88,7 +88,7 @@
   h4,
   h5,
   h6 {
-    font-family: 'Inter', sans-serif;
+    font-family: "Inter", sans-serif;
     letter-spacing: 0;
     font-feature-settings: normal;
   }
@@ -103,6 +103,7 @@
   html {
     @apply antialiased;
     @apply bg-orange-50;
+    scrollbar-gutter: stable;
   }
 
   abbr {
@@ -111,7 +112,6 @@
 }
 
 @layer utilities {
-
   .prose h1 {
     @apply mt-12 mb-8;
   }
