@@ -12,11 +12,11 @@ tags: ["All", "PICO-8", "Game Development"]
 
 It's Bloob!
 
-Play Bloob! Live Bloob! Be Bloob!
+A while back [I wrote about making a tiny video game](/posts/2026-02-20-start-of-bloob) in PICO-8 named Bloob. I had a lot of thoughts and ideas about the game, but I hadn't made anything playable yet.
 
-Bloob is a tiny video game I'm making in PICO-8. It's a platformer with no enemies, no text, and no score. Just you, the bloob, and the world to explore.
+Now I have!
 
-This prototype is early early, but it's playable! You can move, jump, and dash. You can also find bloobs to learn how to jump and dash.
+This is a very early prototype, but you can play it! You can move, jump, and dash. You can also find bloobs to learn how to jump and dash. I have some ideas for next steps, dunno if I'll share those yet or keep them to myself until it's just.. done.
 
 Let me know what you think!
 
