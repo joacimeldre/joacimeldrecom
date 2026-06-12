@@ -1,7 +1,7 @@
 ---
 pubDate: 2026-06-12
 title: Bloob, a tiny video game
-description: "Bloob is a tiny video game made in a tiny fantasy video game called PICO-8. It's a platformer with no enemies, no text, and no score. Just you, the bloob, and the world to explore."
+description: "Bloob is a tiny video game made in a tiny fantasy video game console called PICO-8. It's a platformer with no enemies, no text, and no score. Just you, the bloob, and the world to explore."
 image:
   url: "../images/posts/bloob.png"
   alt: "Bloob eyes by Joacim Eldre"
@@ -14,7 +14,9 @@ This post is a work in progress. I'll update with GIFs and text soon.
 
 A while back [I wrote about making a tiny video game](/posts/2026-02-20-start-of-bloob) and then I wrote about the [prototype of the game](/posts/2026-05-29-bloob-prototype).
 
-Now Bloob is done. Let me tell you more about the game, its features, how I worked on it, and what I've learned. Maybe what I'll do next.
+Now Bloob is done. Ish. I need to update some sprites and grab the PICO-8 cartridge and publish it here.
+
+Let me tell you more about the game, its features, how I worked on it, and what I've learned. Maybe what I'll do next.
 
 # Bloob
 
