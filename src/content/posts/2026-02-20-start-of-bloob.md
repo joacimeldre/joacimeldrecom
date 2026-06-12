@@ -16,7 +16,9 @@ Bloob is a tiny video game I'm making in PICO-8. It's a platformer with no enemi
 
 # Sketches
 
-Note: Add sketches of bloob and stuff. :)
+![A green jelly that jumps around and dashes, keys, a door, spikes, a gap in the floor, concept art for Bloob, a PICO-8 video game](../images/posts/bloob_doodle.webp "Bloob concept art")
+
+Note: Early visualization of Bloob. Core elements and movement is kneaded and roughed out in different styles.
 
 # Design notes
 
