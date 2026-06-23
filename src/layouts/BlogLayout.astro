@@ -128,6 +128,12 @@ const formattedDate = (() => {
           if (response.ok) {
             const data = await response.json();
             claps = data.count || 0;
+
+            // If count is zero but browser says user has clapped, the local lock is stale.
+            if (!isDev && hasClappedLocally && claps === 0) {
+              hasClappedLocally = false;
+              localStorage.removeItem(clapLockKey);
+            }
           }
         } catch (error) {
           console.error("Failed to fetch claps:", error);
