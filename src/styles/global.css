@@ -73,6 +73,26 @@
   --astro-code-token-link: #ffffff;
 }
 
+@keyframes clap-line-burst {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(var(--line-rotate)) translate(0, 0)
+      scaleY(0.35);
+  }
+
+  18% {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(var(--line-rotate)) translate(0, 0)
+      scaleY(1);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(var(--line-rotate))
+      translateY(var(--travel)) scaleY(0.2);
+  }
+}
+
 @layer base {
   ::-moz-selection {
     @apply bg-amber-200;
@@ -112,6 +132,87 @@
 }
 
 @layer utilities {
+  .clap-burst {
+    @apply pointer-events-none absolute left-1/2 top-1/2;
+    width: calc(100% + 56px);
+    height: calc(100% + 56px);
+    transform: translate(-50%, -50%);
+  }
+
+  .clap-line {
+    @apply absolute bg-base-900;
+    left: var(--line-x);
+    top: var(--line-y);
+    width: 2px;
+    height: 14px;
+    border-radius: 9999px;
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(var(--line-rotate)) translate(0, 0)
+      scaleY(0.35);
+    transform-origin: center;
+  }
+
+  .clap-line-1 {
+    --line-x: 22%;
+    --line-y: 12%;
+    --line-rotate: -34deg;
+    --travel: -12px;
+  }
+
+  .clap-line-2 {
+    --line-x: 50%;
+    --line-y: 8%;
+    --line-rotate: 0deg;
+    --travel: -12px;
+  }
+
+  .clap-line-3 {
+    --line-x: 78%;
+    --line-y: 12%;
+    --line-rotate: 34deg;
+    --travel: -12px;
+  }
+
+  .clap-line-4 {
+    --line-x: 22%;
+    --line-y: 88%;
+    --line-rotate: 34deg;
+    --travel: 12px;
+  }
+
+  .clap-line-5 {
+    --line-x: 50%;
+    --line-y: 92%;
+    --line-rotate: 0deg;
+    --travel: 12px;
+  }
+
+  .clap-line-6 {
+    --line-x: 78%;
+    --line-y: 88%;
+    --line-rotate: -34deg;
+    --travel: 12px;
+  }
+
+  .clap-burst-active .clap-line {
+    animation: clap-line-burst 280ms ease-out;
+  }
+
+  .clap-burst-active .clap-line-1,
+  .clap-burst-active .clap-line-4 {
+    animation-delay: 10ms;
+  }
+
+  .clap-burst-active .clap-line-2,
+  .clap-burst-active .clap-line-5 {
+    animation-delay: 0ms;
+  }
+
+  .clap-burst-active .clap-line-3,
+  .clap-burst-active .clap-line-6 {
+    animation-delay: 20ms;
+  }
+
   .prose h1 {
     @apply mt-12 mb-8;
   }

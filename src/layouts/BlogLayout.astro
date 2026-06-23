@@ -69,11 +69,129 @@ const formattedDate = (() => {
         <div class="prose max-w-3xl mt-12 mx-auto text-base-900">
           <slot />
         </div>
+
+        <div class="mx-auto mt-12 text-base-900/70">
+          <div class="group inline-flex items-center gap-3 rounded-md border border-base-900/25 px-3 py-2 transition-colors duration-200 hover:border-base-900/60 hover:cursor-pointer" data-clap-button role="button" tabindex="0">
+            <button
+              type="button"
+              class="clap-button relative inline-flex items-center gap-2 px-0 py-0 text-sm font-medium text-base-900/70 transition duration-200 hover:text-base-900 cursor-pointer disabled:cursor-default disabled:text-base-900/50"
+              aria-live="polite"
+            >
+              <span aria-hidden="true">👏🏻</span>
+              <span data-clap-count class="inline-block min-w-[3ch] text-center tabular-nums">0</span>
+              <span class="sr-only">claps</span>
+              <span class="clap-burst" data-clap-burst aria-hidden="true">
+                <span class="clap-line clap-line-1"></span>
+                <span class="clap-line clap-line-2"></span>
+                <span class="clap-line clap-line-3"></span>
+                <span class="clap-line clap-line-4"></span>
+                <span class="clap-line clap-line-5"></span>
+                <span class="clap-line clap-line-6"></span>
+              </span>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
   <script>
+    const clapContainer = document.querySelector(
+      "[data-clap-button]",
+    ) as HTMLElement | null;
+    const clapCount = document.querySelector("[data-clap-count]");
+    const clapBurst = document.querySelector("[data-clap-burst]");
+
+    if (clapContainer && clapCount && clapBurst) {
+      const isDev = import.meta.env.DEV;
+      const maxClaps = isDev ? Number.MAX_SAFE_INTEGER : 1;
+
+      // Extract slug from pathname (e.g., /posts/my-post-title/ -> my-post-title)
+      const pathname = window.location.pathname;
+      const slug = pathname.split("/").filter(Boolean).pop() || "";
+      const clapLockKey = `claps:locked:${pathname}`;
+
+      let claps = 0;
+      let isLoading = true;
+      let hasClappedLocally = localStorage.getItem(clapLockKey) === "1";
+
+      const renderClaps = () => {
+        clapCount.textContent = String(claps);
+        const isDisabled = !isDev && (claps >= maxClaps || hasClappedLocally);
+        clapContainer.setAttribute("aria-label", `Clap for this post (${claps}/${maxClaps})`);
+        clapContainer.setAttribute("aria-disabled", String(isDisabled));
+      };
+
+      // Fetch initial clap count from server
+      const fetchClaps = async () => {
+        try {
+          const response = await fetch(`/api/claps/${slug}`);
+          if (response.ok) {
+            const data = await response.json();
+            claps = data.count || 0;
+          }
+        } catch (error) {
+          console.error("Failed to fetch claps:", error);
+        } finally {
+          isLoading = false;
+          renderClaps();
+        }
+      };
+
+      fetchClaps();
+
+      const handleClap = async () => {
+        if (isLoading || (!isDev && (claps >= maxClaps || hasClappedLocally))) return;
+
+        // Optimistic update
+        hasClappedLocally = true;
+        if (!isDev) {
+          localStorage.setItem(clapLockKey, "1");
+        }
+        claps += 1;
+        renderClaps();
+
+        try {
+          const response = await fetch(`/api/claps/${slug}`, { method: "POST" });
+          if (response.ok) {
+            const data = await response.json();
+            claps = data.count;
+
+            if (data.blocked && !isDev) {
+              hasClappedLocally = true;
+              localStorage.setItem(clapLockKey, "1");
+            }
+
+            renderClaps();
+          } else {
+            throw new Error(`Clap request failed with status ${response.status}`);
+          }
+        } catch (error) {
+          console.error("Failed to increment claps:", error);
+          // Revert optimistic update on error
+          claps -= 1;
+          hasClappedLocally = false;
+          if (!isDev) {
+            localStorage.removeItem(clapLockKey);
+          }
+          renderClaps();
+          return;
+        }
+
+        clapBurst.classList.remove("clap-burst-active");
+        void (clapBurst as HTMLElement).offsetWidth;
+        clapBurst.classList.add("clap-burst-active");
+      };
+
+      clapContainer.addEventListener("click", handleClap);
+      clapContainer.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          handleClap();
+        }
+      });
+    }
+
     document
       .querySelectorAll('.prose input[type="checkbox"]')
       .forEach((checkbox) => {
