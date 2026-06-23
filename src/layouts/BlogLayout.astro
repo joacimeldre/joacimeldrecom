@@ -104,7 +104,6 @@ const formattedDate = (() => {
 
     if (clapContainer && clapCount && clapBurst) {
       const isDev = import.meta.env.DEV;
-      const maxClaps = isDev ? Number.MAX_SAFE_INTEGER : 1;
 
       // Extract slug from pathname (e.g., /posts/my-post-title/ -> my-post-title)
       const pathname = window.location.pathname;
@@ -117,8 +116,8 @@ const formattedDate = (() => {
 
       const renderClaps = () => {
         clapCount.textContent = String(claps);
-        const isDisabled = !isDev && (claps >= maxClaps || hasClappedLocally);
-        clapContainer.setAttribute("aria-label", `Clap for this post (${claps}/${maxClaps})`);
+        const isDisabled = !isDev && hasClappedLocally;
+        clapContainer.setAttribute("aria-label", `Clap for this post (${claps} claps)`);
         clapContainer.setAttribute("aria-disabled", String(isDisabled));
       };
 
@@ -141,7 +140,7 @@ const formattedDate = (() => {
       fetchClaps();
 
       const handleClap = async () => {
-        if (isLoading || (!isDev && (claps >= maxClaps || hasClappedLocally))) return;
+        if (isLoading || (!isDev && hasClappedLocally)) return;
 
         // Optimistic update
         hasClappedLocally = true;

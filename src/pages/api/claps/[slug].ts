@@ -7,7 +7,7 @@ const isDev = import.meta.env.DEV;
 const hasKvConfig = Boolean(
   process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN,
 );
-const useKv = !isDev || hasKvConfig;
+const useKv = hasKvConfig;
 
 const RATE_LIMIT_WINDOW_SECONDS = 60;
 const RATE_LIMIT_MAX_REQUESTS = 5;
@@ -60,14 +60,42 @@ const memoryExpire = async (key: string, seconds: number) => {
   await memorySet(key, String(current), seconds);
 };
 
-const storeGet = (key: string) => (useKv ? kv.get(key) : memoryGet(key));
+const withKvFallback = async <T>(
+  operation: () => Promise<T>,
+  fallback: () => Promise<T>,
+) => {
+  if (!useKv) {
+    return fallback();
+  }
+
+  try {
+    return await operation();
+  } catch (error) {
+    console.error("KV operation failed, falling back to memory store:", error);
+    return fallback();
+  }
+};
+
+const storeGet = (key: string) =>
+  withKvFallback(
+    () => kv.get(key),
+    () => memoryGet(key),
+  );
 const storeSet = (key: string, value: string, exSeconds?: number) =>
-  useKv
-    ? kv.set(key, value, exSeconds ? { ex: exSeconds } : undefined)
-    : memorySet(key, value, exSeconds);
-const storeIncr = (key: string) => (useKv ? kv.incr(key) : memoryIncr(key));
+  withKvFallback(
+    () => kv.set(key, value, exSeconds ? { ex: exSeconds } : undefined),
+    () => memorySet(key, value, exSeconds),
+  );
+const storeIncr = (key: string) =>
+  withKvFallback(
+    () => kv.incr(key),
+    () => memoryIncr(key),
+  );
 const storeExpire = (key: string, seconds: number) =>
-  useKv ? kv.expire(key, seconds) : memoryExpire(key, seconds);
+  withKvFallback(
+    () => kv.expire(key, seconds),
+    () => memoryExpire(key, seconds),
+  );
 
 const getClientId = (request: Request) => {
   const forwardedFor = request.headers.get("x-forwarded-for") ?? "";
