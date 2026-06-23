@@ -1,6 +1,7 @@
 # Build output
 dist/
 .astro/
+.vercel/
 
 # Dependencies
 node_modules/
@@ -14,6 +15,7 @@ pnpm-debug.log*
 # Environment variables
 .env
 .env.production
+.env.local
 
 # macOS-specific files
 .DS_Store
