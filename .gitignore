@@ -37,3 +37,5 @@ README.md
 *.swp
 *.tmp
 Thumbs.db
+.vercel
+.env*

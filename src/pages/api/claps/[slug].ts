@@ -1,14 +1,24 @@
-import { kv } from "@vercel/kv";
+import { createClient } from "redis";
 import type { APIRoute } from "astro";
 
 export const prerender = false;
 
 const isDev = import.meta.env.DEV;
-const hasKvConfig = Boolean(
-  (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) ||
-  (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN),
-);
-const useKv = hasKvConfig;
+const hasRedisConfig = Boolean(process.env.REDIS_URL);
+
+let redisClient: ReturnType<typeof createClient> | null = null;
+
+const getRedisClient = async () => {
+  if (!hasRedisConfig) return null;
+  if (!redisClient) {
+    redisClient = createClient({ url: process.env.REDIS_URL });
+    redisClient.on("error", (err) => console.error("Redis client error:", err));
+  }
+  if (!redisClient.isOpen) {
+    await redisClient.connect();
+  }
+  return redisClient;
+};
 
 const RATE_LIMIT_WINDOW_SECONDS = 60;
 const RATE_LIMIT_MAX_REQUESTS = 5;
@@ -61,40 +71,44 @@ const memoryExpire = async (key: string, seconds: number) => {
   await memorySet(key, String(current), seconds);
 };
 
-const withKvFallback = async <T>(
-  operation: () => Promise<T>,
+const withRedisFallback = async <T>(
+  operation: (
+    client: NonNullable<Awaited<ReturnType<typeof getRedisClient>>>,
+  ) => Promise<T>,
   fallback: () => Promise<T>,
 ) => {
-  if (!useKv) {
-    return fallback();
-  }
-
+  const client = await getRedisClient();
+  if (!client) return fallback();
   try {
-    return await operation();
+    return await operation(client);
   } catch (error) {
-    console.error("KV operation failed, falling back to memory store:", error);
+    console.error(
+      "Redis operation failed, falling back to memory store:",
+      error,
+    );
     return fallback();
   }
 };
 
 const storeGet = (key: string) =>
-  withKvFallback(
-    () => kv.get(key),
+  withRedisFallback(
+    (client) => client.get(key),
     () => memoryGet(key),
   );
 const storeSet = (key: string, value: string, exSeconds?: number) =>
-  withKvFallback(
-    () => kv.set(key, value, exSeconds ? { ex: exSeconds } : undefined),
+  withRedisFallback(
+    (client) =>
+      client.set(key, value, exSeconds ? { EX: exSeconds } : undefined),
     () => memorySet(key, value, exSeconds),
   );
 const storeIncr = (key: string) =>
-  withKvFallback(
-    () => kv.incr(key),
+  withRedisFallback(
+    (client) => client.incr(key),
     () => memoryIncr(key),
   );
 const storeExpire = (key: string, seconds: number) =>
-  withKvFallback(
-    () => kv.expire(key, seconds),
+  withRedisFallback(
+    (client) => client.expire(key, seconds),
     () => memoryExpire(key, seconds),
   );
 
