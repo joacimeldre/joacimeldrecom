@@ -14,6 +14,11 @@ const postsCollection = defineCollection({
     }),
 });
 
+const imagesCollection = defineCollection({
+  type: "data",
+});
+
 export const collections = {
   posts: postsCollection,
+  images: imagesCollection,
 };
