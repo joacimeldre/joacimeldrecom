@@ -1,7 +1,7 @@
 ---
 pubDate: 2026-05-29
 title: Bloob prototype
-description: "Tiny jelly (8x8 pixels), small game (61 KB to be exact). Previously a concept. Now a playable prototype!"
+description: "Tiny jelly (8x8 pixels), small game (24 KB to be exact). Previously a concept. Now a playable prototype!"
 image:
   url: "../images/posts/bloob_prototype.png"
   alt: "Bloob illustration by Joacim Eldre"
@@ -20,20 +20,6 @@ This is a very early prototype, but you can play it! You can move, jump, and das
 
 Let me know what you think!
 
-  <div style="width: 100%; aspect-ratio: 1 / 1.125;">
-    <iframe
-      src="https://www.lexaloffle.com/bbs/?pid=bloob_prototype#p"
-      title="Bloob Prototype"
-      loading="lazy"
-      scrolling="no"
-      allow="autoplay; fullscreen *; gamepad"
-      allowfullscreen="true"
-      webkitallowfullscreen="true"
-      mozallowfullscreen="true"
-      msallowfullscreen="true"
-      frameborder="0"
-      style="display: block; width: 100%; height: 100%; border: 0; background: #000;"
-    ></iframe>
-  </div>
+<iframe src="https://www.lexaloffle.com/bbs/widget.php?pid=bloob_prototype" allowfullscreen width="600" height="600" style="border:none;"></iframe>
 
-If the embed above fails to load, [open Bloob on Lexaloffle](https://www.lexaloffle.com/bbs/?pid=bloob_prototype#p).
+If the embed above fails to load, [open Bloob on Lexaloffle](https://www.lexaloffle.com/bbs/?pid=bloob_prototype).
