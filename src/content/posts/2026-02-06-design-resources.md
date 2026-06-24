@@ -62,27 +62,33 @@ Computer. I use a MacBook.
 
 [Figma](https://www.figma.com/) is a collaborative web application for wireframe and prototype design.
 
-[Frame0](https://frame0.app/) is a MacOS, Windows, and Linux application to design wireframes.
+[Frame0](https://frame0.app/) is a MacOS, Windows, and Linux software to design wireframes.
 
-[Affinity Studio](https://www.affinity.studio/) is a MacOS and Windows application suite for raster and vector graphics.
+[Affinity Studio](https://www.affinity.studio/) is a MacOS and Windows software suite for raster and vector graphics.
 
 [Squoosh](https://squoosh.app/) is a website for optimizing images.
 
 [Spline](https://spline.design/) is a collaborative web application for 3D sculpting, modeling, and animation.
 
-[Cavalry](https://cavalry.app/) is a Windows and MacOS application for 2D animation.
+[Cavalry](https://cavalry.app/) is a Windows and MacOS software for 2D animation. Now included in Affinity Studio.
 
 [Rive](https://rive.app/) is a collaborative web application for 2D animation.
 
-[Procreate](https://procreate.com/) is an iPad application for raster graphics.
+[Procreate](https://procreate.com/) is an iPad app for raster graphics.
 
-[Nomad Sculpt](https://nomadsculpt.com/) is an iPad application for 3D sculpting and modeling.
+[Nomad Sculpt](https://nomadsculpt.com/) is an iPad app for 3D sculpting and modeling.
 
 [Raycast](https://www.raycast.com/) is a launcher application for MacOS and Windows.
 
 [CleanShot X](https://cleanshot.com/) is a screen capture application for MacOS.
 
 [Tabular](https://tabular.email/) is a web application to build responsive emails.
+
+[Pixelorama](https://pixelorama.org) is a free and open source application for pixel art for Android, Windows, Linux, and MacOS.
+
+[Asesprite](https://www.aseprite.org/) is a pixel art application for MacOS, Windows, and Linux.
+
+[Pixquare](https://pixquare.art/) is an iPad and iPhone app for pixel art.
 
 # Learn
 

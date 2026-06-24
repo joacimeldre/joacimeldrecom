@@ -1,35 +1,122 @@
-# Template Structure
+# joacimeldre.com
 
-Inside of your Astro project, you'll see the following folders and files:
+Personal website and blog built with Astro, Tailwind CSS, and Astro Content Collections.
 
+## Stack
+
+- Astro 5
+- Tailwind CSS 4
+- Astro Content Collections for typed blog content
+- Vercel adapter for deployment
+- Redis-backed clap API with in-memory fallback
+
+## Local development
+
+Install dependencies:
+
+```bash
+npm install
 ```
-/
+
+Start dev server:
+
+```bash
+npm run dev
+```
+
+Default local URL is usually `http://localhost:4321`.
+
+Build for production:
+
+```bash
+npm run build
+```
+
+Preview production build:
+
+```bash
+npm run preview
+```
+
+## Project structure
+
+```text
+.
 ├── public/
+│   └── fonts/
 ├── src/
-│   └── pages/
-│       └── index.astro
+│   ├── components/
+│   ├── content/
+│   │   ├── config.ts
+│   │   ├── images/
+│   │   └── posts/
+│   ├── layouts/
+│   ├── pages/
+│   │   ├── api/claps/[slug].ts
+│   │   └── posts/[...slug].astro
+│   └── styles/global.css
+├── astro.config.mjs
 └── package.json
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Writing blog posts
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+Create a markdown file in `src/content/posts/` using date-first filenames:
 
-Any static assets, like images, can be placed in the `public/` directory.
+```text
+YYYY-MM-DD-post-title.md
+```
 
-# Commands
+Required frontmatter fields are validated in `src/content/config.ts`:
 
-All commands are run from the root of the project, from a terminal:
+```yaml
+---
+pubDate: 2026-06-24
+title: Post title
+description: Short summary
+image:
+	url: "../images/posts/example.png"
+	alt: "Accessible description"
+tags: ["All", "Design"]
+---
+```
 
-| Command                | Action                                           |
-| :--------------------- | :----------------------------------------------- |
-| `npm install`          | Installs dependencies                            |
-| `npm run dev`          | Starts local dev server at `localhost:3000`      |
-| `npm run build`        | Build your production site to `./dist/`          |
-| `npm run preview`      | Preview your build locally, before deploying     |
-| `npm run astro ...`    | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro --help` | Get help using the Astro CLI                     |
+Post images should live under `src/content/images/posts/` and be referenced relatively from each post.
 
-# Want to learn more?
+## Markdown image style tokens
 
-Feel free to check Astros [documentation](https://docs.astro.build)
+This site supports class tokens in markdown image titles via a rehype plugin in `astro.config.mjs`.
+
+Syntax:
+
+```md
+![Alt text](../images/posts/example.png "Optional title {.flat}")
+```
+
+That example adds the `flat` class to the rendered image, so styles from `src/styles/global.css` apply:
+
+```css
+img.flat {
+  border-radius: 0;
+}
+```
+
+Use this for icon/pixel art images that should keep sharp corners.
+
+## Claps API
+
+Claps are served by `src/pages/api/claps/[slug].ts`.
+
+- In production, Redis is used when `REDIS_URL` is set.
+- Without `REDIS_URL`, it falls back to an in-memory store (works for local dev, not durable across restarts).
+- Basic rate limiting and re-clap cooldown are enabled.
+
+## Deployment
+
+The site is configured for Vercel using `@astrojs/vercel` with server output.
+
+Before deploying claps in production, configure:
+
+```bash
+REDIS_URL=<your-redis-connection-string>
+```

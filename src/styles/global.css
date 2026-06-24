@@ -120,6 +120,10 @@
     @apply mr-auto;
   }
 
+  img.flat {
+    @apply rounded-none;
+  }
+
   html {
     @apply antialiased;
     @apply bg-orange-50;
