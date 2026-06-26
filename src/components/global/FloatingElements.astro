@@ -61,43 +61,19 @@
     const large = mobile ? 68 : 96;
     const small = mobile ? 48 : 72;
     
-    // Create a pattern that cycles through all colors with mixed sizes
-    // Pattern ensures 1 of each color for each size, no same color adjacent
-    const numColors = COLOR_CLASSES.length;
-    const cycleLength = numColors * 2; // 12 for 6 colors
-    const posInCycle = index % cycleLength;
-    
-    // Alternate large/small and cycle through colors
-    const isLarge = posInCycle < numColors;
-    const colorOffset = isLarge ? posInCycle : posInCycle - numColors;
-    
-    // Reorder colors in second half to avoid consecutive same colors
-    const reorderedIndex = isLarge ? colorOffset : (colorOffset + Math.floor(numColors / 2)) % numColors;
-    
-    const size = isLarge ? large : small;
+    // Alternate between large and small: large, small, large, small...
+    const size = index % 2 === 0 ? large : small;
     return { kind: 'circle', size };
   }
 
   function getColorForIndex(index: number): string {
-    // Create a pattern that cycles through all colors with mixed sizes
-    // Ensures 1 of each color for each size, no same color adjacent
-    const numColors = COLOR_CLASSES.length;
-    const cycleLength = numColors * 2;
-    const posInCycle = index % cycleLength;
-    
-    const isLarge = posInCycle < numColors;
-    const colorOffset = isLarge ? posInCycle : posInCycle - numColors;
-    
-    // Reorder colors in second half to avoid consecutive same colors
-    const reorderedIndex = isLarge ? colorOffset : (colorOffset + Math.floor(numColors / 2)) % numColors;
-    
-    return COLOR_CLASSES[reorderedIndex];
+    // Cycle through colors: for large screen, 0-5 large get colors 0-5, 6-11 small get colors 0-5
+    return COLOR_CLASSES[index % COLOR_CLASSES.length];
   }
 
   function getTargetShapeCount(width: number) {
-    const spacing = width <= 768 ? 120 : 170;
-    const raw = Math.ceil(width / spacing);
-    return Math.max(6, Math.min(10, raw));
+    // 12 shapes on large screen, 6 on small/medium
+    return width <= 768 ? 6 : 12;
   }
 
   function createShapeElement(kind: 'circle' | 'square', colorClass: string) {
