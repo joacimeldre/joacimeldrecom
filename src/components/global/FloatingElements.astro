@@ -22,6 +22,9 @@
     vy: number;
     angle: number;
     av: number;
+    airTime: number;
+    touchingFloor: boolean;
+    touchingBody: boolean;
   };
 
   const container = document.querySelector('.floating-elements-container') as HTMLElement | null;
@@ -29,11 +32,14 @@
 
   const GRAVITY = 2200;
   const AIR_DRAG = 0.995;
-  const FLOOR_BOUNCE = 0.48;
+  const FLOOR_BOUNCE = 0.5;
+  const FLOOR_AIRTIME_BONUS = 0.34;
+  const AIRTIME_FOR_MAX_BOUNCE = 0.95;
   const WALL_BOUNCE = 0.7;
   const FLOOR_FRICTION = 0.9;
   const LIFT_DECAY_PER_SECOND = 0.72;
-  const BODY_BOUNCE = 0.38;
+  const BODY_BOUNCE = 0.56;
+  const BODY_AIRTIME_BONUS = 0.18;
   const ANGULAR_DRAG = 0.985;
   const COM_RESTORE = 4.2;
   const MAX_LINEAR_SPEED = 900;
@@ -167,6 +173,9 @@
         vy: 0,
         angle,
         av: 0,
+        airTime: 0,
+        touchingFloor: true,
+        touchingBody: false,
       };
 
       if (restoreState && restoreState[index]) {
@@ -177,6 +186,8 @@
         body.vy = saved.vy;
         body.angle = saved.angle;
         body.av = saved.av;
+        body.touchingFloor = body.y >= viewportHeight - radius - 0.5;
+        body.touchingBody = false;
       }
 
       return body;
@@ -220,15 +231,21 @@
     }
 
     const floorY = viewportHeight - ey;
+    const floorContactEpsilon = 0.5;
+    body.touchingFloor = false;
     if (body.y > floorY) {
       body.y = floorY;
-      body.vy = -Math.abs(body.vy) * FLOOR_BOUNCE;
+      const airtimeFactor = Math.min(1, body.airTime / AIRTIME_FOR_MAX_BOUNCE);
+      const floorRestitution = FLOOR_BOUNCE + FLOOR_AIRTIME_BONUS * airtimeFactor;
+      body.vy = -Math.abs(body.vy) * floorRestitution;
       body.av += body.vx * 0.0018;
       body.vx *= FLOOR_FRICTION;
       body.av *= FLOOR_FRICTION;
+      body.touchingFloor = true;
+      body.airTime = 0;
 
       // Settle cleanly at bottom when almost still.
-      if (Math.abs(body.vy) < 8) body.vy = 0;
+      if (Math.abs(body.vy) < 4) body.vy = 0;
       if (Math.abs(body.vx) < 2) body.vx = 0;
       if (Math.abs(body.av) < 0.002) body.av = 0;
 
@@ -238,6 +255,11 @@
         const bobAmount = Math.sin(bobPhase) * 0.8;
         body.vy = bobAmount * 0.3;
       }
+    } else if (body.y >= floorY - floorContactEpsilon && body.vy >= -8) {
+      // Treat near-floor resting bodies as grounded, even without penetration.
+      body.y = floorY;
+      body.touchingFloor = true;
+      if (Math.abs(body.vy) < 8) body.vy = 0;
     }
   }
 
@@ -260,6 +282,31 @@
       ny: dy / dist,
       overlap: minDist - dist,
     };
+  }
+
+  function updateBodyContactState() {
+    for (const body of bodies) {
+      body.touchingBody = false;
+    }
+
+    const contactEpsilon = 0.7;
+    for (let i = 0; i < bodies.length; i += 1) {
+      for (let j = i + 1; j < bodies.length; j += 1) {
+        const a = bodies[i];
+        const b = bodies[j];
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const minDist = a.radius + b.radius + contactEpsilon;
+        if (dx * dx + dy * dy <= minDist * minDist) {
+          a.touchingBody = true;
+          b.touchingBody = true;
+        }
+      }
+    }
+  }
+
+  function canApplyAttraction(body: Body) {
+    return !body.touchingFloor && !body.touchingBody;
   }
 
   function resolveBodyCollisions(dt: number) {
@@ -295,7 +342,9 @@
         // Skip if they are separating after positional correction.
         if (velAlongNormal > 0) continue;
 
-        const impulse = (-(1 + BODY_BOUNCE) * velAlongNormal) / invMassSum;
+        const airtimeMix = Math.min(1, (a.airTime + b.airTime) / (2 * AIRTIME_FOR_MAX_BOUNCE));
+        const bodyRestitution = BODY_BOUNCE + BODY_AIRTIME_BONUS * airtimeMix;
+        const impulse = (-(1 + bodyRestitution) * velAlongNormal) / invMassSum;
         const ix = impulse * nx;
         const iy = impulse * ny;
 
@@ -324,7 +373,7 @@
         b.av += spinKick * b.invInertia;
 
         // Mild damping to avoid perpetual jitter when clustered near the floor.
-        const damping = Math.max(0, 1 - 0.4 * dt);
+        const damping = Math.max(0, 1 - 0.28 * dt);
         a.vx *= damping;
         b.vx *= damping;
         }
@@ -335,12 +384,17 @@
   function step(dt: number) {
     const clampedDt = Math.min(0.02, dt);
 
+    updateBodyContactState();
+
     // Prolonged scrolling adds lift that decays gradually for sustained float.
     const liftThisFrame = liftBoost * clampedDt;
 
     for (let index = 0; index < bodies.length; index += 1) {
       const body = bodies[index];
       const variation = 0.82 + (index % 4) * 0.08;
+      if (!body.touchingFloor) {
+        body.airTime = Math.min(3, body.airTime + clampedDt);
+      }
       body.vy += GRAVITY * clampedDt;
       body.vy -= liftThisFrame * variation;
       body.vx *= Math.pow(AIR_DRAG, clampedDt * 60);
@@ -366,10 +420,10 @@
       const dx = cursorX - body.x;
       const dy = cursorY - body.y;
       const dist = Math.hypot(dx, dy);
-      if (dist > 1 && dist < 1000) {
-        // Strong attraction that scales with proximity and inverse mass (lighter = stronger pull)
+      if (canApplyAttraction(body) && dist > 1 && dist < 1000) {
+        // Strong attraction that scales with proximity equally for every shape.
         const distanceFactor = Math.max(0.3, 1 - dist / 1000);
-        const attractionStrength = 1200 * distanceFactor * body.invMass;
+        const attractionStrength = 520 * distanceFactor;
         const ax = (dx / dist) * attractionStrength;
         const ay = (dy / dist) * attractionStrength;
         body.vx += ax * clampedDt;
@@ -474,6 +528,7 @@
 
   window.addEventListener('touchstart', (e) => {
     if (e.touches.length > 0) {
+      updateBodyContactState();
       cursorX = e.touches[0].clientX;
       cursorY = e.touches[0].clientY;
       // Apply tap impulse to bodies
@@ -481,8 +536,8 @@
         const dx = cursorX - body.x;
         const dy = cursorY - body.y;
         const dist = Math.hypot(dx, dy);
-        if (dist > 1) {
-          const impulse = 200 * body.invMass;
+        if (canApplyAttraction(body) && dist > 1) {
+          const impulse = 95;
           body.vx += (dx / dist) * impulse;
           body.vy += (dy / dist) * impulse;
         }
