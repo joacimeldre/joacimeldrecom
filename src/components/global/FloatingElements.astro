@@ -73,13 +73,14 @@
   }
 
   function getColorForIndex(index: number): string {
-    // Cycle through colors: for large screen, 0-5 large get colors 0-5, 6-11 small get colors 0-5
-    return COLOR_CLASSES[index % COLOR_CLASSES.length];
+    // With alternating sizes, pair each color across large/small indices.
+    // 0/1 => color 0, 2/3 => color 1, ... 10/11 => color 5.
+    return COLOR_CLASSES[Math.floor(index / 2) % COLOR_CLASSES.length];
   }
 
   function getTargetShapeCount(width: number) {
-    // 12 shapes on large screen, 6 on small/medium
-    return width <= 768 ? 6 : 12;
+    // Keep a fixed set: 6 large + 6 small = 12 total.
+    return 12;
   }
 
   function createShapeElement(kind: 'circle' | 'square', colorClass: string) {
