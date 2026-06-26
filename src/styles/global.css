@@ -18,6 +18,7 @@
   --color-base-800: oklch(35.42% 0.009 285.95);
   --color-base-900: oklch(23.48% 0.004 264.49);
   --color-base-950: oklch(16.89% 0.002 286.18);
+  --color-accent: #ffcc00;
 }
 
 /* CSS */
