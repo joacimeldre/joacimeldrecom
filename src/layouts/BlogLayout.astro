@@ -145,6 +145,15 @@ const formattedDate = (() => {
 
       fetchClaps();
 
+      const playClapBurst = () => {
+        clapBurst.classList.remove("clap-burst-active");
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            clapBurst.classList.add("clap-burst-active");
+          });
+        });
+      };
+
       const handleClap = async () => {
         if (isLoading || (!isDev && hasClappedLocally)) return;
 
@@ -155,6 +164,7 @@ const formattedDate = (() => {
         }
         claps += 1;
         renderClaps();
+        playClapBurst();
 
         try {
           const response = await fetch(`/api/claps/${slug}`, { method: "POST" });
@@ -182,10 +192,6 @@ const formattedDate = (() => {
           renderClaps();
           return;
         }
-
-        clapBurst.classList.remove("clap-burst-active");
-        void (clapBurst as HTMLElement).offsetWidth;
-        clapBurst.classList.add("clap-burst-active");
       };
 
       clapContainer.addEventListener("click", handleClap);
