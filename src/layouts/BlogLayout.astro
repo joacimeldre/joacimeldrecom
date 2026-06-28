@@ -51,7 +51,7 @@ const formattedDate = (() => {
           <p class="flex gap-1 mx-auto mt-2 text-base-900 text-sm">
             Tagged as
             {
-              frontmatter.tags.map((tag, index) => (
+              frontmatter.tags.map((tag: string, index: number) => (
                 <span>
                   <a
                     href={`/tags/${tag}`}

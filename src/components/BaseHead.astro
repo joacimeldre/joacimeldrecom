@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+// @ts-expect-error @astrolib/seo exports AstroSeo at runtime; astro check's type view is incomplete.
 import { AstroSeo } from "@astrolib/seo";
 
 interface Props {
@@ -74,4 +75,4 @@ const fullImageUrl = image.startsWith("http")
 <meta name="theme-color" content="#ffffff" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<script is:inline defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>

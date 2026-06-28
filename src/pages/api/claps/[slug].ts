@@ -97,8 +97,9 @@ const storeGet = (key: string) =>
   );
 const storeSet = (key: string, value: string, exSeconds?: number) =>
   withRedisFallback(
-    (client) =>
-      client.set(key, value, exSeconds ? { EX: exSeconds } : undefined),
+    async (client) => {
+      await client.set(key, value, exSeconds ? { EX: exSeconds } : undefined);
+    },
     () => memorySet(key, value, exSeconds),
   );
 const storeIncr = (key: string) =>
@@ -108,7 +109,9 @@ const storeIncr = (key: string) =>
   );
 const storeExpire = (key: string, seconds: number) =>
   withRedisFallback(
-    (client) => client.expire(key, seconds),
+    async (client) => {
+      await client.expire(key, seconds);
+    },
     () => memoryExpire(key, seconds),
   );
 

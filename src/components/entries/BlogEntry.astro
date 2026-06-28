@@ -1,6 +1,5 @@
 ---
-import { Image } from "astro:assets";
-const { title, url, description, pubDate, author, image, tags } = Astro.props;
+const { title, url, pubDate } = Astro.props;
 
 const formattedDate = (() => {
   // pubDate comes in as a string like "2026-01-19"

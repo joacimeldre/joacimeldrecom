@@ -17,7 +17,7 @@ export async function getStaticPaths() {
     );
     // Sort filtered posts by date in descending order
     const sortedPosts = filteredPosts.sort(
-      (a, b) => new Date(b.data.pubDate) - new Date(a.data.pubDate),
+      (a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime(),
     );
 
     return {
@@ -38,7 +38,7 @@ const { tag } = Astro.params;
 const { posts } = Astro.props;
 ---
 
-<BaseLayout pageTitle={tag}>
+<BaseLayout title={tag}>
   <section>
     <div class="py-24">
       <h2
@@ -72,12 +72,7 @@ const { posts } = Astro.props;
           posts.map((post) => (
             <BlogEntries
               url={"/posts/" + post.slug}
-              alt={post.data.title}
-              tags={post.data.tags}
               title={post.data.title}
-              author={post.data.author}
-              image={post.data.image.url}
-              description={post.data.description}
               pubDate={post.data.pubDate.toISOString().split("T")[0]}
             />
           ))
