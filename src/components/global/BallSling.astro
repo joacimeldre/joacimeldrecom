@@ -161,7 +161,12 @@
   }
 
   function getColorForIndex(index: number): string {
-    // With alternating sizes, pair each color across large/small indices.
+    const mobile = viewportWidth <= 768;
+    // Mobile: use one of each color (6 total balls).
+    if (mobile) {
+      return COLOR_CLASSES[index % COLOR_CLASSES.length];
+    }
+    // Desktop: pair each color across large/small indices.
     // 0/1 => color 0, 2/3 => color 1, ... 10/11 => color 5.
     return COLOR_CLASSES[Math.floor(index / 2) % COLOR_CLASSES.length];
   }
