@@ -18,7 +18,7 @@ Now Bloob is done. Play it below or on [Lexaloffle](https://www.lexaloffle.com/b
 
 Or save the PNG file below and open it in your own PICO-8 software or emulator device.
 
-![Download Bloob as a PNG file](/bloob-2.p8.png "Bloob cartridge")
+![Download Bloob as a PNG file](/bloob-3.p8.png "Bloob cartridge")
 
 _Small warning: There's sound in the game, so maybe turn down your volume if you're in a quiet place without headphones._
 
