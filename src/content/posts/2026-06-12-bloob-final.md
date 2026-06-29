@@ -192,6 +192,6 @@ I hope you enjoy playing Bloob as much as I enjoyed making it.
 
 My next game will be smaller, and larger. I have three ideas that I think are worth exploring. I have lots of gameplay ideas for all of them, and roughed out concepts for one.
 
-- Knithit. A tiny game about tiny knits.
+- Knitbit. A tiny game about tiny knits.
 - Stackasnack. A tiny game about stacking and kicking snacks.
 - Shapedrifter. A tiny game about drifting and shapes.
