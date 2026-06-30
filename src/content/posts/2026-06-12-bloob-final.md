@@ -190,7 +190,7 @@ I hope you enjoy playing Bloob as much as I enjoyed making it.
 
 # New game +
 
-My next game will be smaller, and larger. I have three ideas that I think are worth exploring. I have lots of gameplay ideas for all of them, and roughed out concepts for one.
+My next game will be smaller, and larger. I have some ideas that I think are worth exploring. I have lots of gameplay ideas for all of them, and rough visual concepts for two.
 
 - _Knitbit_. A tiny game about tiny knits.
 - _Stackasnack_. A tiny game about stacking and kicking snacks.
