@@ -195,4 +195,4 @@ My next game will be smaller, and larger. I have three ideas that I think are wo
 - _Knitbit_. A tiny game about tiny knits.
 - _Stackasnack_. A tiny game about stacking and kicking snacks.
 - _Shapedrifter_. A tiny game about drifting and shapes.
-- _Climb? Climb! Mountain <span>/\</span>_. A tiny game about climbing a mountain.
+- _Climb? Climb! Mountain /\\_. A tiny game about climbing a mountain.
