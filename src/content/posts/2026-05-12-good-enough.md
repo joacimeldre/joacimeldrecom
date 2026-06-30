@@ -1,10 +1,10 @@
 ---
 pubDate: 2026-05-12
-title: Good Enough
+title: Good enough
 description: "Most things made today are mostly just enough. Without good. Do we really need another good enough?"
 image:
   url: "../images/posts/Good_Enough.png"
-  alt: "Good Enough illustration by Joacim Eldre"
+  alt: "Good enough illustration by Joacim Eldre"
 tags: ["All", "Rant", "Design"]
 ---
 
