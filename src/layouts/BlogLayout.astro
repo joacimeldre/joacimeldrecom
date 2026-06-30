@@ -48,19 +48,19 @@ const formattedDate = (() => {
               >{formattedDate}</time
             >
           </p>
-          <p class="flex gap-1 mx-auto mt-2 text-base-900 text-sm">
-            Tagged as
+          <p class="mx-auto mt-2 text-base-900 text-sm">
+            Tagged as{" "}
             {
               frontmatter.tags.map((tag: string, index: number) => (
-                <span>
+                <>
+                  {index > 0 && " & "}
                   <a
                     href={`/tags/${tag}`}
                     class="underline hover:decoration-wavy"
                   >
                     {tag}
                   </a>
-                  {index < frontmatter.tags.length - 1 && " & "}
-                </span>
+                </>
               ))
             }
           </p>
