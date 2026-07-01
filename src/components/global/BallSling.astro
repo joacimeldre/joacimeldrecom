@@ -11,7 +11,7 @@ const container = document.querySelector(".floating-elements-container"), overla
 let elements = [];
 const CLUE_CONSUMED_KEY = "ballslingClueConsumed";
 const GRAVITY = 2e3, GYRO_GRAVITY_FACTOR = 0.95, AIR_DRAG = 0.997, FLOOR_BOUNCE = 0.62, FLOOR_AIRTIME_BONUS = 0.42, AIRTIME_FOR_MAX_BOUNCE = 0.95, WALL_BOUNCE = 0.84, FLOOR_FRICTION = 0.96, BODY_BOUNCE = 0.72, BODY_AIRTIME_BONUS = 0.24, ANGULAR_DRAG = 0.991, COM_RESTORE = 4.2, MAX_LINEAR_SPEED = 2600, MAX_ANGULAR_SPEED = 3.2, GROUND_IMPACT_MIN_SPEED = 210, GROUND_IMPACT_STRENGTH = 0.6, GROUND_IMPACT_RADIUS = 380, IMPACT_SQUASH_MAX = 0.1, ANTICIPATION_HEIGHT = 90, ANTICIPATION_SPEED = 240, GEL_LOW_IMPACT_SPEED = 170, RESTING_SQUASH = 0.022, ROLL_SPEED_FOR_MAX_GLIDE = 320, ROLL_FRICTION_FAST = 0.9992, ROLL_FRICTION_SLOW = 0.965, ROLL_STOP_SPEED = 0.045, ROLL_BACK_TRIGGER = 0.11, ROLL_BACK_FACTOR = -0.22, FLING_SAMPLE_WINDOW_MS = 72, FLING_GAIN = 1.22, COLLISION_ITERATIONS = 8, PENETRATION_SLOP = 0.15, POSITION_CORRECTION_PERCENT = 0.9, FIXED_DT = 1 / 120;
-let viewportWidth = window.innerWidth, viewportHeight = window.innerHeight, bodies = [], lastTs = performance.now(), accumulator = 0, shapeCount = 0, dragState = null, pendingImpactPulses = [], hoveringBall = false, gravityX = 0, gravityY = GRAVITY, gravityTargetX = 0, gravityTargetY = GRAVITY, gyroPermissionAttempted = false, lightingRefreshTimeout = null, hasUserInteracted = sessionStorage.getItem(CLUE_CONSUMED_KEY) === "1", clueActivatedByFooter = false, clueBall = null, clueAnchorX = 0, clueHopClock = 0, clueNextHopAt = 0;
+let viewportWidth = window.innerWidth, viewportHeight = window.innerHeight, bodies = [], lastTs = performance.now(), accumulator = 0, shapeCount = 0, dragState = null, pendingImpactPulses = [], hoveringBall = false, gravityX = 0, gravityY = GRAVITY, gravityTargetX = 0, gravityTargetY = GRAVITY, gyroPermissionAttempted = false, hasUserInteracted = sessionStorage.getItem(CLUE_CONSUMED_KEY) === "1", clueActivatedByFooter = false, clueBall = null, clueAnchorX = 0, clueHopClock = 0, clueNextHopAt = 0;
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 function getLightingFromLocalTime(now = new Date()) {
   const h = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
@@ -19,18 +19,22 @@ function getLightingFromLocalTime(now = new Date()) {
   const sunArc = Math.sin(solar);
   const elevation = Math.max(0, sunArc);
   const dayMix = clamp(elevation * 1.08, 0, 1);
-  const sunriseWarmth = clamp(1 - Math.abs(h - 6.7) / 2.2, 0, 1) * (h <= 11 ? 1 : 0);
+  const sunriseWarmth = clamp(1 - Math.abs(h - 6.7) / 2.2, 0, 1);
+  const sunsetWarmth = clamp(1 - Math.abs(h - 18.7) / 2.4, 0, 1);
+  const sunriseGlow = Math.pow(sunriseWarmth, 1.1) * 0.8;
+  const sunsetGlow = Math.pow(sunsetWarmth, 0.85) * 1.35;
+  const twilightWarmth = clamp(sunriseGlow + sunsetGlow, 0, 1.4);
   const nightCoolness = Math.pow(1 - dayMix, 1.08);
   const azimuth = Math.cos(solar);
   const lightCx = clamp(50 - azimuth * 22, 16, 84);
   const lightCy = clamp(74 - dayMix * 42, 22, 78);
   const shadowCx = clamp(100 - lightCx + (azimuth >= 0 ? 4 : -4), 18, 86);
   const shadowCy = clamp(100 - lightCy + 12, 36, 90);
-  const baseR = Math.round(clamp(238 + dayMix * 11 + sunriseWarmth * 8 - nightCoolness * 7, 228, 250));
-  const baseG = Math.round(clamp(234 + dayMix * 9 + sunriseWarmth * 4 - nightCoolness * 5, 224, 246));
-  const baseB = Math.round(clamp(226 + dayMix * 7 - sunriseWarmth * 3 + nightCoolness * 11, 220, 246));
-  const shadeR = Math.round(clamp(18 + sunriseWarmth * 2 - nightCoolness * 6, 9, 24));
-  const shadeG = Math.round(clamp(18 + sunriseWarmth * 1 - nightCoolness * 4, 11, 24));
+  const baseR = Math.round(clamp(238 + dayMix * 11 + twilightWarmth * 10 - nightCoolness * 7, 228, 252));
+  const baseG = Math.round(clamp(234 + dayMix * 9 + twilightWarmth * 3.2 - nightCoolness * 5, 223, 246));
+  const baseB = Math.round(clamp(226 + dayMix * 7 - twilightWarmth * 5.4 + nightCoolness * 11, 216, 246));
+  const shadeR = Math.round(clamp(18 + twilightWarmth * 2.8 - nightCoolness * 6, 9, 25));
+  const shadeG = Math.round(clamp(18 + twilightWarmth * 0.9 - nightCoolness * 4, 10, 24));
   const shadeB = Math.round(clamp(20 + nightCoolness * 9, 18, 31));
   return {
     lightCx,
@@ -60,25 +64,19 @@ function applyTimeOfDayLighting(now = new Date()) {
     hi && (hi.setAttribute("cx", `${l.lightCx}%`), hi.setAttribute("cy", `${l.lightCy}%`));
     sh && (sh.setAttribute("cx", `${l.shadowCx}%`), sh.setAttribute("cy", `${l.shadowCy}%`));
   }
-  container?.style.setProperty("--ballsling-highlight-opacity", l.highlightOpacity);
-  container?.style.setProperty("--ballsling-shadow-opacity", l.shadowOpacity);
-  container?.style.setProperty("--ballsling-noise-opacity", l.noiseOpacity);
-  container?.style.setProperty("--ballsling-fill-stop-opacity", l.fillStopOpacity);
-  container?.style.setProperty("--ballsling-base-r", l.baseR);
-  container?.style.setProperty("--ballsling-base-g", l.baseG);
-  container?.style.setProperty("--ballsling-base-b", l.baseB);
-  container?.style.setProperty("--ballsling-shade-r", l.shadeR);
-  container?.style.setProperty("--ballsling-shade-g", l.shadeG);
-  container?.style.setProperty("--ballsling-shade-b", l.shadeB);
-}
-function scheduleTimeOfDayLightingUpdates() {
-  lightingRefreshTimeout && clearTimeout(lightingRefreshTimeout);
-  const run = () => {
-    applyTimeOfDayLighting(new Date());
-    lightingRefreshTimeout = window.setTimeout(run, 3e4);
-  };
-  const msToNextTick = 3e4 - Date.now() % 3e4;
-  lightingRefreshTimeout = window.setTimeout(run, msToNextTick);
+  for (const target of [container, overlayContainer]) {
+    if (!target) continue;
+    target.style.setProperty("--ballsling-highlight-opacity", l.highlightOpacity);
+    target.style.setProperty("--ballsling-shadow-opacity", l.shadowOpacity);
+    target.style.setProperty("--ballsling-noise-opacity", l.noiseOpacity);
+    target.style.setProperty("--ballsling-fill-stop-opacity", l.fillStopOpacity);
+    target.style.setProperty("--ballsling-base-r", l.baseR);
+    target.style.setProperty("--ballsling-base-g", l.baseG);
+    target.style.setProperty("--ballsling-base-b", l.baseB);
+    target.style.setProperty("--ballsling-shade-r", l.shadeR);
+    target.style.setProperty("--ballsling-shade-g", l.shadeG);
+    target.style.setProperty("--ballsling-shade-b", l.shadeB);
+  }
 }
 function updateViewportSize() {
   const vv = window.visualViewport;
@@ -435,8 +433,8 @@ window.addEventListener("resize", () => {
   dragState && e.preventDefault();
 }), window.addEventListener("mouseleave", () => {
   dragState || (hoveringBall = false, document.documentElement.classList.remove("ballsling-hover"));
-}), initializeBodies(loadBodyState()), updateBottomAnchor(), scheduleTimeOfDayLightingUpdates(), window.addEventListener("beforeunload", () => {
-  saveBodyState(), lightingRefreshTimeout && clearTimeout(lightingRefreshTimeout), stopIdleClue();
+}), initializeBodies(loadBodyState()), updateBottomAnchor(), window.addEventListener("beforeunload", () => {
+  saveBodyState(), stopIdleClue();
 }), requestAnimationFrame((ts) => {
   lastTs = ts, tick(ts);
 });
