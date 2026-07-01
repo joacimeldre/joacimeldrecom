@@ -6,1146 +6,395 @@
 <div class="floating-elements-overlay" aria-hidden="true"></div>
 
 <script>
-  type Body = {
-    el: HTMLElement;
-    kind: 'circle';
-    size: number;
-    radius: number;
-    mass: number;
-    invMass: number;
-    inertia: number;
-    invInertia: number;
-    comOffset: number;
-    comAngle: number;
-    x: number;
-    y: number;
-    vx: number;
-    vy: number;
-    angle: number;
-    av: number;
-    airTime: number;
-    touchingFloor: boolean;
-    touchingBody: boolean;
-    squash: number;
-    anticipation: number;
-    didGroundOverstep: boolean;
-  };
-
-  type ImpactPulse = {
-    x: number;
-    y: number;
-    mass: number;
-    speed: number;
-    delay: number;
-    source: Body | null;
-  };
-
-  type DragPoint = {
-    x: number;
-    y: number;
-    t: number;
-  };
-
-  type DragState = {
-    body: Body;
-    pointerId: number;
-    pointerX: number;
-    pointerY: number;
-    grabOffsetX: number;
-    grabOffsetY: number;
-    samples: DragPoint[];
-  };
-
-  const container = document.querySelector('.floating-elements-container') as HTMLElement | null;
-  const overlayContainer = document.querySelector('.floating-elements-overlay') as HTMLElement | null;
-  let elements: HTMLElement[] = [];
-
-  const GRAVITY = 2000;
-  const GYRO_GRAVITY_FACTOR = 0.95;
-  const AIR_DRAG = 0.997;
-  const FLOOR_BOUNCE = 0.62;
-  const FLOOR_AIRTIME_BONUS = 0.42;
-  const AIRTIME_FOR_MAX_BOUNCE = 0.95;
-  const WALL_BOUNCE = 0.84;
-  const FLOOR_FRICTION = 0.96;
-  const BODY_BOUNCE = 0.72;
-  const BODY_AIRTIME_BONUS = 0.24;
-  const ANGULAR_DRAG = 0.991;
-  const COM_RESTORE = 4.2;
-  const MAX_LINEAR_SPEED = 2600;
-  const MAX_ANGULAR_SPEED = 3.2;
-  const GROUND_IMPACT_MIN_SPEED = 210;
-  const GROUND_IMPACT_STRENGTH = 0.6;
-  const GROUND_IMPACT_RADIUS = 380;
-  const IMPACT_SQUASH_MAX = 0.1;
-  const ANTICIPATION_HEIGHT = 90;
-  const ANTICIPATION_SPEED = 240;
-  const GEL_LOW_IMPACT_SPEED = 170;
-  const RESTING_SQUASH = 0.022;
-  const ROLL_SPEED_FOR_MAX_GLIDE = 320;
-  const ROLL_FRICTION_FAST = 0.9992;
-  const ROLL_FRICTION_SLOW = 0.965;
-  const ROLL_STOP_SPEED = 0.045;
-  const ROLL_BACK_TRIGGER = 0.11;
-  const ROLL_BACK_FACTOR = -0.22;
-  const FLING_SAMPLE_WINDOW_MS = 72;
-  const FLING_GAIN = 1.22;
-  const COLLISION_ITERATIONS = 8;
-  const PENETRATION_SLOP = 0.15;
-  const POSITION_CORRECTION_PERCENT = 0.9;
-  const FIXED_DT = 1 / 120;
-
-  let viewportWidth = window.innerWidth;
-  let viewportHeight = window.innerHeight;
-  let bodies: Body[] = [];
-  let lastTs = performance.now();
-  let accumulator = 0;
-  let shapeCount = 0;
-  let dragState: DragState | null = null;
-  let pendingImpactPulses: ImpactPulse[] = [];
-  let hoveringBall = false;
-  let gravityX = 0;
-  let gravityY = GRAVITY;
-  let gravityTargetX = 0;
-  let gravityTargetY = GRAVITY;
-  let gyroPermissionAttempted = false;
-
-  const COLOR_CLASSES = ['white'] as const;
-
-  function updateBottomAnchor() {
-    updateViewportSize();
-    const footerEl = document.querySelector('footer');
-
-    let anchorTop = Math.max(0, document.documentElement.scrollHeight - viewportHeight);
-    if (footerEl) {
-      const rect = footerEl.getBoundingClientRect();
-      const footerBottom = rect.bottom + window.scrollY;
-      anchorTop = Math.max(0, footerBottom - viewportHeight);
-    }
-
-    if (container) {
-      container.style.top = `${anchorTop}px`;
-      container.style.height = `${viewportHeight}px`;
-    }
-    if (overlayContainer) {
-      overlayContainer.style.top = `${anchorTop}px`;
-      overlayContainer.style.height = `${viewportHeight}px`;
-    }
+// @ts-nocheck
+const container = document.querySelector(".floating-elements-container"), overlayContainer = document.querySelector(".floating-elements-overlay");
+let elements = [];
+const GRAVITY = 2e3, GYRO_GRAVITY_FACTOR = 0.95, AIR_DRAG = 0.997, FLOOR_BOUNCE = 0.62, FLOOR_AIRTIME_BONUS = 0.42, AIRTIME_FOR_MAX_BOUNCE = 0.95, WALL_BOUNCE = 0.84, FLOOR_FRICTION = 0.96, BODY_BOUNCE = 0.72, BODY_AIRTIME_BONUS = 0.24, ANGULAR_DRAG = 0.991, COM_RESTORE = 4.2, MAX_LINEAR_SPEED = 2600, MAX_ANGULAR_SPEED = 3.2, GROUND_IMPACT_MIN_SPEED = 210, GROUND_IMPACT_STRENGTH = 0.6, GROUND_IMPACT_RADIUS = 380, IMPACT_SQUASH_MAX = 0.1, ANTICIPATION_HEIGHT = 90, ANTICIPATION_SPEED = 240, GEL_LOW_IMPACT_SPEED = 170, RESTING_SQUASH = 0.022, ROLL_SPEED_FOR_MAX_GLIDE = 320, ROLL_FRICTION_FAST = 0.9992, ROLL_FRICTION_SLOW = 0.965, ROLL_STOP_SPEED = 0.045, ROLL_BACK_TRIGGER = 0.11, ROLL_BACK_FACTOR = -0.22, FLING_SAMPLE_WINDOW_MS = 72, FLING_GAIN = 1.22, COLLISION_ITERATIONS = 8, PENETRATION_SLOP = 0.15, POSITION_CORRECTION_PERCENT = 0.9, FIXED_DT = 1 / 120;
+let viewportWidth = window.innerWidth, viewportHeight = window.innerHeight, bodies = [], lastTs = performance.now(), accumulator = 0, shapeCount = 0, dragState = null, pendingImpactPulses = [], hoveringBall = false, gravityX = 0, gravityY = GRAVITY, gravityTargetX = 0, gravityTargetY = GRAVITY, gyroPermissionAttempted = false;
+const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+function updateViewportSize() {
+  const vv = window.visualViewport;
+  viewportWidth = vv ? vv.width : window.innerWidth, viewportHeight = vv ? vv.height : window.innerHeight;
+}
+function updateBottomAnchor() {
+  updateViewportSize();
+  const footerEl = document.querySelector("footer");
+  let anchorTop = Math.max(0, document.documentElement.scrollHeight - viewportHeight);
+  footerEl && (anchorTop = Math.max(0, footerEl.getBoundingClientRect().bottom + window.scrollY - viewportHeight)), container && (container.style.top = `${anchorTop}px`, container.style.height = `${viewportHeight}px`), overlayContainer && (overlayContainer.style.top = `${anchorTop}px`, overlayContainer.style.height = `${viewportHeight}px`);
+}
+const toLocalPoint = (cx, cy) => {
+  const r = container?.getBoundingClientRect();
+  return r ? { x: cx - r.left, y: cy - r.top } : { x: cx, y: cy };
+}, shapeAndSizeForIndex = (i) => ({
+  kind: "circle",
+  size: i % 2 === 0 ? viewportWidth <= 768 ? 68 : 96 : viewportWidth <= 768 ? 48 : 72
+}), getTargetShapeCount = (w) => w <= 768 ? 6 : 12;
+function createShapeElement(index) {
+  const el = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  el.setAttribute("viewBox", "0 0 100 100"), el.setAttribute("overflow", "hidden"), el.classList.add("floating-element", "circle", "white"), el.dataset.bodyIndex = String(index);
+  const n = index;
+  return el.innerHTML = `
+      <defs>
+        <clipPath id="bc-${n}" clipPathUnits="userSpaceOnUse"><circle cx="50" cy="50" r="40"/></clipPath>
+        <radialGradient id="bf-${n}" cx="34%" cy="28%" r="74%">
+          <stop offset="0%" stop-color="#fff" stop-opacity=".2"/>
+          <stop offset="42%" stop-color="currentColor"/>
+          <stop offset="100%" stop-color="#000" stop-opacity=".34"/>
+        </radialGradient>
+        <radialGradient id="bh-${n}" cx="32%" cy="26%" r="36%">
+          <stop offset="0%" stop-color="#fff" stop-opacity=".22"/>
+          <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="bs-${n}" cx="68%" cy="72%" r="66%">
+          <stop offset="0%" stop-color="#000" stop-opacity=".2"/>
+          <stop offset="78%" stop-color="#000" stop-opacity="0"/>
+        </radialGradient>
+        <pattern id="bn-${n}" patternUnits="userSpaceOnUse" width="6" height="6">
+          <circle cx="0.9" cy="0.8" r=".58" fill="#000" fill-opacity=".28"/>
+          <circle cx="2.9" cy="1.6" r=".42" fill="#000" fill-opacity=".2"/>
+          <circle cx="4.6" cy="2.4" r=".5"  fill="#000" fill-opacity=".25"/>
+          <circle cx="1.8" cy="3.7" r=".38" fill="#000" fill-opacity=".18"/>
+          <circle cx="3.8" cy="4.4" r=".46" fill="#000" fill-opacity=".24"/>
+          <circle cx="5.3" cy="5.1" r=".34" fill="#000" fill-opacity=".2"/>
+        </pattern>
+      </defs>
+      <g class="ball-lighting-layer" clip-path="url(#bc-${n})">
+        <circle class="ball-base"      cx="50" cy="50" r="40" fill="url(#bf-${n})"/>
+        <circle class="ball-shadow"    cx="50" cy="50" r="40" fill="url(#bs-${n})"/>
+        <circle class="ball-highlight" cx="50" cy="50" r="40" fill="url(#bh-${n})"/>
+        <circle class="ball-noise"     cx="50" cy="50" r="40" fill="url(#bn-${n})"/>
+      </g>
+      <circle class="ball-outline" cx="50" cy="50" r="40" fill="none"/>`, el;
+}
+function ensureShapePopulation() {
+  if (!container) return;
+  updateViewportSize();
+  const target = getTargetShapeCount(viewportWidth);
+  if (!(target === shapeCount && elements.length === target)) {
+    container.innerHTML = "";
+    for (let i = 0; i < target; i++) container.appendChild(createShapeElement(i));
+    shapeCount = target, elements = Array.from(container.querySelectorAll(".floating-element"));
   }
-
-  function toLocalPoint(clientX: number, clientY: number) {
-    const rect = container?.getBoundingClientRect();
-    if (!rect) {
-      return { x: clientX, y: clientY };
-    }
-    return {
-      x: clientX - rect.left,
-      y: clientY - rect.top,
+}
+function initializeBodies(restoreState) {
+  updateViewportSize(), ensureShapePopulation();
+  const spreadWidth = viewportWidth * (viewportWidth <= 768 ? 0.58 : 0.48), spreadStart = (viewportWidth - spreadWidth) / 2, laneWidth = spreadWidth / (elements.length + 1);
+  bodies = elements.map((el, i) => {
+    const { size, kind } = shapeAndSizeForIndex(i);
+    el.style.width = `${size}px`, el.style.height = `${size}px`;
+    const radius = size * 0.4, mass = Math.max(0.8, Math.PI * radius * radius * 9e-4 * (1 + size / 96 * 0.6)), inertia = Math.max(0.15, mass * radius * radius * 5e-3), x = spreadStart + laneWidth * (i + 1) + (Math.random() - 0.5) * laneWidth * 0.12, b = {
+      el,
+      kind,
+      size,
+      radius,
+      mass,
+      invMass: 1 / mass,
+      inertia,
+      invInertia: 1 / inertia,
+      comOffset: radius * 0.02,
+      comAngle: Math.PI / 2,
+      x,
+      y: viewportHeight - radius,
+      vx: 0,
+      vy: 0,
+      angle: 0,
+      av: 0,
+      airTime: 0,
+      touchingFloor: true,
+      touchingBody: false,
+      squash: 0,
+      anticipation: 0,
+      didGroundOverstep: false
     };
-  }
-
-  function updateViewportSize() {
-    const vv = window.visualViewport;
-    viewportWidth = vv ? vv.width : window.innerWidth;
-    viewportHeight = vv ? vv.height : window.innerHeight;
-  }
-
-  function shapeAndSizeForIndex(index: number): { kind: 'circle'; size: number } {
-    const mobile = viewportWidth <= 768;
-    const large = mobile ? 68 : 96;
-    const small = mobile ? 48 : 72;
-    
-    // Alternate between large and small: large, small, large, small...
-    const size = index % 2 === 0 ? large : small;
-    return { kind: 'circle', size };
-  }
-
-  function getColorForIndex(index: number): string {
-    return COLOR_CLASSES[0];
-  }
-
-  function getTargetShapeCount(width: number) {
-    // Mobile uses 3 large + 3 small.
-    return width <= 768 ? 6 : 12;
-  }
-
-  function createShapeElement(kind: 'circle', colorClass: string, index: number) {
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('viewBox', '0 0 100 100');
-    svg.setAttribute('overflow', 'hidden');
-    svg.classList.add('floating-element', kind, colorClass);
-    svg.dataset.bodyIndex = String(index);
-
-    const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-
-    const clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
-    const clipPathId = `ball-clip-${index}`;
-    clipPath.setAttribute('id', clipPathId);
-    clipPath.setAttribute('clipPathUnits', 'userSpaceOnUse');
-    const clipCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    clipCircle.setAttribute('cx', '50');
-    clipCircle.setAttribute('cy', '50');
-    clipCircle.setAttribute('r', '40');
-    clipPath.appendChild(clipCircle);
-
-    const fillGradient = document.createElementNS('http://www.w3.org/2000/svg', 'radialGradient');
-    const fillGradientId = `ball-fill-${index}`;
-    fillGradient.setAttribute('id', fillGradientId);
-    fillGradient.setAttribute('cx', '34%');
-    fillGradient.setAttribute('cy', '28%');
-    fillGradient.setAttribute('r', '74%');
-
-    const fillStop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-    fillStop1.setAttribute('offset', '0%');
-    fillStop1.setAttribute('stop-color', '#ffffff');
-    fillStop1.setAttribute('stop-opacity', '0.2');
-
-    const fillStop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-    fillStop2.setAttribute('offset', '42%');
-    fillStop2.setAttribute('stop-color', 'currentColor');
-    fillStop2.setAttribute('stop-opacity', '1');
-
-    const fillStop3 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-    fillStop3.setAttribute('offset', '100%');
-    fillStop3.setAttribute('stop-color', '#000000');
-    fillStop3.setAttribute('stop-opacity', '0.34');
-
-    fillGradient.append(fillStop1, fillStop2, fillStop3);
-
-    const highlightGradient = document.createElementNS('http://www.w3.org/2000/svg', 'radialGradient');
-    const highlightGradientId = `ball-highlight-${index}`;
-    highlightGradient.setAttribute('id', highlightGradientId);
-    highlightGradient.setAttribute('cx', '32%');
-    highlightGradient.setAttribute('cy', '26%');
-    highlightGradient.setAttribute('r', '36%');
-
-    const hiStop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-    hiStop1.setAttribute('offset', '0%');
-    hiStop1.setAttribute('stop-color', '#ffffff');
-    hiStop1.setAttribute('stop-opacity', '0.22');
-
-    const hiStop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-    hiStop2.setAttribute('offset', '100%');
-    hiStop2.setAttribute('stop-color', '#ffffff');
-    hiStop2.setAttribute('stop-opacity', '0');
-
-    highlightGradient.append(hiStop1, hiStop2);
-
-    const shadowGradient = document.createElementNS('http://www.w3.org/2000/svg', 'radialGradient');
-    const shadowGradientId = `ball-shadow-${index}`;
-    shadowGradient.setAttribute('id', shadowGradientId);
-    shadowGradient.setAttribute('cx', '68%');
-    shadowGradient.setAttribute('cy', '72%');
-    shadowGradient.setAttribute('r', '66%');
-
-    const shStop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-    shStop1.setAttribute('offset', '0%');
-    shStop1.setAttribute('stop-color', '#000000');
-    shStop1.setAttribute('stop-opacity', '0.2');
-
-    const shStop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-    shStop2.setAttribute('offset', '78%');
-    shStop2.setAttribute('stop-color', '#000000');
-    shStop2.setAttribute('stop-opacity', '0');
-
-    shadowGradient.append(shStop1, shStop2);
-
-    const noisePattern = document.createElementNS('http://www.w3.org/2000/svg', 'pattern');
-    const noisePatternId = `ball-noise-${index}`;
-    noisePattern.setAttribute('id', noisePatternId);
-    noisePattern.setAttribute('patternUnits', 'userSpaceOnUse');
-    noisePattern.setAttribute('width', '6');
-    noisePattern.setAttribute('height', '6');
-
-    const noiseDots = [
-      { x: '0.9', y: '0.8', r: '0.58', o: '0.28' },
-      { x: '2.9', y: '1.6', r: '0.42', o: '0.2' },
-      { x: '4.6', y: '2.4', r: '0.5', o: '0.25' },
-      { x: '1.8', y: '3.7', r: '0.38', o: '0.18' },
-      { x: '3.8', y: '4.4', r: '0.46', o: '0.24' },
-      { x: '5.3', y: '5.1', r: '0.34', o: '0.2' },
-    ];
-    for (const dot of noiseDots) {
-      const d = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      d.setAttribute('cx', dot.x);
-      d.setAttribute('cy', dot.y);
-      d.setAttribute('r', dot.r);
-      d.setAttribute('fill', '#000000');
-      d.setAttribute('fill-opacity', dot.o);
-      noisePattern.appendChild(d);
+    if (restoreState?.[i]) {
+      const s = restoreState[i];
+      Object.assign(b, { x: s.x, y: s.y, vx: s.vx, vy: s.vy, angle: s.angle, av: s.av }), b.touchingFloor = b.y >= viewportHeight - radius - 0.5, b.touchingBody = false;
     }
-
-    defs.append(clipPath, fillGradient, highlightGradient, shadowGradient, noisePattern);
-    svg.appendChild(defs);
-
-    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    circle.classList.add('ball-base');
-    circle.setAttribute('cx', '50');
-    circle.setAttribute('cy', '50');
-    circle.setAttribute('r', '40');
-    circle.setAttribute('fill', `url(#${fillGradientId})`);
-
-    const lightingLayer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    lightingLayer.classList.add('ball-lighting-layer');
-    lightingLayer.setAttribute('clip-path', `url(#${clipPathId})`);
-    lightingLayer.appendChild(circle);
-
-    const shadow = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    shadow.classList.add('ball-shadow');
-    shadow.setAttribute('cx', '50');
-    shadow.setAttribute('cy', '50');
-    shadow.setAttribute('r', '40');
-    shadow.setAttribute('fill', `url(#${shadowGradientId})`);
-    lightingLayer.appendChild(shadow);
-
-    const highlight = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    highlight.classList.add('ball-highlight');
-    highlight.setAttribute('cx', '50');
-    highlight.setAttribute('cy', '50');
-    highlight.setAttribute('r', '40');
-    highlight.setAttribute('fill', `url(#${highlightGradientId})`);
-    lightingLayer.appendChild(highlight);
-
-    const noise = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    noise.classList.add('ball-noise');
-    noise.setAttribute('cx', '50');
-    noise.setAttribute('cy', '50');
-    noise.setAttribute('r', '40');
-    noise.setAttribute('fill', `url(#${noisePatternId})`);
-    lightingLayer.appendChild(noise);
-
-    svg.appendChild(lightingLayer);
-
-    const outline = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    outline.classList.add('ball-outline');
-    outline.setAttribute('cx', '50');
-    outline.setAttribute('cy', '50');
-    outline.setAttribute('r', '40');
-    outline.setAttribute('fill', 'none');
-    svg.appendChild(outline);
-
-    return svg;
+    return b;
+  });
+}
+function applyGroundImpactImpulseAt(srcX, srcY, srcMass, speed, src) {
+  if (speed < GROUND_IMPACT_MIN_SPEED) return;
+  const effR = GROUND_IMPACT_RADIUS + (src?.radius ?? 0);
+  for (const t of bodies) {
+    if (t === src || dragState && t === dragState.body || t.y < viewportHeight - t.radius - 90) continue;
+    const dx = t.x - srcX, dy = t.y - srcY, dist = Math.hypot(dx, dy);
+    if (dist >= effR) continue;
+    const f = Math.pow(1 - dist / effR, 2) * clamp(srcMass / t.mass, 0.55, 1.45) * speed * GROUND_IMPACT_STRENGTH, sign = dx === 0 ? 0 : dx > 0 ? 1 : -1;
+    t.vy -= f, t.vx += sign * f * 0.22, t.av += sign * f * 14e-4, t.squash = Math.max(t.squash, Math.min(IMPACT_SQUASH_MAX * 0.72, f / 1700)), t.vy = Math.max(t.vy, -MAX_LINEAR_SPEED * 0.9);
   }
-
-  function ensureShapePopulation() {
-    if (!container) return;
-
-    updateViewportSize();
-
-    const target = getTargetShapeCount(viewportWidth);
-    if (target === shapeCount && elements.length === target) return;
-
-    container.innerHTML = '';
-    for (let i = 0; i < target; i += 1) {
-      const { kind } = shapeAndSizeForIndex(i);
-      const colorClass = getColorForIndex(i);
-      container.appendChild(createShapeElement(kind, colorClass, i));
+}
+const applyGroundImpactImpulse = (src, speed) => applyGroundImpactImpulseAt(src.x, src.y, src.mass, speed, src);
+function queueImpactPulseCurve(src, speed) {
+  speed < GROUND_IMPACT_MIN_SPEED || pendingImpactPulses.push(
+    { x: src.x, y: src.y, mass: src.mass, speed: speed * 0.62, delay: 0.055, source: src },
+    { x: src.x, y: src.y, mass: src.mass, speed: speed * 0.34, delay: 0.115, source: src }
+  );
+}
+function clampInsideViewport(b) {
+  const e = b.radius;
+  b.x - e < 0 && (b.x = e, b.vx = Math.abs(b.vx) * WALL_BOUNCE, b.av += Math.abs(b.vy) * 9e-4), b.x + e > viewportWidth && (b.x = viewportWidth - e, b.vx = -Math.abs(b.vx) * WALL_BOUNCE, b.av -= Math.abs(b.vy) * 9e-4), b.y - e < 0 && (b.y = e, b.vy = Math.abs(b.vy) * WALL_BOUNCE, b.av += b.vx * 12e-4);
+  const floorY = viewportHeight - e;
+  if (b.touchingFloor = false, b.y > floorY) {
+    const impactSpeed = Math.abs(b.vy);
+    b.y = floorY;
+    const rest = Math.min(0.92, FLOOR_BOUNCE + FLOOR_AIRTIME_BONUS * Math.min(1, b.airTime / AIRTIME_FOR_MAX_BOUNCE) + clamp((impactSpeed - 440) / 1e3, 0, 0.16));
+    b.vy = -Math.abs(b.vy) * rest, b.squash = Math.max(b.squash, Math.min(IMPACT_SQUASH_MAX, impactSpeed / 2e3)), b.av += b.vx * 18e-4, b.vx *= FLOOR_FRICTION, b.av *= FLOOR_FRICTION, b.didGroundOverstep = false, impactSpeed < GEL_LOW_IMPACT_SPEED && (b.vy *= 0.28, b.vx *= 0.97, b.av *= 0.55), b.touchingFloor = true, b.airTime = 0, Math.abs(b.vy) < 14 && (b.vy = 0), Math.abs(b.vx) < 0.02 && (b.vx = 0), Math.abs(b.av) < 2e-3 && (b.av = 0), applyGroundImpactImpulse(b, impactSpeed), queueImpactPulseCurve(b, impactSpeed);
+  } else b.y >= floorY - 0.5 && b.vy >= -8 && (b.y = floorY, b.touchingFloor = true, Math.abs(b.vy) < 8 && (b.vy = 0));
+}
+function getCollisionInfo(a, b) {
+  const dx = b.x - a.x, dy = b.y - a.y, minDist = a.radius + b.radius, dSq = dx * dx + dy * dy;
+  if (dSq >= minDist * minDist) return null;
+  if (dSq < 1e-8) return { nx: a.x + a.y > b.x + b.y ? 1 : -1, ny: 0, overlap: minDist };
+  const dist = Math.sqrt(dSq);
+  return { nx: dx / dist, ny: dy / dist, overlap: minDist - dist };
+}
+function updateBodyContactState() {
+  for (const b of bodies) b.touchingBody = false;
+  const held = dragState?.body ?? null;
+  for (let i = 0; i < bodies.length; i++) for (let j = i + 1; j < bodies.length; j++) {
+    const a = bodies[i], b = bodies[j];
+    if (held && (a === held || b === held)) continue;
+    const dx = b.x - a.x, dy = b.y - a.y, m = a.radius + b.radius + 0.7;
+    dx * dx + dy * dy <= m * m && (a.touchingBody = true, b.touchingBody = true);
+  }
+}
+function resolveBodyCollisions(dt) {
+  const held = dragState?.body ?? null;
+  for (let iter = 0; iter < COLLISION_ITERATIONS; iter++)
+    for (let i = 0; i < bodies.length; i++) for (let j = i + 1; j < bodies.length; j++) {
+      const a = bodies[i], b = bodies[j];
+      if (held && (a === held || b === held)) continue;
+      const hit = getCollisionInfo(a, b);
+      if (!hit) continue;
+      const { nx, ny, overlap } = hit, invSum = a.invMass + b.invMass;
+      if (invSum <= 0) continue;
+      const corr = Math.max(0, overlap - PENETRATION_SLOP) * POSITION_CORRECTION_PERCENT;
+      a.x -= nx * corr * (a.invMass / invSum), a.y -= ny * corr * (a.invMass / invSum), b.x += nx * corr * (b.invMass / invSum), b.y += ny * corr * (b.invMass / invSum);
+      const rvx = b.vx - a.vx, rvy = b.vy - a.vy, vaN = rvx * nx + rvy * ny;
+      if (vaN > 0) continue;
+      const airtimeMix = Math.min(1, (a.airTime + b.airTime) / (2 * AIRTIME_FOR_MAX_BOUNCE)), impulse = -(1 + BODY_BOUNCE + BODY_AIRTIME_BONUS * airtimeMix) * vaN / invSum, ix = impulse * nx, iy = impulse * ny;
+      a.vx -= ix * a.invMass, a.vy -= iy * a.invMass, b.vx += ix * b.invMass, b.vy += iy * b.invMass;
+      const tx = -ny, ty = nx, vaT = rvx * tx + rvy * ty, fi = clamp(-vaT / invSum, -impulse * 0.24, impulse * 0.24);
+      a.vx -= fi * tx * a.invMass, a.vy -= fi * ty * a.invMass, b.vx += fi * tx * b.invMass, b.vy += fi * ty * b.invMass;
+      const spinKick = (rvx * -ny + rvy * nx) * 22e-5;
+      a.av -= spinKick * a.invInertia, b.av += spinKick * b.invInertia;
+      const damp = Math.max(0, 1 - 0.28 * dt);
+      a.vx *= damp, b.vx *= damp;
     }
-
-    shapeCount = target;
-    elements = Array.from(container.querySelectorAll('.floating-element')) as HTMLElement[];
+}
+function step(dt) {
+  const d = Math.min(0.02, dt);
+  for (let i = pendingImpactPulses.length - 1; i >= 0; i--) {
+    const p = pendingImpactPulses[i];
+    (p.delay -= d) > 0 || (applyGroundImpactImpulseAt(p.x, p.y, p.mass, p.speed, p.source), pendingImpactPulses.splice(i, 1));
   }
-
-  function initializeBodies(restoreState?: any) {
-    updateViewportSize();
-
-    ensureShapePopulation();
-
-    // Bunch shapes more tightly on spawn
-    const clumpRatio = viewportWidth <= 768 ? 0.58 : 0.48;
-    const spreadWidth = viewportWidth * clumpRatio;
-    const spreadStart = (viewportWidth - spreadWidth) / 2;
-    const laneWidth = spreadWidth / (elements.length + 1);
-    bodies = elements.map((el, index) => {
-      const { size, kind } = shapeAndSizeForIndex(index);
-      el.style.width = `${size}px`;
-      el.style.height = `${size}px`;
-      // Use a conservative proxy radius for circles.
-      const radius = size * 0.4;
-      const areaFactor = Math.PI;
-      // Scale mass more dramatically by size for weight variety
-      const massMultiplier = 1 + (size / 96) * 0.6;
-      const mass = Math.max(0.8, areaFactor * radius * radius * 0.0009 * massMultiplier);
-      const inertiaScale = 0.5;
-      const inertia = Math.max(0.15, mass * radius * radius * inertiaScale * 0.01);
-      const jitter = (Math.random() - 0.5) * laneWidth * 0.12;
-      const x = spreadStart + laneWidth * (index + 1) + jitter;
-      const y = viewportHeight - radius;
-      const angle = 0;
-      const comOffset = radius * 0.02;
-      // Define local COM direction so gravity can create a restoring torque.
-      const comAngle = Math.PI / 2;
-
-      // If restoring saved state, override with previous values
-      let body: Body = {
-        el,
-        kind,
-        size,
-        radius,
-        mass,
-        invMass: 1 / mass,
-        inertia,
-        invInertia: 1 / inertia,
-        comOffset,
-        comAngle,
-        x,
-        y,
-        vx: 0,
-        vy: 0,
-        angle,
-        av: 0,
-        airTime: 0,
-        touchingFloor: true,
-        touchingBody: false,
-        squash: 0,
-        anticipation: 0,
-        didGroundOverstep: false,
-      };
-
-      if (restoreState && restoreState[index]) {
-        const saved = restoreState[index];
-        body.x = saved.x;
-        body.y = saved.y;
-        body.vx = saved.vx;
-        body.vy = saved.vy;
-        body.angle = saved.angle;
-        body.av = saved.av;
-        body.touchingFloor = body.y >= viewportHeight - radius - 0.5;
-        body.touchingBody = false;
-      }
-
-      return body;
-    });
-  }
-
-  function applyGroundImpactImpulseAt(sourceX: number, sourceY: number, sourceMass: number, impactSpeed: number, source: Body | null) {
-    if (impactSpeed < GROUND_IMPACT_MIN_SPEED) return;
-
-    const sourceRadius = source ? source.radius : 0;
-    const effectRadius = GROUND_IMPACT_RADIUS + sourceRadius;
-    const nearFloorBand = 90;
-    for (const target of bodies) {
-      if (source && target === source) continue;
-      if (dragState && target === dragState.body) continue;
-      if (target.y < viewportHeight - target.radius - nearFloorBand) continue;
-
-      const dx = target.x - sourceX;
-      const dy = target.y - sourceY;
-      const dist = Math.hypot(dx, dy);
-      if (dist >= effectRadius) continue;
-
-      const linearFalloff = 1 - dist / effectRadius;
-      // Keep close impacts punchy while tapering distant influence quickly.
-      const falloff = linearFalloff * linearFalloff;
-      const massFactor = clamp(sourceMass / target.mass, 0.55, 1.45);
-      const impulse = impactSpeed * GROUND_IMPACT_STRENGTH * falloff * massFactor;
-      const horizontalSign = dx === 0 ? 0 : dx > 0 ? 1 : -1;
-
-      target.vy -= impulse;
-      target.vx += horizontalSign * impulse * 0.22;
-      target.av += horizontalSign * impulse * 0.0014;
-      target.squash = Math.max(target.squash, Math.min(IMPACT_SQUASH_MAX * 0.72, impulse / 1700));
-      target.vy = Math.max(target.vy, -MAX_LINEAR_SPEED * 0.9);
+  updateBodyContactState(), gravityX += (gravityTargetX - gravityX) * Math.min(1, d * 4.5), gravityY += (gravityTargetY - gravityY) * Math.min(1, d * 4.5);
+  for (const b of bodies) {
+    if (dragState?.body === b) {
+      b.x = dragState.pointerX + dragState.grabOffsetX, b.y = dragState.pointerY + dragState.grabOffsetY, b.vx = 0, b.vy = 0, b.av *= 0.8, b.anticipation = 0, b.squash *= Math.pow(0.82, d * 60), clampInsideViewport(b);
+      continue;
+    }
+    b.touchingFloor || (b.airTime = Math.min(3, b.airTime + d), b.didGroundOverstep = false), b.vx += gravityX * d, b.vy += gravityY * d;
+    const floorDist = Math.max(0, viewportHeight - b.radius - b.y), anticipTarget = !b.touchingFloor && b.vy > ANTICIPATION_SPEED && floorDist < ANTICIPATION_HEIGHT ? Math.min(0.032, (1 - floorDist / ANTICIPATION_HEIGHT) * (b.vy / 1150) * 0.032) : 0;
+    b.anticipation += (anticipTarget - b.anticipation) * Math.min(1, d * 14), b.vx *= Math.pow(AIR_DRAG, d * 60), b.vy < -30 ? b.vy *= Math.pow(0.96, d * 60) : Math.abs(b.vy) < 90 ? b.vy *= Math.pow(0.93, d * 60) : b.vy > 120 && (b.vy += GRAVITY * d * 0.22), b.av += -COM_RESTORE * (b.comOffset / b.radius) * Math.sin(b.angle + b.comAngle - Math.PI / 2) * b.invInertia * d, b.av *= Math.pow(ANGULAR_DRAG, d * 60), b.squash *= Math.pow(0.76, d * 60);
+    const settled = b.touchingFloor && Math.abs(b.vy) < 10 && Math.abs(b.vx) < 18;
+    b.squash += ((settled ? RESTING_SQUASH : 0) - b.squash) * Math.min(1, d * (settled ? 8 : 4)), b.x += b.vx * d, b.y += b.vy * d, b.angle += b.av * d;
+    const spd = Math.hypot(b.vx, b.vy);
+    if (spd > MAX_LINEAR_SPEED && (b.vx *= MAX_LINEAR_SPEED / spd, b.vy *= MAX_LINEAR_SPEED / spd), b.av = clamp(b.av, -MAX_ANGULAR_SPEED, MAX_ANGULAR_SPEED), clampInsideViewport(b), b.touchingFloor) {
+      const mix = clamp(Math.abs(b.vx) / ROLL_SPEED_FOR_MAX_GLIDE, 0, 1);
+      b.vx *= Math.pow(ROLL_FRICTION_SLOW + (ROLL_FRICTION_FAST - ROLL_FRICTION_SLOW) * mix, d * 60), b.av *= Math.pow(0.9 + 0.09 * mix, d * 60);
+      const pfs = Math.abs(b.vx);
+      pfs < ROLL_BACK_TRIGGER && pfs > ROLL_STOP_SPEED && !b.didGroundOverstep && (b.vx *= ROLL_BACK_FACTOR, b.didGroundOverstep = true), Math.abs(b.vx) < ROLL_STOP_SPEED && (b.vx *= 0.96 + 0.04 * clamp(Math.abs(b.vx) / ROLL_STOP_SPEED, 0, 1), Math.abs(b.vx) < 0.012 && (b.vx = 0));
     }
   }
-
-  function applyGroundImpactImpulse(source: Body, impactSpeed: number) {
-    applyGroundImpactImpulseAt(source.x, source.y, source.mass, impactSpeed, source);
+  resolveBodyCollisions(d);
+  for (const b of bodies) clampInsideViewport(b);
+}
+function renderBodies() {
+  for (const b of bodies) {
+    const tx = b.x - b.size / 2, ty = Math.round(b.y - b.size / 2), spd = Math.hypot(b.vx, b.vy), floorDist = Math.max(0, viewportHeight - b.radius - b.y), lowDamp = floorDist < 90 && spd < 340 ? clamp(floorDist / 90, 0.22, 1) : 1, stretch = (!b.touchingFloor && spd > 220 ? Math.min(0.016, Math.pow((spd - 220) / 1500, 1.15)) : 0) * lowDamp, sq = clamp((b.squash + b.anticipation) * lowDamp, 0, 0.12), hs = dragState?.body === b ? 1.045 : 1, sx = (1 + sq - stretch * 0.55) * hs, sy = (1 - sq * 0.78 + stretch) * hs, la = Math.atan2(b.vy, b.vx) - Math.PI / 2 - b.angle;
+    b.el.style.transform = `translate(${tx}px,${ty}px) rotate(${b.angle}rad) rotate(${la}rad) scale(${sx},${sy}) rotate(${-la}rad)`, b.el.style.setProperty("--lighting-counter-rotation", `${-b.angle}rad`);
   }
-
-  function queueImpactPulseCurve(source: Body, impactSpeed: number) {
-    if (impactSpeed < GROUND_IMPACT_MIN_SPEED) return;
-    pendingImpactPulses.push(
-      { x: source.x, y: source.y, mass: source.mass, speed: impactSpeed * 0.62, delay: 0.055, source },
-      { x: source.x, y: source.y, mass: source.mass, speed: impactSpeed * 0.34, delay: 0.115, source },
-    );
-  }
-
-  function clampInsideViewport(body: Body) {
-    const ex = body.radius;
-    const ey = body.radius;
-
-    if (body.x - ex < 0) {
-      body.x = ex;
-      body.vx = Math.abs(body.vx) * WALL_BOUNCE;
-      body.av += Math.abs(body.vy) * 0.0009;
-    }
-    if (body.x + ex > viewportWidth) {
-      body.x = viewportWidth - ex;
-      body.vx = -Math.abs(body.vx) * WALL_BOUNCE;
-      body.av -= Math.abs(body.vy) * 0.0009;
-    }
-    if (body.y - ey < 0) {
-      body.y = ey;
-      body.vy = Math.abs(body.vy) * WALL_BOUNCE;
-      body.av += body.vx * 0.0012;
-    }
-
-    const floorY = viewportHeight - ey;
-    const floorContactEpsilon = 0.5;
-    body.touchingFloor = false;
-    if (body.y > floorY) {
-      const impactSpeed = Math.abs(body.vy);
-      body.y = floorY;
-      const airtimeFactor = Math.min(1, body.airTime / AIRTIME_FOR_MAX_BOUNCE);
-      const throwImpactBoost = clamp((impactSpeed - 440) / 1000, 0, 0.16);
-      const floorRestitution = Math.min(0.92, FLOOR_BOUNCE + FLOOR_AIRTIME_BONUS * airtimeFactor + throwImpactBoost);
-      body.vy = -Math.abs(body.vy) * floorRestitution;
-      body.squash = Math.max(body.squash, Math.min(IMPACT_SQUASH_MAX, impactSpeed / 2000));
-      body.av += body.vx * 0.0018;
-      body.vx *= FLOOR_FRICTION;
-      body.av *= FLOOR_FRICTION;
-      body.didGroundOverstep = false;
-
-      // Low-speed contacts should feel gel-like, not springy.
-      if (impactSpeed < GEL_LOW_IMPACT_SPEED) {
-        body.vy *= 0.28;
-        body.vx *= 0.97;
-        body.av *= 0.55;
-      }
-
-      body.touchingFloor = true;
-      body.airTime = 0;
-
-      // Settle cleanly at bottom when almost still.
-      if (Math.abs(body.vy) < 14) body.vy = 0;
-      if (Math.abs(body.vx) < 0.02) body.vx = 0;
-      if (Math.abs(body.av) < 0.002) body.av = 0;
-
-      applyGroundImpactImpulse(body, impactSpeed);
-      queueImpactPulseCurve(body, impactSpeed);
-    } else if (body.y >= floorY - floorContactEpsilon && body.vy >= -8) {
-      // Treat near-floor resting bodies as grounded, even without penetration.
-      body.y = floorY;
-      body.touchingFloor = true;
-      if (Math.abs(body.vy) < 8) body.vy = 0;
-    }
-  }
-
-  function getCollisionInfo(a: Body, b: Body) {
-    const dx = b.x - a.x;
-    const dy = b.y - a.y;
-    const minDist = a.radius + b.radius;
-    const distSq = dx * dx + dy * dy;
-    if (distSq >= minDist * minDist) return null;
-
-    if (distSq < 1e-8) {
-      // Perfect overlap fallback normal to avoid stuck/merged bodies.
-      const bias = (a.x + a.y) > (b.x + b.y) ? 1 : -1;
-      return { nx: bias, ny: 0, overlap: minDist };
-    }
-
-    const dist = Math.sqrt(distSq);
-    return {
-      nx: dx / dist,
-      ny: dy / dist,
-      overlap: minDist - dist,
-    };
-  }
-
-  function updateBodyContactState() {
-    for (const body of bodies) {
-      body.touchingBody = false;
-    }
-
-    const heldBody = dragState?.body ?? null;
-
-    const contactEpsilon = 0.7;
-    for (let i = 0; i < bodies.length; i += 1) {
-      for (let j = i + 1; j < bodies.length; j += 1) {
-        const a = bodies[i];
-        const b = bodies[j];
-        if (heldBody && (a === heldBody || b === heldBody)) continue;
-        const dx = b.x - a.x;
-        const dy = b.y - a.y;
-        const minDist = a.radius + b.radius + contactEpsilon;
-        if (dx * dx + dy * dy <= minDist * minDist) {
-          a.touchingBody = true;
-          b.touchingBody = true;
-        }
-      }
-    }
-  }
-
-  function clamp(value: number, min: number, max: number) {
-    return Math.max(min, Math.min(max, value));
-  }
-
-  function sampleToGravity(beta: number, gamma: number) {
-    const orientation = Number((screen.orientation && screen.orientation.angle) || (window as any).orientation || 0);
-    const normalizedAngle = ((Math.round(orientation / 90) * 90) % 360 + 360) % 360;
-
-    let gxTilt = gamma;
-    let gyTilt = beta;
-    if (normalizedAngle === 90) {
-      gxTilt = -beta;
-      gyTilt = gamma;
-    } else if (normalizedAngle === 180) {
-      gxTilt = -gamma;
-      gyTilt = -beta;
-    } else if (normalizedAngle === 270) {
-      gxTilt = beta;
-      gyTilt = -gamma;
-    }
-
-    const scale = GRAVITY * GYRO_GRAVITY_FACTOR;
-    return {
-      x: clamp((gxTilt / 90) * scale, -scale, scale),
-      y: clamp((gyTilt / 90) * scale, -scale, scale),
-    };
-  }
-
-  function onDeviceOrientation(event: DeviceOrientationEvent) {
-    if (event.beta == null || event.gamma == null) return;
-    const gravity = sampleToGravity(event.beta, event.gamma);
-    gravityTargetX = gravity.x;
-    gravityTargetY = gravity.y;
-  }
-
-  async function tryEnableGyro() {
-    if (gyroPermissionAttempted) return;
-    gyroPermissionAttempted = true;
-
-    const orientationEvent = window.DeviceOrientationEvent as unknown as {
-      requestPermission?: () => Promise<'granted' | 'denied'>;
-    };
-
-    if (typeof orientationEvent?.requestPermission === 'function') {
-      try {
-        const result = await orientationEvent.requestPermission();
-        if (result !== 'granted') {
-          gravityTargetX = 0;
-          gravityTargetY = GRAVITY;
-        }
-      } catch {
-        gravityTargetX = 0;
-        gravityTargetY = GRAVITY;
-      }
-    }
-  }
-
-  function findBodyAtPoint(x: number, y: number) {
-    for (let i = bodies.length - 1; i >= 0; i -= 1) {
-      const body = bodies[i];
-      const dx = x - body.x;
-      const dy = y - body.y;
-      if (dx * dx + dy * dy <= body.radius * body.radius) {
-        return body;
-      }
-    }
+}
+const saveBodyState = () => sessionStorage.setItem("ballSlingState", JSON.stringify(bodies.map((b) => ({ x: b.x, y: b.y, vx: b.vx, vy: b.vy, angle: b.angle, av: b.av }))));
+function loadBodyState() {
+  try {
+    return JSON.parse(sessionStorage.getItem("ballSlingState") ?? "null");
+  } catch {
     return null;
   }
-
-  function addDragSample(state: DragState, x: number, y: number, t: number) {
-    state.samples.push({ x, y, t });
-    if (state.samples.length > 8) {
-      state.samples.shift();
-    }
-    const cutoff = t - 140;
-    state.samples = state.samples.filter((sample) => sample.t >= cutoff);
+}
+function sampleToGravity(beta, gamma) {
+  const ang = (Math.round((screen.orientation?.angle ?? window.orientation ?? 0) / 90) * 90 % 360 + 360) % 360;
+  let gx = gamma, gy = beta;
+  ang === 90 ? (gx = -beta, gy = gamma) : ang === 180 ? (gx = -gamma, gy = -beta) : ang === 270 && (gx = beta, gy = -gamma);
+  const s = GRAVITY * GYRO_GRAVITY_FACTOR;
+  return { x: clamp(gx / 90 * s, -s, s), y: clamp(gy / 90 * s, -s, s) };
+}
+function addDragSample(state, x, y, t) {
+  state.samples.push({ x, y, t }), state.samples.length > 8 && state.samples.shift(), state.samples = state.samples.filter((s) => s.t >= t - 140);
+}
+function findBodyAtPoint(x, y) {
+  for (let i = bodies.length - 1; i >= 0; i--) {
+    const b = bodies[i], dx = x - b.x, dy = y - b.y;
+    if (dx * dx + dy * dy <= b.radius * b.radius) return b;
   }
-
-  function startDrag(event: PointerEvent) {
-    const local = toLocalPoint(event.clientX, event.clientY);
-    const hit = findBodyAtPoint(local.x, local.y);
-    if (!hit) return false;
-
-    dragState = {
-      body: hit,
-      pointerId: event.pointerId,
-      pointerX: local.x,
-      pointerY: local.y,
-      grabOffsetX: hit.x - local.x,
-      grabOffsetY: hit.y - local.y,
-      samples: [{ x: local.x, y: local.y, t: performance.now() }],
-    };
-    if (overlayContainer) {
-      overlayContainer.appendChild(hit.el);
-    }
-    hit.el.classList.add('is-dragging');
-    document.documentElement.classList.add('ballsling-dragging');
-    hit.vx = 0;
-    hit.vy = 0;
-    hit.av = 0;
-    return true;
+  return null;
+}
+function startDrag(e) {
+  const local = toLocalPoint(e.clientX, e.clientY), hit = findBodyAtPoint(local.x, local.y);
+  return hit ? (dragState = {
+    body: hit,
+    pointerId: e.pointerId,
+    pointerX: local.x,
+    pointerY: local.y,
+    grabOffsetX: hit.x - local.x,
+    grabOffsetY: hit.y - local.y,
+    samples: [{ x: local.x, y: local.y, t: performance.now() }]
+  }, overlayContainer?.appendChild(hit.el), hit.el.classList.add("is-dragging"), document.documentElement.classList.add("ballsling-dragging"), hit.vx = 0, hit.vy = 0, hit.av = 0, true) : false;
+}
+function updateDrag(e) {
+  if (!dragState || e.pointerId !== dragState.pointerId) return;
+  const local = toLocalPoint(e.clientX, e.clientY);
+  dragState.pointerX = local.x, dragState.pointerY = local.y, addDragSample(dragState, local.x, local.y, performance.now()), e.preventDefault();
+}
+function endDrag(e) {
+  if (!dragState || e.pointerId !== dragState.pointerId) return;
+  const local = toLocalPoint(e.clientX, e.clientY);
+  addDragSample(dragState, local.x, local.y, performance.now());
+  const last = dragState.samples[dragState.samples.length - 1];
+  let bvx = 0, bvy = 0, ws = 0;
+  for (let i = 1; i < dragState.samples.length; i++) {
+    const p = dragState.samples[i - 1], c = dragState.samples[i];
+    if (c.t < last.t - FLING_SAMPLE_WINDOW_MS || c.t - p.t < 2) continue;
+    const dt = (c.t - p.t) / 1e3, w = 0.65 + (1 - clamp((last.t - c.t) / FLING_SAMPLE_WINDOW_MS, 0, 1)) * 1.35;
+    bvx += (c.x - p.x) / dt * w, bvy += (c.y - p.y) / dt * w, ws += w;
   }
-
-  function updateDrag(event: PointerEvent) {
-    if (!dragState || event.pointerId !== dragState.pointerId) return;
-    const local = toLocalPoint(event.clientX, event.clientY);
-    dragState.pointerX = local.x;
-    dragState.pointerY = local.y;
-    addDragSample(dragState, local.x, local.y, performance.now());
-    event.preventDefault();
+  if (ws > 0)
+    bvx /= ws, bvy /= ws;
+  else {
+    const f = dragState.samples[0], dt = Math.max(12, last.t - f.t) / 1e3;
+    bvx = (last.x - f.x) / dt, bvy = (last.y - f.y) / dt;
   }
-
-  function updateHoverCursor(x: number, y: number) {
-    if (dragState) return;
-    const local = toLocalPoint(x, y);
-    const isHovering = !!findBodyAtPoint(local.x, local.y);
-    if (isHovering === hoveringBall) return;
-    hoveringBall = isHovering;
-    document.documentElement.classList.toggle('ballsling-hover', isHovering);
+  const boost = 1 + Math.min(1.45, Math.pow(Math.hypot(bvx, bvy) / 980, 1.16));
+  let fvx = bvx * FLING_GAIN * boost, fvy = bvy * FLING_GAIN * boost;
+  if (Math.abs(bvy) > Math.abs(bvx) * 1.7) {
+    const vd = clamp((Math.abs(bvy) - Math.abs(bvx) * 1.7) / (Math.abs(bvy) + 1), 0, 1);
+    fvx *= 1 - 0.72 * vd;
   }
-
-  function endDrag(event: PointerEvent) {
-    if (!dragState || event.pointerId !== dragState.pointerId) return;
-
-    const local = toLocalPoint(event.clientX, event.clientY);
-    addDragSample(dragState, local.x, local.y, performance.now());
-
-    const last = dragState.samples[dragState.samples.length - 1];
-    let baseVx = 0;
-    let baseVy = 0;
-    let weightSum = 0;
-    const windowStart = last.t - FLING_SAMPLE_WINDOW_MS;
-    for (let i = 1; i < dragState.samples.length; i += 1) {
-      const prev = dragState.samples[i - 1];
-      const curr = dragState.samples[i];
-      if (curr.t < windowStart) continue;
-      const segDtMs = curr.t - prev.t;
-      if (segDtMs < 2) continue;
-      const segDt = segDtMs / 1000;
-      const segVx = (curr.x - prev.x) / segDt;
-      const segVy = (curr.y - prev.y) / segDt;
-      const age = last.t - curr.t;
-      const recency = 1 - clamp(age / FLING_SAMPLE_WINDOW_MS, 0, 1);
-      const weight = 0.65 + recency * 1.35;
-      baseVx += segVx * weight;
-      baseVy += segVy * weight;
-      weightSum += weight;
-    }
-
-    if (weightSum > 0) {
-      baseVx /= weightSum;
-      baseVy /= weightSum;
-    } else {
-      const first = dragState.samples[0];
-      const dtMs = Math.max(12, last.t - first.t);
-      const dt = dtMs / 1000;
-      baseVx = (last.x - first.x) / dt;
-      baseVy = (last.y - first.y) / dt;
-    }
-
-    const baseSpeed = Math.hypot(baseVx, baseVy);
-    const speedBoost = 1 + Math.min(1.45, Math.pow(baseSpeed / 980, 1.16));
-
-    let flingVx = baseVx * FLING_GAIN * speedBoost;
-    let flingVy = baseVy * FLING_GAIN * speedBoost;
-
-    // If throw intent is mostly vertical, suppress lateral jitter from pointer sampling.
-    const absBaseVx = Math.abs(baseVx);
-    const absBaseVy = Math.abs(baseVy);
-    if (absBaseVy > absBaseVx * 1.7) {
-      const verticalDominance = clamp((absBaseVy - absBaseVx * 1.7) / (absBaseVy + 1), 0, 1);
-      const lateralDampen = 1 - 0.72 * verticalDominance;
-      flingVx *= lateralDampen;
-    }
-
-    // Arcade pop only when throw intent is upward.
-    if (baseVy < -40) {
-      flingVy -= Math.min(210, 36 + Math.abs(baseVy) * 0.06);
-    }
-
-    dragState.body.vx = clamp(flingVx, -MAX_LINEAR_SPEED, MAX_LINEAR_SPEED);
-    dragState.body.vy = clamp(flingVy, -MAX_LINEAR_SPEED, MAX_LINEAR_SPEED);
-    dragState.body.av = clamp(dragState.body.vx * 0.0031, -MAX_ANGULAR_SPEED, MAX_ANGULAR_SPEED);
-
-    if (container) {
-      container.appendChild(dragState.body.el);
-    }
-
-    dragState.body.el.classList.remove('is-dragging');
-    document.documentElement.classList.remove('ballsling-dragging');
-    dragState = null;
-    event.preventDefault();
-  }
-
-  function resolveBodyCollisions(dt: number) {
-    const heldBody = dragState?.body ?? null;
-    for (let iter = 0; iter < COLLISION_ITERATIONS; iter += 1) {
-      for (let i = 0; i < bodies.length; i += 1) {
-        for (let j = i + 1; j < bodies.length; j += 1) {
-        const a = bodies[i];
-        const b = bodies[j];
-        if (heldBody && (a === heldBody || b === heldBody)) continue;
-
-        const hit = getCollisionInfo(a, b);
-        if (!hit) continue;
-        const { nx, ny, overlap } = hit;
-
-        const invMassA = a.invMass;
-        const invMassB = b.invMass;
-        const invMassSum = invMassA + invMassB;
-        if (invMassSum <= 0) continue;
-
-        // Separate overlaps gently to prevent jitter/explosions from deep penetration.
-        const correctedPenetration = Math.max(0, overlap - PENETRATION_SLOP) * POSITION_CORRECTION_PERCENT;
-        const correctionA = correctedPenetration * (invMassA / invMassSum);
-        const correctionB = correctedPenetration * (invMassB / invMassSum);
-        a.x -= nx * correctionA;
-        a.y -= ny * correctionA;
-        b.x += nx * correctionB;
-        b.y += ny * correctionB;
-
-        // Relative velocity along the collision normal.
-        const rvx = b.vx - a.vx;
-        const rvy = b.vy - a.vy;
-        const velAlongNormal = rvx * nx + rvy * ny;
-
-        // Skip if they are separating after positional correction.
-        if (velAlongNormal > 0) continue;
-
-        const airtimeMix = Math.min(1, (a.airTime + b.airTime) / (2 * AIRTIME_FOR_MAX_BOUNCE));
-        const bodyRestitution = BODY_BOUNCE + BODY_AIRTIME_BONUS * airtimeMix;
-        const impulse = (-(1 + bodyRestitution) * velAlongNormal) / invMassSum;
-        const ix = impulse * nx;
-        const iy = impulse * ny;
-
-        a.vx -= ix * invMassA;
-        a.vy -= iy * invMassA;
-        b.vx += ix * invMassB;
-        b.vy += iy * invMassB;
-
-        // Friction impulse along contact tangent to avoid perpetual sliding/stack jitter.
-        const tx = -ny;
-        const ty = nx;
-        const velAlongTangent = rvx * tx + rvy * ty;
-        const jt = -velAlongTangent / invMassSum;
-        const mu = 0.24;
-        const frictionImpulse = Math.max(-impulse * mu, Math.min(impulse * mu, jt));
-        const fix = frictionImpulse * tx;
-        const fiy = frictionImpulse * ty;
-        a.vx -= fix * invMassA;
-        a.vy -= fiy * invMassA;
-        b.vx += fix * invMassB;
-        b.vy += fiy * invMassB;
-
-        const tangential = rvx * -ny + rvy * nx;
-        const spinKick = tangential * 0.00022;
-        a.av -= spinKick * a.invInertia;
-        b.av += spinKick * b.invInertia;
-
-        // Mild damping to avoid perpetual jitter when clustered near the floor.
-        const damping = Math.max(0, 1 - 0.28 * dt);
-        a.vx *= damping;
-        b.vx *= damping;
-        }
-      }
-    }
-  }
-
-  function step(dt: number) {
-    const clampedDt = Math.min(0.02, dt);
-
-    for (let i = pendingImpactPulses.length - 1; i >= 0; i -= 1) {
-      const pulse = pendingImpactPulses[i];
-      pulse.delay -= clampedDt;
-      if (pulse.delay > 0) continue;
-      applyGroundImpactImpulseAt(pulse.x, pulse.y, pulse.mass, pulse.speed, pulse.source);
-      pendingImpactPulses.splice(i, 1);
-    }
-
-    updateBodyContactState();
-
-    gravityX += (gravityTargetX - gravityX) * Math.min(1, clampedDt * 4.5);
-    gravityY += (gravityTargetY - gravityY) * Math.min(1, clampedDt * 4.5);
-
-    for (let index = 0; index < bodies.length; index += 1) {
-      const body = bodies[index];
-
-      if (dragState && dragState.body === body) {
-        body.x = dragState.pointerX + dragState.grabOffsetX;
-        body.y = dragState.pointerY + dragState.grabOffsetY;
-        body.vx = 0;
-        body.vy = 0;
-        body.av *= 0.8;
-        body.anticipation = 0;
-        body.squash *= Math.pow(0.82, clampedDt * 60);
-        clampInsideViewport(body);
-        continue;
-      }
-
-      if (!body.touchingFloor) {
-        body.airTime = Math.min(3, body.airTime + clampedDt);
-        body.didGroundOverstep = false;
-      }
-
-      body.vx += gravityX * clampedDt;
-      body.vy += gravityY * clampedDt;
-
-      const floorDistance = Math.max(0, viewportHeight - body.radius - body.y);
-      const anticipationTarget = !body.touchingFloor && body.vy > ANTICIPATION_SPEED && floorDistance < ANTICIPATION_HEIGHT
-        ? Math.min(0.032, (1 - floorDistance / ANTICIPATION_HEIGHT) * (body.vy / 1150) * 0.032)
-        : 0;
-      body.anticipation += (anticipationTarget - body.anticipation) * Math.min(1, clampedDt * 14);
-
-      body.vx *= Math.pow(AIR_DRAG, clampedDt * 60);
-
-      // Add curve behavior: hang at top, resistance on up, acceleration on down
-      if (body.vy < -30) {
-        // Moving up: extra air resistance for smooth upward curve
-        body.vy *= Math.pow(0.96, clampedDt * 60);
-      } else if (Math.abs(body.vy) < 90) {
-        // Near peak: hang effect with gentle damping
-        body.vy *= Math.pow(0.93, clampedDt * 60);
-      } else if (body.vy > 120) {
-        // Moving down quickly: extra downward gravity for faster descent
-        body.vy += GRAVITY * clampedDt * 0.22;
-      }
-
-      const restoringTorque = -COM_RESTORE * (body.comOffset / body.radius) * Math.sin(body.angle + body.comAngle - Math.PI / 2);
-      body.av += restoringTorque * body.invInertia * clampedDt;
-
-      body.av *= Math.pow(ANGULAR_DRAG, clampedDt * 60);
-      body.squash *= Math.pow(0.76, clampedDt * 60);
-
-      const settledOnFloor = body.touchingFloor && Math.abs(body.vy) < 10 && Math.abs(body.vx) < 18;
-      const restingTarget = settledOnFloor ? RESTING_SQUASH : 0;
-      body.squash += (restingTarget - body.squash) * Math.min(1, clampedDt * (settledOnFloor ? 8 : 4));
-
-      body.x += body.vx * clampedDt;
-      body.y += body.vy * clampedDt;
-      body.angle += body.av * clampedDt;
-
-      const speed = Math.hypot(body.vx, body.vy);
-      if (speed > MAX_LINEAR_SPEED) {
-        const scale = MAX_LINEAR_SPEED / speed;
-        body.vx *= scale;
-        body.vy *= scale;
-      }
-      body.av = Math.max(-MAX_ANGULAR_SPEED, Math.min(MAX_ANGULAR_SPEED, body.av));
-
-      clampInsideViewport(body);
-
-      if (body.touchingFloor) {
-        const groundSpeed = Math.abs(body.vx);
-        const speedMix = clamp(groundSpeed / ROLL_SPEED_FOR_MAX_GLIDE, 0, 1);
-        const rollingFriction = ROLL_FRICTION_SLOW + (ROLL_FRICTION_FAST - ROLL_FRICTION_SLOW) * speedMix;
-        body.vx *= Math.pow(rollingFriction, clampedDt * 60);
-        body.av *= Math.pow(0.9 + 0.09 * speedMix, clampedDt * 60);
-
-        const postFrictionSpeed = Math.abs(body.vx);
-        if (postFrictionSpeed < ROLL_BACK_TRIGGER && postFrictionSpeed > ROLL_STOP_SPEED && !body.didGroundOverstep) {
-          body.vx *= ROLL_BACK_FACTOR;
-          body.didGroundOverstep = true;
-        }
-
-        if (Math.abs(body.vx) < ROLL_STOP_SPEED) {
-          // Soft-tail damping near rest avoids visual snap-to-zero.
-          const tailMix = clamp(Math.abs(body.vx) / ROLL_STOP_SPEED, 0, 1);
-          body.vx *= 0.96 + 0.04 * tailMix;
-
-          if (Math.abs(body.vx) < 0.012) {
-            body.vx = 0;
-          }
-        }
-      }
-    }
-
-    resolveBodyCollisions(clampedDt);
-
-    for (const body of bodies) {
-      clampInsideViewport(body);
-    }
-
-  }
-
-  function renderBodies() {
-    for (const body of bodies) {
-      const tx = body.x - body.size / 2;
-      const ty = Math.round(body.y - body.size / 2);
-      const speed = Math.hypot(body.vx, body.vy);
-      const floorDistance = Math.max(0, viewportHeight - body.radius - body.y);
-      const lowHopDampen = floorDistance < 90 && speed < 340 ? clamp(floorDistance / 90, 0.22, 1) : 1;
-      const motionStretchBase = !body.touchingFloor && speed > 220
-        ? Math.min(0.016, Math.pow((speed - 220) / 1500, 1.15))
-        : 0;
-      const motionStretch = motionStretchBase * lowHopDampen;
-      const squash = clamp((body.squash + body.anticipation) * lowHopDampen, 0, 0.12);
-      const holdScale = dragState && dragState.body === body ? 1.045 : 1;
-      const scaleX = (1 + squash - motionStretch * 0.55) * holdScale;
-      const scaleY = (1 - squash * 0.78 + motionStretch) * holdScale;
-      const stretchWorldAngle = Math.atan2(body.vy, body.vx) - Math.PI / 2;
-      const stretchLocalAngle = stretchWorldAngle - body.angle;
-      body.el.style.transform = `translate(${tx}px, ${ty}px) rotate(${body.angle}rad) rotate(${stretchLocalAngle}rad) scale(${scaleX}, ${scaleY}) rotate(${-stretchLocalAngle}rad)`;
-      body.el.style.setProperty('--lighting-counter-rotation', `${-body.angle}rad`);
-    }
-  }
-
-  function saveBodyState() {
-    const state = bodies.map(body => ({
-      x: body.x,
-      y: body.y,
-      vx: body.vx,
-      vy: body.vy,
-      angle: body.angle,
-      av: body.av,
-    }));
-    sessionStorage.setItem('ballSlingState', JSON.stringify(state));
-  }
-
-  function loadBodyState() {
+  bvy < -40 && (fvy -= Math.min(210, 36 + Math.abs(bvy) * 0.06)), dragState.body.vx = clamp(fvx, -MAX_LINEAR_SPEED, MAX_LINEAR_SPEED), dragState.body.vy = clamp(fvy, -MAX_LINEAR_SPEED, MAX_LINEAR_SPEED), dragState.body.av = clamp(dragState.body.vx * 31e-4, -MAX_ANGULAR_SPEED, MAX_ANGULAR_SPEED), container?.appendChild(dragState.body.el), dragState.body.el.classList.remove("is-dragging"), document.documentElement.classList.remove("ballsling-dragging"), dragState = null, e.preventDefault();
+}
+async function tryEnableGyro() {
+  if (gyroPermissionAttempted) return;
+  gyroPermissionAttempted = true;
+  const oe = window.DeviceOrientationEvent;
+  if (typeof oe?.requestPermission == "function")
     try {
-      const saved = sessionStorage.getItem('ballSlingState');
-      return saved ? JSON.parse(saved) : null;
-    } catch (e) {
-      return null;
+      await oe.requestPermission() !== "granted" && (gravityTargetX = 0, gravityTargetY = GRAVITY);
+    } catch {
+      gravityTargetX = 0, gravityTargetY = GRAVITY;
     }
-  }
-
-  function tick(ts: number) {
-    const dt = Math.min(0.05, (ts - lastTs) / 1000);
-    lastTs = ts;
-
-    accumulator += dt;
-    let safety = 0;
-    while (accumulator >= FIXED_DT && safety < 6) {
-      step(FIXED_DT);
-      accumulator -= FIXED_DT;
-      safety += 1;
-    }
-
-    renderBodies();
-
-    requestAnimationFrame(tick);
-  }
-
-  window.addEventListener('resize', () => {
-    shapeCount = 0;
-    initializeBodies();
-    updateBottomAnchor();
-  });
-
-  window.visualViewport?.addEventListener('resize', () => {
-    updateViewportSize();
-    for (const body of bodies) {
-      clampInsideViewport(body);
-    }
-    updateBottomAnchor();
-  });
-
-  window.addEventListener('scroll', () => {
-    updateBottomAnchor();
-  }, { passive: true });
-
-  window.addEventListener('deviceorientation', onDeviceOrientation, { passive: true });
-
-  window.addEventListener('pointerdown', (event) => {
-    void tryEnableGyro();
-    const started = startDrag(event);
-    if (started) {
-      event.preventDefault();
-    }
-  }, { capture: true });
-
-  window.addEventListener('pointermove', updateDrag, { passive: false });
-  window.addEventListener('mousemove', (event) => {
-    updateHoverCursor(event.clientX, event.clientY);
-  }, { passive: true });
-  window.addEventListener('pointerup', endDrag, { passive: false });
-  window.addEventListener('pointercancel', endDrag, { passive: false });
-  document.addEventListener('selectstart', (event) => {
-    if (!dragState) return;
-    event.preventDefault();
-  });
-
-  // Try to restore state from navigation
-  const savedState = loadBodyState();
-  initializeBodies(savedState);
+}
+function tick(ts) {
+  const dt = Math.min(0.05, (ts - lastTs) / 1e3);
+  lastTs = ts, accumulator += dt;
+  for (let s = 0; accumulator >= FIXED_DT && s < 6; s++)
+    step(FIXED_DT), accumulator -= FIXED_DT;
+  renderBodies(), requestAnimationFrame(tick);
+}
+window.addEventListener("resize", () => {
+  shapeCount = 0, initializeBodies(), updateBottomAnchor();
+}), window.visualViewport?.addEventListener("resize", () => {
+  updateViewportSize();
+  for (const b of bodies) clampInsideViewport(b);
   updateBottomAnchor();
-
-  // Save state before navigating away
-  window.addEventListener('beforeunload', () => {
-    saveBodyState();
-  });
-
-  requestAnimationFrame((ts) => {
-    lastTs = ts;
-    tick(ts);
-  });
+}), window.addEventListener("scroll", () => updateBottomAnchor(), { passive: true }), window.addEventListener("deviceorientation", (e) => {
+  if (e.beta == null || e.gamma == null) return;
+  const g = sampleToGravity(e.beta, e.gamma);
+  gravityTargetX = g.x, gravityTargetY = g.y;
+}, { passive: true }), window.addEventListener("pointerdown", (e) => {
+  tryEnableGyro(), startDrag(e) && e.preventDefault();
+}, { capture: true }), window.addEventListener("pointermove", updateDrag, { passive: false }), window.addEventListener("mousemove", (e) => {
+  if (dragState) return;
+  const local = toLocalPoint(e.clientX, e.clientY), h = !!findBodyAtPoint(local.x, local.y);
+  h !== hoveringBall && (hoveringBall = h, document.documentElement.classList.toggle("ballsling-hover", h));
+}, { passive: true }), window.addEventListener("pointerup", endDrag, { passive: false }), window.addEventListener("pointercancel", endDrag, { passive: false }), document.addEventListener("selectstart", (e) => {
+  dragState && e.preventDefault();
+}), initializeBodies(loadBodyState()), updateBottomAnchor(), window.addEventListener("beforeunload", saveBodyState), requestAnimationFrame((ts) => {
+  lastTs = ts, tick(ts);
+});
 </script>
 
 <style is:global>
-  .floating-elements-container {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    height: 100dvh;
-    pointer-events: none;
-    overflow: hidden;
-    z-index: -1;
-  }
-
-  .floating-elements-overlay {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    height: 100dvh;
-    pointer-events: none;
-    overflow: visible;
-    z-index: 9999;
-  }
-
-  .floating-element {
-    position: absolute;
-    top: 0;
-    left: 0;
-    pointer-events: none;
-    touch-action: none;
-    transform-origin: center center;
-    will-change: transform;
-    overflow: hidden;
-  }
-
-  .ballsling-dragging,
-  .ballsling-dragging body,
-  .ballsling-dragging body * {
-    user-select: none;
-    -webkit-user-select: none;
-    cursor: grabbing !important;
-  }
-
-  .ballsling-hover,
-  .ballsling-hover body {
-    cursor: pointer;
-  }
-
-  .floating-element circle {
-    stroke: none;
-  }
-
-  .floating-element .ball-base {
-    fill: currentColor;
-  }
-
-  .floating-element .ball-lighting-layer {
-    transform-origin: 50% 50%;
-    transform-box: fill-box;
-    transform: rotate(var(--lighting-counter-rotation, 0rad));
-  }
-
-  .floating-element .ball-highlight {
-    opacity: 0.62;
-  }
-
-  .floating-element .ball-shadow {
-    opacity: 0.72;
-  }
-
-  .floating-element .ball-noise {
-    opacity: 0.34;
-  }
-
-  .floating-element .ball-outline {
-    stroke: #d0d0d0;
-    stroke-width: 1;
-    vector-effect: non-scaling-stroke;
-    opacity: 0.92;
-  }
-
-
-  .floating-element.white { color: #f3efe7; }
+.floating-elements-container {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 100dvh;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: -1;
+}
+.floating-elements-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 100dvh;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 9999;
+}
+.floating-element {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  touch-action: none;
+  transform-origin: center center;
+  will-change: transform;
+  overflow: hidden;
+}
+.ballsling-dragging,
+.ballsling-dragging body,
+.ballsling-dragging body * {
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grabbing !important;
+}
+.ballsling-hover,
+.ballsling-hover body {
+  cursor: pointer;
+}
+.floating-element circle {
+  stroke: none;
+}
+.floating-element .ball-base {
+  fill: currentColor;
+}
+.floating-element .ball-lighting-layer {
+  transform-origin: 50% 50%;
+  transform-box: fill-box;
+  transform: rotate(var(--lighting-counter-rotation, 0rad));
+}
+.floating-element .ball-highlight {
+  opacity: .62;
+}
+.floating-element .ball-shadow {
+  opacity: .72;
+}
+.floating-element .ball-noise {
+  opacity: .34;
+}
+.floating-element .ball-outline {
+  stroke: #d0d0d0;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  opacity: .92;
+}
+.floating-element.white {
+  color: #f3efe7;
+}
 </style>
