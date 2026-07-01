@@ -35,7 +35,7 @@ const sortedPosts = allPosts.sort(
       <h2 class="mt-8 text-3xl font-medium font-display text-base-900">
         Recent writings
       </h2>
-      <div class="gap-4">
+      <ul class="mt-4">
         {
           sortedPosts
             .slice(0, 5)
@@ -47,12 +47,12 @@ const sortedPosts = allPosts.sort(
               />
             ))
         }
-      </div>
+      </ul>
       <p class="mt-4">
         Or you can find <a
           href="/tags/All/"
           class="underline hover:decoration-wavy"
-          >all the <span class="line-through" aria-hidden="true">things</span> posts</a
+          >all posts</a
         >.
       </p>
     </div>

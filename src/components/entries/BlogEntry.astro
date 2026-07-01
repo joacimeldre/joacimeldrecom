@@ -8,15 +8,20 @@ const formattedDate = (() => {
   const date = new Date(year, month - 1, day);
   const monthName = date.toLocaleDateString("en-US", { month: "short" });
 
-  return `${year} ${monthName} ${day}`;
+  return `${monthName} ${Number(day)}, ${year}`;
 })();
 ---
 
-<article class="mt-4">
-  <h3 class="text-base text-base-900 text-balance table w-full">
-    <time datetime={pubDate} class="text-base-900/60 table-cell w-26">
+<li class="py-1.5">
+  <div class="grid grid-cols-1 gap-y-0.5 text-base text-base-900 sm:grid-cols-[6.5rem_minmax(0,1fr)] sm:items-baseline sm:gap-x-3">
+    <time datetime={pubDate} class="text-base-900/60">
       {formattedDate}
     </time>
-    <a href={url} class="underline hover:decoration-wavy table-cell">{title}</a>
-  </h3>
-</article>
+    <a
+      href={url}
+      class="min-w-0 underline hover:decoration-wavy decoration-1 underline-offset-3"
+    >
+      {title}
+    </a>
+  </div>
+</li>
