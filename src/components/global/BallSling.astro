@@ -110,7 +110,7 @@
   let gravityTargetY = GRAVITY;
   let gyroPermissionAttempted = false;
 
-  const COLOR_CLASSES = ['red', 'orange', 'pink', 'yellow', 'green', 'purple'] as const;
+  const COLOR_CLASSES = ['white'] as const;
 
   function updateBottomAnchor() {
     updateViewportSize();
@@ -161,14 +161,7 @@
   }
 
   function getColorForIndex(index: number): string {
-    const mobile = viewportWidth <= 768;
-    // Mobile: use one of each color (6 total balls).
-    if (mobile) {
-      return COLOR_CLASSES[index % COLOR_CLASSES.length];
-    }
-    // Desktop: pair each color across large/small indices.
-    // 0/1 => color 0, 2/3 => color 1, ... 10/11 => color 5.
-    return COLOR_CLASSES[Math.floor(index / 2) % COLOR_CLASSES.length];
+    return COLOR_CLASSES[0];
   }
 
   function getTargetShapeCount(width: number) {
@@ -179,14 +172,157 @@
   function createShapeElement(kind: 'circle', colorClass: string, index: number) {
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('viewBox', '0 0 100 100');
+    svg.setAttribute('overflow', 'hidden');
     svg.classList.add('floating-element', kind, colorClass);
     svg.dataset.bodyIndex = String(index);
 
+    const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+
+    const clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
+    const clipPathId = `ball-clip-${index}`;
+    clipPath.setAttribute('id', clipPathId);
+    clipPath.setAttribute('clipPathUnits', 'userSpaceOnUse');
+    const clipCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    clipCircle.setAttribute('cx', '50');
+    clipCircle.setAttribute('cy', '50');
+    clipCircle.setAttribute('r', '40');
+    clipPath.appendChild(clipCircle);
+
+    const fillGradient = document.createElementNS('http://www.w3.org/2000/svg', 'radialGradient');
+    const fillGradientId = `ball-fill-${index}`;
+    fillGradient.setAttribute('id', fillGradientId);
+    fillGradient.setAttribute('cx', '34%');
+    fillGradient.setAttribute('cy', '28%');
+    fillGradient.setAttribute('r', '74%');
+
+    const fillStop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+    fillStop1.setAttribute('offset', '0%');
+    fillStop1.setAttribute('stop-color', '#ffffff');
+    fillStop1.setAttribute('stop-opacity', '0.2');
+
+    const fillStop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+    fillStop2.setAttribute('offset', '42%');
+    fillStop2.setAttribute('stop-color', 'currentColor');
+    fillStop2.setAttribute('stop-opacity', '1');
+
+    const fillStop3 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+    fillStop3.setAttribute('offset', '100%');
+    fillStop3.setAttribute('stop-color', '#000000');
+    fillStop3.setAttribute('stop-opacity', '0.34');
+
+    fillGradient.append(fillStop1, fillStop2, fillStop3);
+
+    const highlightGradient = document.createElementNS('http://www.w3.org/2000/svg', 'radialGradient');
+    const highlightGradientId = `ball-highlight-${index}`;
+    highlightGradient.setAttribute('id', highlightGradientId);
+    highlightGradient.setAttribute('cx', '32%');
+    highlightGradient.setAttribute('cy', '26%');
+    highlightGradient.setAttribute('r', '36%');
+
+    const hiStop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+    hiStop1.setAttribute('offset', '0%');
+    hiStop1.setAttribute('stop-color', '#ffffff');
+    hiStop1.setAttribute('stop-opacity', '0.22');
+
+    const hiStop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+    hiStop2.setAttribute('offset', '100%');
+    hiStop2.setAttribute('stop-color', '#ffffff');
+    hiStop2.setAttribute('stop-opacity', '0');
+
+    highlightGradient.append(hiStop1, hiStop2);
+
+    const shadowGradient = document.createElementNS('http://www.w3.org/2000/svg', 'radialGradient');
+    const shadowGradientId = `ball-shadow-${index}`;
+    shadowGradient.setAttribute('id', shadowGradientId);
+    shadowGradient.setAttribute('cx', '68%');
+    shadowGradient.setAttribute('cy', '72%');
+    shadowGradient.setAttribute('r', '66%');
+
+    const shStop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+    shStop1.setAttribute('offset', '0%');
+    shStop1.setAttribute('stop-color', '#000000');
+    shStop1.setAttribute('stop-opacity', '0.2');
+
+    const shStop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+    shStop2.setAttribute('offset', '78%');
+    shStop2.setAttribute('stop-color', '#000000');
+    shStop2.setAttribute('stop-opacity', '0');
+
+    shadowGradient.append(shStop1, shStop2);
+
+    const noisePattern = document.createElementNS('http://www.w3.org/2000/svg', 'pattern');
+    const noisePatternId = `ball-noise-${index}`;
+    noisePattern.setAttribute('id', noisePatternId);
+    noisePattern.setAttribute('patternUnits', 'userSpaceOnUse');
+    noisePattern.setAttribute('width', '6');
+    noisePattern.setAttribute('height', '6');
+
+    const noiseDots = [
+      { x: '0.9', y: '0.8', r: '0.58', o: '0.28' },
+      { x: '2.9', y: '1.6', r: '0.42', o: '0.2' },
+      { x: '4.6', y: '2.4', r: '0.5', o: '0.25' },
+      { x: '1.8', y: '3.7', r: '0.38', o: '0.18' },
+      { x: '3.8', y: '4.4', r: '0.46', o: '0.24' },
+      { x: '5.3', y: '5.1', r: '0.34', o: '0.2' },
+    ];
+    for (const dot of noiseDots) {
+      const d = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      d.setAttribute('cx', dot.x);
+      d.setAttribute('cy', dot.y);
+      d.setAttribute('r', dot.r);
+      d.setAttribute('fill', '#000000');
+      d.setAttribute('fill-opacity', dot.o);
+      noisePattern.appendChild(d);
+    }
+
+    defs.append(clipPath, fillGradient, highlightGradient, shadowGradient, noisePattern);
+    svg.appendChild(defs);
+
     const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.classList.add('ball-base');
     circle.setAttribute('cx', '50');
     circle.setAttribute('cy', '50');
     circle.setAttribute('r', '40');
-    svg.appendChild(circle);
+    circle.setAttribute('fill', `url(#${fillGradientId})`);
+
+    const lightingLayer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    lightingLayer.classList.add('ball-lighting-layer');
+    lightingLayer.setAttribute('clip-path', `url(#${clipPathId})`);
+    lightingLayer.appendChild(circle);
+
+    const shadow = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    shadow.classList.add('ball-shadow');
+    shadow.setAttribute('cx', '50');
+    shadow.setAttribute('cy', '50');
+    shadow.setAttribute('r', '40');
+    shadow.setAttribute('fill', `url(#${shadowGradientId})`);
+    lightingLayer.appendChild(shadow);
+
+    const highlight = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    highlight.classList.add('ball-highlight');
+    highlight.setAttribute('cx', '50');
+    highlight.setAttribute('cy', '50');
+    highlight.setAttribute('r', '40');
+    highlight.setAttribute('fill', `url(#${highlightGradientId})`);
+    lightingLayer.appendChild(highlight);
+
+    const noise = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    noise.classList.add('ball-noise');
+    noise.setAttribute('cx', '50');
+    noise.setAttribute('cy', '50');
+    noise.setAttribute('r', '40');
+    noise.setAttribute('fill', `url(#${noisePatternId})`);
+    lightingLayer.appendChild(noise);
+
+    svg.appendChild(lightingLayer);
+
+    const outline = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    outline.classList.add('ball-outline');
+    outline.setAttribute('cx', '50');
+    outline.setAttribute('cy', '50');
+    outline.setAttribute('r', '40');
+    outline.setAttribute('fill', 'none');
+    svg.appendChild(outline);
 
     return svg;
   }
@@ -833,6 +969,7 @@
       const stretchWorldAngle = Math.atan2(body.vy, body.vx) - Math.PI / 2;
       const stretchLocalAngle = stretchWorldAngle - body.angle;
       body.el.style.transform = `translate(${tx}px, ${ty}px) rotate(${body.angle}rad) rotate(${stretchLocalAngle}rad) scale(${scaleX}, ${scaleY}) rotate(${-stretchLocalAngle}rad)`;
+      body.el.style.setProperty('--lighting-counter-rotation', `${-body.angle}rad`);
     }
   }
 
@@ -960,6 +1097,7 @@
     touch-action: none;
     transform-origin: center center;
     will-change: transform;
+    overflow: hidden;
   }
 
   .ballsling-dragging,
@@ -976,15 +1114,38 @@
   }
 
   .floating-element circle {
-    fill: currentColor;
     stroke: none;
   }
 
+  .floating-element .ball-base {
+    fill: currentColor;
+  }
 
-  .floating-element.red { color: #FF6E5B; }
-  .floating-element.orange { color: #FF9317; }
-  .floating-element.pink { color: #FF6BB1; }
-  .floating-element.yellow { color: #FFCC00; }
-  .floating-element.green { color: #5FE79F; }
-  .floating-element.purple { color: #795FFF; }
+  .floating-element .ball-lighting-layer {
+    transform-origin: 50% 50%;
+    transform-box: fill-box;
+    transform: rotate(var(--lighting-counter-rotation, 0rad));
+  }
+
+  .floating-element .ball-highlight {
+    opacity: 0.62;
+  }
+
+  .floating-element .ball-shadow {
+    opacity: 0.72;
+  }
+
+  .floating-element .ball-noise {
+    opacity: 0.34;
+  }
+
+  .floating-element .ball-outline {
+    stroke: #d0d0d0;
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+    opacity: 0.92;
+  }
+
+
+  .floating-element.white { color: #f3efe7; }
 </style>
