@@ -10,8 +10,75 @@
 const container = document.querySelector(".floating-elements-container"), overlayContainer = document.querySelector(".floating-elements-overlay");
 let elements = [];
 const GRAVITY = 2e3, GYRO_GRAVITY_FACTOR = 0.95, AIR_DRAG = 0.997, FLOOR_BOUNCE = 0.62, FLOOR_AIRTIME_BONUS = 0.42, AIRTIME_FOR_MAX_BOUNCE = 0.95, WALL_BOUNCE = 0.84, FLOOR_FRICTION = 0.96, BODY_BOUNCE = 0.72, BODY_AIRTIME_BONUS = 0.24, ANGULAR_DRAG = 0.991, COM_RESTORE = 4.2, MAX_LINEAR_SPEED = 2600, MAX_ANGULAR_SPEED = 3.2, GROUND_IMPACT_MIN_SPEED = 210, GROUND_IMPACT_STRENGTH = 0.6, GROUND_IMPACT_RADIUS = 380, IMPACT_SQUASH_MAX = 0.1, ANTICIPATION_HEIGHT = 90, ANTICIPATION_SPEED = 240, GEL_LOW_IMPACT_SPEED = 170, RESTING_SQUASH = 0.022, ROLL_SPEED_FOR_MAX_GLIDE = 320, ROLL_FRICTION_FAST = 0.9992, ROLL_FRICTION_SLOW = 0.965, ROLL_STOP_SPEED = 0.045, ROLL_BACK_TRIGGER = 0.11, ROLL_BACK_FACTOR = -0.22, FLING_SAMPLE_WINDOW_MS = 72, FLING_GAIN = 1.22, COLLISION_ITERATIONS = 8, PENETRATION_SLOP = 0.15, POSITION_CORRECTION_PERCENT = 0.9, FIXED_DT = 1 / 120;
-let viewportWidth = window.innerWidth, viewportHeight = window.innerHeight, bodies = [], lastTs = performance.now(), accumulator = 0, shapeCount = 0, dragState = null, pendingImpactPulses = [], hoveringBall = false, gravityX = 0, gravityY = GRAVITY, gravityTargetX = 0, gravityTargetY = GRAVITY, gyroPermissionAttempted = false;
+let viewportWidth = window.innerWidth, viewportHeight = window.innerHeight, bodies = [], lastTs = performance.now(), accumulator = 0, shapeCount = 0, dragState = null, pendingImpactPulses = [], hoveringBall = false, gravityX = 0, gravityY = GRAVITY, gravityTargetX = 0, gravityTargetY = GRAVITY, gyroPermissionAttempted = false, lightingRefreshTimeout = null;
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+function getLightingFromLocalTime(now = new Date()) {
+  const h = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
+  const solar = (h - 6) / 12 * Math.PI;
+  const sunArc = Math.sin(solar);
+  const elevation = Math.max(0, sunArc);
+  const dayMix = clamp(elevation * 1.08, 0, 1);
+  const sunriseWarmth = clamp(1 - Math.abs(h - 6.7) / 2.2, 0, 1) * (h <= 11 ? 1 : 0);
+  const nightCoolness = Math.pow(1 - dayMix, 1.08);
+  const azimuth = Math.cos(solar);
+  const lightCx = clamp(50 - azimuth * 22, 16, 84);
+  const lightCy = clamp(74 - dayMix * 42, 22, 78);
+  const shadowCx = clamp(100 - lightCx + (azimuth >= 0 ? 4 : -4), 18, 86);
+  const shadowCy = clamp(100 - lightCy + 12, 36, 90);
+  const baseR = Math.round(clamp(238 + dayMix * 11 + sunriseWarmth * 8 - nightCoolness * 7, 228, 250));
+  const baseG = Math.round(clamp(234 + dayMix * 9 + sunriseWarmth * 4 - nightCoolness * 5, 224, 246));
+  const baseB = Math.round(clamp(226 + dayMix * 7 - sunriseWarmth * 3 + nightCoolness * 11, 220, 246));
+  const shadeR = Math.round(clamp(18 + sunriseWarmth * 2 - nightCoolness * 6, 9, 24));
+  const shadeG = Math.round(clamp(18 + sunriseWarmth * 1 - nightCoolness * 4, 11, 24));
+  const shadeB = Math.round(clamp(20 + nightCoolness * 9, 18, 31));
+  return {
+    lightCx,
+    lightCy,
+    shadowCx,
+    shadowCy,
+    highlightOpacity: (0.2 + dayMix * 0.44).toFixed(3),
+    shadowOpacity: (0.82 - dayMix * 0.26).toFixed(3),
+    noiseOpacity: (0.4 - dayMix * 0.14).toFixed(3),
+    fillStopOpacity: (0.14 + dayMix * 0.1).toFixed(3),
+    baseR: baseR.toString(),
+    baseG: baseG.toString(),
+    baseB: baseB.toString(),
+    shadeR: shadeR.toString(),
+    shadeG: shadeG.toString(),
+    shadeB: shadeB.toString()
+  };
+}
+function applyTimeOfDayLighting(now = new Date()) {
+  if (!elements.length) return;
+  const l = getLightingFromLocalTime(now);
+  for (const el of elements) {
+    const fill = el.querySelector(".ball-fill-gradient");
+    const hi = el.querySelector(".ball-highlight-gradient");
+    const sh = el.querySelector(".ball-shadow-gradient");
+    fill && (fill.setAttribute("cx", `${l.lightCx}%`), fill.setAttribute("cy", `${l.lightCy}%`));
+    hi && (hi.setAttribute("cx", `${l.lightCx}%`), hi.setAttribute("cy", `${l.lightCy}%`));
+    sh && (sh.setAttribute("cx", `${l.shadowCx}%`), sh.setAttribute("cy", `${l.shadowCy}%`));
+  }
+  container?.style.setProperty("--ballsling-highlight-opacity", l.highlightOpacity);
+  container?.style.setProperty("--ballsling-shadow-opacity", l.shadowOpacity);
+  container?.style.setProperty("--ballsling-noise-opacity", l.noiseOpacity);
+  container?.style.setProperty("--ballsling-fill-stop-opacity", l.fillStopOpacity);
+  container?.style.setProperty("--ballsling-base-r", l.baseR);
+  container?.style.setProperty("--ballsling-base-g", l.baseG);
+  container?.style.setProperty("--ballsling-base-b", l.baseB);
+  container?.style.setProperty("--ballsling-shade-r", l.shadeR);
+  container?.style.setProperty("--ballsling-shade-g", l.shadeG);
+  container?.style.setProperty("--ballsling-shade-b", l.shadeB);
+}
+function scheduleTimeOfDayLightingUpdates() {
+  lightingRefreshTimeout && clearTimeout(lightingRefreshTimeout);
+  const run = () => {
+    applyTimeOfDayLighting(new Date());
+    lightingRefreshTimeout = window.setTimeout(run, 3e4);
+  };
+  const msToNextTick = 3e4 - Date.now() % 3e4;
+  lightingRefreshTimeout = window.setTimeout(run, msToNextTick);
+}
 function updateViewportSize() {
   const vv = window.visualViewport;
   viewportWidth = vv ? vv.width : window.innerWidth, viewportHeight = vv ? vv.height : window.innerHeight;
@@ -36,16 +103,16 @@ function createShapeElement(index) {
   return el.innerHTML = `
       <defs>
         <clipPath id="bc-${n}" clipPathUnits="userSpaceOnUse"><circle cx="50" cy="50" r="40"/></clipPath>
-        <radialGradient id="bf-${n}" cx="34%" cy="28%" r="74%">
-          <stop offset="0%" stop-color="#fff" stop-opacity=".2"/>
+        <radialGradient class="ball-fill-gradient" id="bf-${n}" cx="34%" cy="28%" r="74%">
+          <stop offset="0%" stop-color="#fff" stop-opacity="var(--ballsling-fill-stop-opacity, .2)"/>
           <stop offset="42%" stop-color="currentColor"/>
-          <stop offset="100%" stop-color="#000" stop-opacity=".34"/>
+          <stop offset="100%" stop-color="rgb(var(--ballsling-shade-r, 20), var(--ballsling-shade-g, 20), var(--ballsling-shade-b, 20))" stop-opacity=".34"/>
         </radialGradient>
-        <radialGradient id="bh-${n}" cx="32%" cy="26%" r="36%">
+        <radialGradient class="ball-highlight-gradient" id="bh-${n}" cx="32%" cy="26%" r="36%">
           <stop offset="0%" stop-color="#fff" stop-opacity=".22"/>
           <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
         </radialGradient>
-        <radialGradient id="bs-${n}" cx="68%" cy="72%" r="66%">
+        <radialGradient class="ball-shadow-gradient" id="bs-${n}" cx="68%" cy="72%" r="66%">
           <stop offset="0%" stop-color="#000" stop-opacity=".2"/>
           <stop offset="78%" stop-color="#000" stop-opacity="0"/>
         </radialGradient>
@@ -112,6 +179,7 @@ function initializeBodies(restoreState) {
     }
     return b;
   });
+  applyTimeOfDayLighting(new Date());
 }
 function applyGroundImpactImpulseAt(srcX, srcY, srcMass, speed, src) {
   if (speed < GROUND_IMPACT_MIN_SPEED) return;
@@ -321,7 +389,9 @@ window.addEventListener("resize", () => {
   h !== hoveringBall && (hoveringBall = h, document.documentElement.classList.toggle("ballsling-hover", h));
 }, { passive: true }), window.addEventListener("pointerup", endDrag, { passive: false }), window.addEventListener("pointercancel", endDrag, { passive: false }), document.addEventListener("selectstart", (e) => {
   dragState && e.preventDefault();
-}), initializeBodies(loadBodyState()), updateBottomAnchor(), window.addEventListener("beforeunload", saveBodyState), requestAnimationFrame((ts) => {
+}), initializeBodies(loadBodyState()), updateBottomAnchor(), scheduleTimeOfDayLightingUpdates(), window.addEventListener("beforeunload", () => {
+  saveBodyState(), lightingRefreshTimeout && clearTimeout(lightingRefreshTimeout);
+}), requestAnimationFrame((ts) => {
   lastTs = ts, tick(ts);
 });
 </script>
@@ -380,13 +450,13 @@ window.addEventListener("resize", () => {
   transform: rotate(var(--lighting-counter-rotation, 0rad));
 }
 .floating-element .ball-highlight {
-  opacity: .62;
+  opacity: var(--ballsling-highlight-opacity, .62);
 }
 .floating-element .ball-shadow {
-  opacity: .72;
+  opacity: var(--ballsling-shadow-opacity, .72);
 }
 .floating-element .ball-noise {
-  opacity: .34;
+  opacity: var(--ballsling-noise-opacity, .34);
 }
 .floating-element .ball-outline {
   stroke: #d0d0d0;
@@ -395,6 +465,6 @@ window.addEventListener("resize", () => {
   opacity: .92;
 }
 .floating-element.white {
-  color: #f3efe7;
+  color: rgb(var(--ballsling-base-r, 243), var(--ballsling-base-g, 239), var(--ballsling-base-b, 231));
 }
 </style>
