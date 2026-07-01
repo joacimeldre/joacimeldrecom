@@ -9,8 +9,9 @@
 // @ts-nocheck
 const container = document.querySelector(".floating-elements-container"), overlayContainer = document.querySelector(".floating-elements-overlay");
 let elements = [];
+const CLUE_CONSUMED_KEY = "ballslingClueConsumed";
 const GRAVITY = 2e3, GYRO_GRAVITY_FACTOR = 0.95, AIR_DRAG = 0.997, FLOOR_BOUNCE = 0.62, FLOOR_AIRTIME_BONUS = 0.42, AIRTIME_FOR_MAX_BOUNCE = 0.95, WALL_BOUNCE = 0.84, FLOOR_FRICTION = 0.96, BODY_BOUNCE = 0.72, BODY_AIRTIME_BONUS = 0.24, ANGULAR_DRAG = 0.991, COM_RESTORE = 4.2, MAX_LINEAR_SPEED = 2600, MAX_ANGULAR_SPEED = 3.2, GROUND_IMPACT_MIN_SPEED = 210, GROUND_IMPACT_STRENGTH = 0.6, GROUND_IMPACT_RADIUS = 380, IMPACT_SQUASH_MAX = 0.1, ANTICIPATION_HEIGHT = 90, ANTICIPATION_SPEED = 240, GEL_LOW_IMPACT_SPEED = 170, RESTING_SQUASH = 0.022, ROLL_SPEED_FOR_MAX_GLIDE = 320, ROLL_FRICTION_FAST = 0.9992, ROLL_FRICTION_SLOW = 0.965, ROLL_STOP_SPEED = 0.045, ROLL_BACK_TRIGGER = 0.11, ROLL_BACK_FACTOR = -0.22, FLING_SAMPLE_WINDOW_MS = 72, FLING_GAIN = 1.22, COLLISION_ITERATIONS = 8, PENETRATION_SLOP = 0.15, POSITION_CORRECTION_PERCENT = 0.9, FIXED_DT = 1 / 120;
-let viewportWidth = window.innerWidth, viewportHeight = window.innerHeight, bodies = [], lastTs = performance.now(), accumulator = 0, shapeCount = 0, dragState = null, pendingImpactPulses = [], hoveringBall = false, gravityX = 0, gravityY = GRAVITY, gravityTargetX = 0, gravityTargetY = GRAVITY, gyroPermissionAttempted = false, lightingRefreshTimeout = null;
+let viewportWidth = window.innerWidth, viewportHeight = window.innerHeight, bodies = [], lastTs = performance.now(), accumulator = 0, shapeCount = 0, dragState = null, pendingImpactPulses = [], hoveringBall = false, gravityX = 0, gravityY = GRAVITY, gravityTargetX = 0, gravityTargetY = GRAVITY, gyroPermissionAttempted = false, lightingRefreshTimeout = null, hasUserInteracted = sessionStorage.getItem(CLUE_CONSUMED_KEY) === "1", clueActivatedByFooter = false, clueBall = null, clueAnchorX = 0, clueHopClock = 0, clueNextHopAt = 0;
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 function getLightingFromLocalTime(now = new Date()) {
   const h = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
@@ -87,7 +88,16 @@ function updateBottomAnchor() {
   updateViewportSize();
   const footerEl = document.querySelector("footer");
   let anchorTop = Math.max(0, document.documentElement.scrollHeight - viewportHeight);
-  footerEl && (anchorTop = Math.max(0, footerEl.getBoundingClientRect().bottom + window.scrollY - viewportHeight)), container && (container.style.top = `${anchorTop}px`, container.style.height = `${viewportHeight}px`), overlayContainer && (overlayContainer.style.top = `${anchorTop}px`, overlayContainer.style.height = `${viewportHeight}px`);
+  if (footerEl) {
+    const rect = footerEl.getBoundingClientRect();
+    anchorTop = Math.max(0, rect.bottom + window.scrollY - viewportHeight);
+    const footerVisible = rect.top < viewportHeight && rect.bottom > 0;
+    if (footerVisible && !clueActivatedByFooter) {
+      clueActivatedByFooter = true;
+      !hasUserInteracted && !clueBall && setClueBall(pickClueBall());
+    }
+  }
+  container && (container.style.top = `${anchorTop}px`, container.style.height = `${viewportHeight}px`), overlayContainer && (overlayContainer.style.top = `${anchorTop}px`, overlayContainer.style.height = `${viewportHeight}px`);
 }
 const toLocalPoint = (cx, cy) => {
   const r = container?.getBoundingClientRect();
@@ -143,6 +153,23 @@ function ensureShapePopulation() {
     shapeCount = target, elements = Array.from(container.querySelectorAll(".floating-element"));
   }
 }
+function setClueBall(next) {
+  clueBall = next ?? null;
+  clueAnchorX = clueBall?.x ?? 0;
+  clueHopClock = 0, clueNextHopAt = 2.2 + Math.random() * 0.8;
+}
+function pickClueBall() {
+  if (!bodies.length) return null;
+  const candidates = dragState ? bodies.filter((b) => b !== dragState.body) : bodies;
+  return candidates.length ? candidates[Math.floor(Math.random() * candidates.length)] : null;
+}
+function stopIdleClue() {
+  setClueBall(null);
+}
+function markUserInteracted() {
+  if (hasUserInteracted) return;
+  hasUserInteracted = true, sessionStorage.setItem(CLUE_CONSUMED_KEY, "1"), stopIdleClue();
+}
 function initializeBodies(restoreState) {
   updateViewportSize(), ensureShapePopulation();
   const spreadWidth = viewportWidth * (viewportWidth <= 768 ? 0.58 : 0.48), spreadStart = (viewportWidth - spreadWidth) / 2, laneWidth = spreadWidth / (elements.length + 1);
@@ -179,6 +206,7 @@ function initializeBodies(restoreState) {
     }
     return b;
   });
+  !hasUserInteracted && clueActivatedByFooter && setClueBall(pickClueBall());
   applyTimeOfDayLighting(new Date());
 }
 function applyGroundImpactImpulseAt(srcX, srcY, srcMass, speed, src) {
@@ -253,6 +281,8 @@ function resolveBodyCollisions(dt) {
 }
 function step(dt) {
   const d = Math.min(0.02, dt);
+  !hasUserInteracted && clueActivatedByFooter && !clueBall && bodies.length && setClueBall(pickClueBall());
+  !hasUserInteracted && clueActivatedByFooter && clueBall && !dragState && (clueHopClock += d);
   for (let i = pendingImpactPulses.length - 1; i >= 0; i--) {
     const p = pendingImpactPulses[i];
     (p.delay -= d) > 0 || (applyGroundImpactImpulseAt(p.x, p.y, p.mass, p.speed, p.source), pendingImpactPulses.splice(i, 1));
@@ -264,6 +294,16 @@ function step(dt) {
       continue;
     }
     b.touchingFloor || (b.airTime = Math.min(3, b.airTime + d), b.didGroundOverstep = false), b.vx += gravityX * d, b.vy += gravityY * d;
+    if (!hasUserInteracted && clueActivatedByFooter && b === clueBall) {
+      const floorY = viewportHeight - b.radius;
+      b.x = clueAnchorX, b.vx = 0, b.av = 0;
+      b.y > floorY && (b.y = floorY);
+      const onFloor = b.y >= floorY - 0.8;
+      if (onFloor && b.vy >= -24 && clueHopClock >= clueNextHopAt) {
+        const hopSpeed = 640;
+        b.y = floorY, b.vy = -hopSpeed, b.squash = Math.max(b.squash, 0.07), clueNextHopAt = clueHopClock + 2.4 + Math.random() * 1.2;
+      }
+    }
     const floorDist = Math.max(0, viewportHeight - b.radius - b.y), anticipTarget = !b.touchingFloor && b.vy > ANTICIPATION_SPEED && floorDist < ANTICIPATION_HEIGHT ? Math.min(0.032, (1 - floorDist / ANTICIPATION_HEIGHT) * (b.vy / 1150) * 0.032) : 0;
     b.anticipation += (anticipTarget - b.anticipation) * Math.min(1, d * 14), b.vx *= Math.pow(AIR_DRAG, d * 60), b.vy < -30 ? b.vy *= Math.pow(0.96, d * 60) : Math.abs(b.vy) < 90 ? b.vy *= Math.pow(0.93, d * 60) : b.vy > 120 && (b.vy += GRAVITY * d * 0.22), b.av += -COM_RESTORE * (b.comOffset / b.radius) * Math.sin(b.angle + b.comAngle - Math.PI / 2) * b.invInertia * d, b.av *= Math.pow(ANGULAR_DRAG, d * 60), b.squash *= Math.pow(0.76, d * 60);
     const settled = b.touchingFloor && Math.abs(b.vy) < 10 && Math.abs(b.vx) < 18;
@@ -277,7 +317,10 @@ function step(dt) {
     }
   }
   resolveBodyCollisions(d);
-  for (const b of bodies) clampInsideViewport(b);
+  for (const b of bodies) {
+    if (!hasUserInteracted && clueActivatedByFooter && b === clueBall) b.x = clueAnchorX, b.vx = 0, b.av = 0;
+    clampInsideViewport(b);
+  }
 }
 function renderBodies() {
   for (const b of bodies) {
@@ -320,7 +363,7 @@ function startDrag(e) {
     grabOffsetX: hit.x - local.x,
     grabOffsetY: hit.y - local.y,
     samples: [{ x: local.x, y: local.y, t: performance.now() }]
-  }, overlayContainer?.appendChild(hit.el), hit.el.classList.add("is-dragging"), document.documentElement.classList.add("ballsling-dragging"), hit.vx = 0, hit.vy = 0, hit.av = 0, true) : false;
+  }, markUserInteracted(), overlayContainer?.appendChild(hit.el), hit.el.classList.add("is-dragging"), document.documentElement.classList.add("ballsling-dragging"), hit.vx = 0, hit.vy = 0, hit.av = 0, true) : false;
 }
 function updateDrag(e) {
   if (!dragState || e.pointerId !== dragState.pointerId) return;
@@ -351,7 +394,8 @@ function endDrag(e) {
     const vd = clamp((Math.abs(bvy) - Math.abs(bvx) * 1.7) / (Math.abs(bvy) + 1), 0, 1);
     fvx *= 1 - 0.72 * vd;
   }
-  bvy < -40 && (fvy -= Math.min(210, 36 + Math.abs(bvy) * 0.06)), dragState.body.vx = clamp(fvx, -MAX_LINEAR_SPEED, MAX_LINEAR_SPEED), dragState.body.vy = clamp(fvy, -MAX_LINEAR_SPEED, MAX_LINEAR_SPEED), dragState.body.av = clamp(dragState.body.vx * 31e-4, -MAX_ANGULAR_SPEED, MAX_ANGULAR_SPEED), container?.appendChild(dragState.body.el), dragState.body.el.classList.remove("is-dragging"), document.documentElement.classList.remove("ballsling-dragging"), dragState = null, e.preventDefault();
+  bvy < -40 && (fvy -= Math.min(210, 36 + Math.abs(bvy) * 0.06));
+  dragState.body.vx = clamp(fvx, -MAX_LINEAR_SPEED, MAX_LINEAR_SPEED), dragState.body.vy = clamp(fvy, -MAX_LINEAR_SPEED, MAX_LINEAR_SPEED), dragState.body.av = clamp(dragState.body.vx * 31e-4, -MAX_ANGULAR_SPEED, MAX_ANGULAR_SPEED), container?.appendChild(dragState.body.el), dragState.body.el.classList.remove("is-dragging"), document.documentElement.classList.remove("ballsling-dragging"), dragState = null, e.preventDefault();
 }
 async function tryEnableGyro() {
   if (gyroPermissionAttempted) return;
@@ -389,8 +433,10 @@ window.addEventListener("resize", () => {
   h !== hoveringBall && (hoveringBall = h, document.documentElement.classList.toggle("ballsling-hover", h));
 }, { passive: true }), window.addEventListener("pointerup", endDrag, { passive: false }), window.addEventListener("pointercancel", endDrag, { passive: false }), document.addEventListener("selectstart", (e) => {
   dragState && e.preventDefault();
+}), window.addEventListener("mouseleave", () => {
+  dragState || (hoveringBall = false, document.documentElement.classList.remove("ballsling-hover"));
 }), initializeBodies(loadBodyState()), updateBottomAnchor(), scheduleTimeOfDayLightingUpdates(), window.addEventListener("beforeunload", () => {
-  saveBodyState(), lightingRefreshTimeout && clearTimeout(lightingRefreshTimeout);
+  saveBodyState(), lightingRefreshTimeout && clearTimeout(lightingRefreshTimeout), stopIdleClue();
 }), requestAnimationFrame((ts) => {
   lastTs = ts, tick(ts);
 });
