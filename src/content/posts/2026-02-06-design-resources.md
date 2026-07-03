@@ -108,6 +108,8 @@ Computer. I use a MacBook.
 
 # Design System
 
+[Astryx](https://astryx.atmeta.com/) is an "agentic first" open source design system for building user interfaces.
+
 [Atomic Design](https://atomicdesign.bradfrost.com/) is a free web book on how to build reusable parts, from small to large.
 
 [Design Systems Database](https://designsystems.surf/) is a directory of design systems.
