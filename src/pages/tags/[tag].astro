@@ -52,7 +52,7 @@ const { posts } = Astro.props;
             const isActive = t === tag;
             const classes = isActive
               ? "font-bold"
-              : "underline hover:decoration-wavy font-medium text-base-900";
+              : "underline hover:decoration-wavy font-medium";
 
             return (
               <a class={classes} href={`/tags/${t}`}>

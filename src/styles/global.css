@@ -136,6 +136,135 @@
   }
 }
 
+a:not(.rounded-full) {
+  position: relative;
+  width: fit-content;
+  text-decoration-line: underline;
+}
+
+/* Sibling links (tag lists, inline links) */
+a:not(.rounded-full):nth-of-type(4n + 1) {
+  --lc: #ff5fa2;
+  text-decoration-color: #ff5fa2 !important;
+  text-decoration-style: solid !important;
+  text-decoration-thickness: 2px !important;
+}
+
+a:not(.rounded-full):nth-of-type(4n + 2) {
+  --lc: #ffc800;
+  text-decoration-color: #ffc800 !important;
+  text-decoration-style: solid !important;
+  text-decoration-thickness: 2px !important;
+}
+
+a:not(.rounded-full):nth-of-type(4n + 3) {
+  --lc: #5f71ff;
+  text-decoration-color: #5f71ff !important;
+  text-decoration-style: solid !important;
+  text-decoration-thickness: 2px !important;
+}
+
+a:not(.rounded-full):nth-of-type(4n + 4) {
+  --lc: #39edae;
+  text-decoration-color: #39edae !important;
+  text-decoration-style: solid !important;
+  text-decoration-thickness: 2px !important;
+}
+
+/* List item links — rotate by li position since each link is its own parent */
+li:nth-child(4n + 1) a:not(.rounded-full) {
+  --lc: #ff5fa2;
+  text-decoration-color: #ff5fa2 !important;
+  text-decoration-style: solid !important;
+  text-decoration-thickness: 2px !important;
+}
+
+li:nth-child(4n + 2) a:not(.rounded-full) {
+  --lc: #ffc800;
+  text-decoration-color: #ffc800 !important;
+  text-decoration-style: solid !important;
+  text-decoration-thickness: 2px !important;
+}
+
+li:nth-child(4n + 3) a:not(.rounded-full) {
+  --lc: #5f71ff;
+  text-decoration-color: #5f71ff !important;
+  text-decoration-style: solid !important;
+  text-decoration-thickness: 2px !important;
+}
+
+li:nth-child(4n + 4) a:not(.rounded-full) {
+  --lc: #39edae;
+  text-decoration-color: #39edae !important;
+  text-decoration-style: solid !important;
+  text-decoration-thickness: 2px !important;
+}
+
+/* Paragraph links — scoped to .prose so only single-link paragraphs rotate by paragraph position.
+   Multi-link paragraphs (tags, footer) use a:nth-of-type rotation instead. */
+.prose p:nth-child(4n + 1) a:not(.rounded-full) {
+  --lc: #ff5fa2;
+  text-decoration-color: #ff5fa2 !important;
+  text-decoration-style: solid !important;
+  text-decoration-thickness: 2px !important;
+}
+
+.prose p:nth-child(4n + 2) a:not(.rounded-full) {
+  --lc: #ffc800;
+  text-decoration-color: #ffc800 !important;
+  text-decoration-style: solid !important;
+  text-decoration-thickness: 2px !important;
+}
+
+.prose p:nth-child(4n + 3) a:not(.rounded-full) {
+  --lc: #5f71ff;
+  text-decoration-color: #5f71ff !important;
+  text-decoration-style: solid !important;
+  text-decoration-thickness: 2px !important;
+}
+
+.prose p:nth-child(4n + 4) a:not(.rounded-full) {
+  --lc: #39edae;
+  text-decoration-color: #39edae !important;
+  text-decoration-style: solid !important;
+  text-decoration-thickness: 2px !important;
+}
+
+/* On hover: fade out the solid underline, replace with two wavy pseudo-elements */
+a:not(.rounded-full):hover,
+li a:not(.rounded-full):hover {
+  text-decoration-color: transparent !important;
+  font-style: oblique 8deg;
+}
+
+a:not(.rounded-full):hover::before,
+a:not(.rounded-full):hover::after,
+li a:not(.rounded-full):hover::before,
+li a:not(.rounded-full):hover::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background-color: var(--lc, currentColor);
+  mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='4'><path d='M0 2 Q2 0 4 2 Q6 4 8 2' fill='none' stroke='white' stroke-width='1.5'/></svg>");
+  mask-repeat: repeat-x;
+  mask-size: 8px 4px;
+  pointer-events: none;
+}
+
+/* First wavy line */
+a:not(.rounded-full):hover::before,
+li a:not(.rounded-full):hover::before {
+  bottom: 0;
+}
+
+/* Second wavy line, 1px below — no gap */
+a:not(.rounded-full):hover::after,
+li a:not(.rounded-full):hover::after {
+  bottom: -1px;
+}
+
 @layer utilities {
   .clap-burst {
     @apply pointer-events-none absolute left-1/2 top-1/2;
@@ -227,7 +356,7 @@
   }
 
   .prose a {
-    @apply underline hover:decoration-wavy text-base-900;
+    @apply underline hover:decoration-wavy;
   }
 
   /* marker is bullet point */
