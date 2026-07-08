@@ -3,9 +3,12 @@
 @plugin "@tailwindcss/typography";
 
 @theme {
-  --font-sans: Inter, sans-serif;
-  /* Changed from InterDisplay */
-  --font-display: Inter, sans-serif;
+  --font-sans:
+    "Atkinson Hyperlegible Next", "Apple Color Emoji", "Segoe UI Emoji",
+    "Noto Color Emoji", sans-serif;
+  --font-display:
+    "Atkinson Hyperlegible Next", "Apple Color Emoji", "Segoe UI Emoji",
+    "Noto Color Emoji", sans-serif;
   --font-mono: JetBrains Mono, monospace;
   --color-base-50: oklch(96.74% 0.001 286.38);
   --color-base-100: oklch(93.73% 0.001 286.37);
@@ -21,21 +24,54 @@
   --color-accent: #ffcc00;
 }
 
-/* CSS */
 @font-face {
-  font-family: "Inter";
+  font-family: "Atkinson Hyperlegible Next";
   font-style: normal;
-  font-weight: 100 900;
+  font-weight: 400 700;
   font-display: swap;
-  src: url("/fonts/InterVariable.woff2") format("woff2");
+  src: url("/fonts/AtkinsonHyperlegibleNext-normal-latin-ext.woff2")
+    format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
 @font-face {
-  font-family: "Inter";
-  font-style: italic;
-  font-weight: 100 900;
+  font-family: "Atkinson Hyperlegible Next";
+  font-style: normal;
+  font-weight: 400 700;
   font-display: swap;
-  src: url("/fonts/InterVariable-Italic.woff2") format("woff2");
+  src: url("/fonts/AtkinsonHyperlegibleNext-normal-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Atkinson Hyperlegible Next";
+  font-style: italic;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/AtkinsonHyperlegibleNext-italic-latin-ext.woff2")
+    format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Atkinson Hyperlegible Next";
+  font-style: italic;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/AtkinsonHyperlegibleNext-italic-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
 }
 
 @font-face {
@@ -55,12 +91,11 @@
 }
 
 :root {
-  font-family: "Inter", sans-serif;
+  font-family:
+    "Atkinson Hyperlegible Next", "Apple Color Emoji", "Segoe UI Emoji",
+    "Noto Color Emoji", sans-serif;
   font-feature-settings: normal;
   font-variation-settings: normal;
-}
-
-:root {
   --astro-code-color-text: #000000;
   --astro-code-background: #f5f5f5;
   --astro-code-token-constant: #00000080;
@@ -109,7 +144,9 @@
   h4,
   h5,
   h6 {
-    font-family: "Inter", sans-serif;
+    font-family:
+      "Atkinson Hyperlegible Next", "Apple Color Emoji", "Segoe UI Emoji",
+      "Noto Color Emoji", sans-serif;
     letter-spacing: 0;
     font-feature-settings: normal;
   }
@@ -202,28 +239,36 @@ li:nth-child(4n + 4) a:not(.rounded-full) {
 
 /* Paragraph links — scoped to .prose so only single-link paragraphs rotate by paragraph position.
    Multi-link paragraphs (tags, footer) use a:nth-of-type rotation instead. */
-.prose p:nth-child(4n + 1) a:not(.rounded-full) {
+.prose
+  p:nth-child(4n + 1):has(a:not(.rounded-full):only-of-type)
+  a:not(.rounded-full) {
   --lc: #ff5fa2;
   text-decoration-color: #ff5fa2 !important;
   text-decoration-style: solid !important;
   text-decoration-thickness: 2px !important;
 }
 
-.prose p:nth-child(4n + 2) a:not(.rounded-full) {
+.prose
+  p:nth-child(4n + 2):has(a:not(.rounded-full):only-of-type)
+  a:not(.rounded-full) {
   --lc: #ffc800;
   text-decoration-color: #ffc800 !important;
   text-decoration-style: solid !important;
   text-decoration-thickness: 2px !important;
 }
 
-.prose p:nth-child(4n + 3) a:not(.rounded-full) {
+.prose
+  p:nth-child(4n + 3):has(a:not(.rounded-full):only-of-type)
+  a:not(.rounded-full) {
   --lc: #5f71ff;
   text-decoration-color: #5f71ff !important;
   text-decoration-style: solid !important;
   text-decoration-thickness: 2px !important;
 }
 
-.prose p:nth-child(4n + 4) a:not(.rounded-full) {
+.prose
+  p:nth-child(4n + 4):has(a:not(.rounded-full):only-of-type)
+  a:not(.rounded-full) {
   --lc: #39edae;
   text-decoration-color: #39edae !important;
   text-decoration-style: solid !important;
@@ -266,11 +311,56 @@ li a:not(.rounded-full):hover::after {
 }
 
 @layer utilities {
+  /* Type scale tokens: use these semantic classes across pages/components. */
+  /* Display: page and section headings */
   .clap-burst {
     @apply pointer-events-none absolute left-1/2 top-1/2;
     width: calc(100% + 56px);
     height: calc(100% + 56px);
     transform: translate(-50%, -50%);
+  }
+
+  .typo-display-xl {
+    @apply text-4xl text-balance font-medium font-display text-base-900 leading-[1.12] tracking-[-0.01em];
+  }
+
+  .typo-display-lg {
+    @apply text-3xl text-balance font-medium font-display text-base-900 leading-[1.18] tracking-[-0.005em];
+  }
+
+  /* Main: long-form and primary content */
+  .typo-main-size {
+    @apply text-xl leading-[1.55];
+  }
+
+  .typo-main {
+    @apply text-xl text-base-900 leading-[1.55] tracking-[0.002em];
+  }
+
+  .typo-main-muted {
+    @apply text-xl text-base-900/60 leading-[1.55] tracking-[0.002em];
+  }
+
+  /* UI: navigation, tags, buttons, metadata */
+  .typo-ui-size {
+    @apply text-base leading-[1.4];
+  }
+
+  .typo-ui {
+    @apply text-base text-base-900 leading-[1.45];
+  }
+
+  .typo-nav {
+    @apply text-base text-base-900 leading-[1.45];
+  }
+
+  .typo-ui-strong {
+    @apply text-base font-medium leading-[1.4];
+  }
+
+  /* Prose: markdown/content body */
+  .typo-prose {
+    @apply prose prose-xl text-base-900;
   }
 
   .clap-line {
@@ -349,10 +439,28 @@ li a:not(.rounded-full):hover::after {
 
   .prose h1 {
     @apply mt-12 mb-8;
+    line-height: 1.2;
   }
 
   .prose h2 {
     @apply mt-8 mb-4;
+    line-height: 1.25;
+  }
+
+  .prose p,
+  .prose li {
+    line-height: 1.58;
+  }
+
+  .prose p {
+    margin-top: 1.05em;
+    margin-bottom: 1.05em;
+  }
+
+  .prose ul,
+  .prose ol {
+    margin-top: 1.15em;
+    margin-bottom: 1.15em;
   }
 
   .prose a {

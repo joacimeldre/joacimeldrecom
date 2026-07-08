@@ -1,57 +1,68 @@
 ---
 import "../styles/global.css";
-// @ts-expect-error @astrolib/seo exports AstroSeo at runtime; astro check's type view is incomplete.
-import { AstroSeo } from "@astrolib/seo";
 
 interface Props {
   title?: string;
   description?: string;
-  image?: string; // Changed to just string
+  image?: string;
   canonical?: string;
   type?: "website" | "article";
+  publishedTime?: string | Date;
 }
 
 const {
   title = "Joacim Eldre",
   description = "If this description shows, it means that Joacim forgot to set a description, boo! Hehe.",
-  image = "/ogdefault.png", // Changed to public path
+  image = "/ogdefault.png",
   canonical = Astro.url.href,
   type = "website",
+  publishedTime,
 } = Astro.props;
 
-// Construct full URL for OG tags (they need absolute URLs)
 const fullImageUrl = image.startsWith("http")
   ? image
   : new URL(image, Astro.site || Astro.url.origin).href;
+
+const structuredData =
+  type === "article"
+    ? {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        headline: title,
+        description,
+        image: [fullImageUrl],
+        url: canonical,
+        ...(publishedTime
+          ? {
+              datePublished:
+                publishedTime instanceof Date
+                  ? publishedTime.toISOString()
+                  : new Date(publishedTime).toISOString(),
+            }
+          : {}),
+        author: {
+          "@type": "Person",
+          name: "Joacim Eldre",
+          url: Astro.site || Astro.url.origin,
+        },
+      }
+    : {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        name: "Joacim Eldre",
+        description,
+        url: Astro.site || Astro.url.origin,
+        inLanguage: "en-US",
+      };
 ---
-
-<AstroSeo
-  title={title}
-  description={description}
-  canonical={canonical}
-  openGraph={{
-    url: canonical,
-    title: title,
-    description: description,
-    images: [
-      {
-        url: fullImageUrl,
-        width: 1200,
-        height: 630,
-        alt: title,
-        type: "image/png", // Changed to png
-      },
-    ],
-    site_name: "Joacim Eldre",
-    type: type,
-    locale: "en_US",
-  }}
-/>
-
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>{title}</title>
 <meta name="description" content={description} />
+
+<meta name="robots" content="index,follow,max-image-preview:large" />
+<meta name="googlebot" content="index,follow,max-image-preview:large" />
+<meta name="theme-color" content="#fff8e7" />
 
 <!-- Favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
@@ -66,13 +77,33 @@ const fullImageUrl = image.startsWith("http")
 <link rel="shortcut icon" href="/favicon.ico" />
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 
-<!-- Canonical URL -->
 <link rel="canonical" href={canonical} />
 
-<!-- Additional SEO -->
-<meta name="robots" content="index, follow" />
-<meta name="googlebot" content="index, follow" />
-<meta name="theme-color" content="#ffffff" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta property="og:type" content={type} />
+<meta property="og:site_name" content="Joacim Eldre" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={fullImageUrl} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={title} />
 
-<script is:inline defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={fullImageUrl} />
+
+{publishedTime && (
+  <meta
+    property="article:published_time"
+    content={
+      publishedTime instanceof Date
+        ? publishedTime.toISOString()
+        : new Date(publishedTime).toISOString()
+    }
+  />
+)}
+
+<script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>

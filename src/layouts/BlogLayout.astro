@@ -2,6 +2,9 @@
 import { Image } from "astro:assets";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 const { frontmatter } = Astro.props;
+const normalizedTags = (frontmatter.tags ?? [])
+  .map((tag: string) => tag.trim())
+  .filter((tag: string) => tag.length > 0);
 
 // Get the resolved image src for meta tags
 const imageUrl = frontmatter.image?.url?.src || "/ogdefault.png";
@@ -28,15 +31,16 @@ const formattedDate = (() => {
   description={frontmatter.description}
   image={imageUrl}
   type="article"
+  publishedTime={frontmatter.pubDate}
 >
   <section>
     <div class="py-24 max-w-3xl">
       <div>
         <div class="mx-auto">
-          <h1 class="text-4xl font-medium font-display text-base-900">
+          <h1 class="typo-display-xl">
             {frontmatter.title}
           </h1>
-          <p class="mt-4 text-base-900 text-xl">
+          <p class="mt-4 typo-main">
             {frontmatter.description}
           </p>
           <Image
@@ -44,32 +48,30 @@ const formattedDate = (() => {
             height={630}
             src={frontmatter.image.url}
             alt={frontmatter.image.alt}
-            class="object-cover object-center w-full rounded-xl mt-4"
+            loading="eager"
+            fetchpriority="high"
+            sizes="(max-width: 768px) 100vw, 768px"
+            style="display:block;width:100%;height:auto;aspect-ratio:1280 / 630;object-fit:cover;object-position:center;margin-top:1rem;margin-left:auto;margin-right:auto;border-radius:0.75rem;"
           />
-          <p class="mx-auto mt-4 text-base-900 text-sm">
+          <p class="mx-auto mt-4 typo-nav">
             Published on <time datetime={frontmatter.pubDate}
               >{formattedDate}</time
             >
           </p>
-          <p class="mx-auto mt-2 text-base-900 text-sm">
+          <p class="mx-auto mt-2 typo-nav">
             Tagged as{" "}
             {
-              frontmatter.tags.map((tag: string, index: number) => (
+              normalizedTags.map((tag: string, index: number) => (
                 <>
                   {index > 0 && " & "}
-                  <a
-                    href={`/tags/${tag}`}
-                    class="underline hover:decoration-wavy"
-                  >
-                    {tag}
-                  </a>
+                  <a href={`/tags/${encodeURIComponent(tag)}`} class="underline hover:decoration-wavy typo-nav">{tag}</a>
                 </>
               ))
             }
           </p>
         </div>
 
-        <div class="prose max-w-3xl mt-12 mx-auto text-base-900">
+        <div class="typo-prose max-w-3xl mt-12 mx-auto">
           <slot />
         </div>
 
@@ -77,7 +79,7 @@ const formattedDate = (() => {
           <div class="group inline-flex items-center gap-3 rounded-md border border-base-900/25 px-3 py-2 transition-colors duration-200 hover:border-base-900/60 hover:cursor-pointer" data-clap-button role="button" tabindex="0">
             <button
               type="button"
-              class="clap-button relative inline-flex items-center gap-2 px-0 py-0 text-sm font-medium text-base-900/70 transition duration-200 hover:text-base-900 cursor-pointer disabled:cursor-default disabled:text-base-900/50"
+              class="clap-button relative inline-flex items-center gap-2 px-0 py-0 typo-ui text-base-900/70 transition duration-200 hover:text-base-900 cursor-pointer disabled:cursor-default disabled:text-base-900/50"
               aria-live="polite"
             >
               <span aria-hidden="true">👏🏻</span>
@@ -128,6 +130,9 @@ const formattedDate = (() => {
       const fetchClaps = async () => {
         try {
           const response = await fetch(`/api/claps/${slug}`);
+          if (response.status === 404) {
+            return;
+          }
           if (response.ok) {
             const data = await response.json();
             claps = data.count || 0;
@@ -139,7 +144,7 @@ const formattedDate = (() => {
             }
           }
         } catch (error) {
-          console.error("Failed to fetch claps:", error);
+          // Claps API can be unavailable in static previews; fail silently.
         } finally {
           isLoading = false;
           renderClaps();

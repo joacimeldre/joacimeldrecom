@@ -42,7 +42,7 @@ const { posts } = Astro.props;
   <section>
     <div class="py-24">
       <h2
-        class="text-3xl text-balance font-medium font-display text-base-900 mb-2"
+        class="typo-display-lg mb-2"
       >
         Show posts tagged with
       </h2>
@@ -51,8 +51,8 @@ const { posts } = Astro.props;
           tags.map((t) => {
             const isActive = t === tag;
             const classes = isActive
-              ? "font-bold"
-              : "underline hover:decoration-wavy font-medium";
+              ? "font-bold typo-nav"
+              : "underline hover:decoration-wavy typo-nav";
 
             return (
               <a class={classes} href={`/tags/${t}`}>
@@ -63,7 +63,7 @@ const { posts } = Astro.props;
         }
       </div>
       <h1
-        class="text-4xl text-balance font-medium font-display text-base-900 max-w-xl mt-8"
+        class="typo-display-xl max-w-xl mt-8"
       >
         ö <span class="bg-amber-200 px-2 rounded">{tag}</span>
       </h1>
@@ -71,7 +71,7 @@ const { posts } = Astro.props;
         {
           posts.map((post) => (
             <BlogEntries
-              url={"/posts/" + post.slug}
+              url={"/posts/" + post.id.replace(/\.(md|mdx)$/i, "")}
               title={post.data.title}
               pubDate={post.data.pubDate.toISOString().split("T")[0]}
             />

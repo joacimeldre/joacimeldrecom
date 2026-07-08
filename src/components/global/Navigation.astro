@@ -8,20 +8,25 @@ import logo from "../../content/images/logo.svg";
 >
   <div>
     <a href="/" aria-label="Home" class="decoration-none">
-      <Image src={logo} alt="Joacim Eldre Logo" class="h-5 w-auto" />
+      <Image
+        src={logo}
+        alt="Joacim Eldre Logo"
+        width={69}
+        height={23}
+        class="h-5 w-auto max-w-none block"
+      />
     </a>
   </div>
   <nav class="flex ml-auto gap-4 items-center">
     <a
       href="/about"
-      class="underline text-base-900 text-sm transition duration-200 hover:decoration-wavy"
+      class="underline typo-nav transition duration-200 hover:decoration-wavy"
     >
       About
     </a>
     <a
-      aria-label="Contact me"
       href="mailto:hei@joacimeldre.com"
-      class="bg-accent text-base-900 py-2 px-4 rounded-full text-sm transition duration-200 hover:bg-white hover:text-base-900"
+      class="bg-accent typo-nav py-2 px-4 rounded-full transition duration-200 hover:bg-white hover:text-base-900"
       >Hello <span aria-hidden="true">:)</span></a
     >
   </nav>

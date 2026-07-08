@@ -10,9 +10,21 @@
 const container = document.querySelector(".floating-elements-container"), overlayContainer = document.querySelector(".floating-elements-overlay");
 let elements = [];
 const CLUE_CONSUMED_KEY = "ballslingClueConsumed";
-const GRAVITY = 2e3, GYRO_GRAVITY_FACTOR = 0.95, AIR_DRAG = 0.997, FLOOR_BOUNCE = 0.62, FLOOR_AIRTIME_BONUS = 0.42, AIRTIME_FOR_MAX_BOUNCE = 0.95, WALL_BOUNCE = 0.84, FLOOR_FRICTION = 0.96, BODY_BOUNCE = 0.72, BODY_AIRTIME_BONUS = 0.24, ANGULAR_DRAG = 0.991, COM_RESTORE = 4.2, MAX_LINEAR_SPEED = 2600, MAX_ANGULAR_SPEED = 3.2, GROUND_IMPACT_MIN_SPEED = 210, GROUND_IMPACT_STRENGTH = 0.6, GROUND_IMPACT_RADIUS = 380, IMPACT_SQUASH_MAX = 0.1, ANTICIPATION_HEIGHT = 90, ANTICIPATION_SPEED = 240, GEL_LOW_IMPACT_SPEED = 170, RESTING_SQUASH = 0.022, ROLL_SPEED_FOR_MAX_GLIDE = 320, ROLL_FRICTION_FAST = 0.9992, ROLL_FRICTION_SLOW = 0.965, ROLL_STOP_SPEED = 0.045, ROLL_BACK_TRIGGER = 0.11, ROLL_BACK_FACTOR = -0.22, FLING_SAMPLE_WINDOW_MS = 72, FLING_GAIN = 1.22, COLLISION_ITERATIONS = 8, PENETRATION_SLOP = 0.15, POSITION_CORRECTION_PERCENT = 0.9, FIXED_DT = 1 / 120;
+const IS_POST_PAGE = window.location.pathname.startsWith("/posts/");
+const PREFERS_REDUCED_MOTION = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const GRAVITY = 2e3, GYRO_GRAVITY_FACTOR = 0.95, AIR_DRAG = 0.997, FLOOR_BOUNCE = 0.62, FLOOR_AIRTIME_BONUS = 0.42, AIRTIME_FOR_MAX_BOUNCE = 0.95, WALL_BOUNCE = 0.84, FLOOR_FRICTION = 0.96, BODY_BOUNCE = 0.72, BODY_AIRTIME_BONUS = 0.24, ANGULAR_DRAG = 0.991, COM_RESTORE = 4.2, MAX_LINEAR_SPEED = 2600, MAX_ANGULAR_SPEED = 3.2, GROUND_IMPACT_MIN_SPEED = 210, GROUND_IMPACT_STRENGTH = 0.6, GROUND_IMPACT_RADIUS = 380, IMPACT_SQUASH_MAX = 0.1, ANTICIPATION_HEIGHT = 90, ANTICIPATION_SPEED = 240, GEL_LOW_IMPACT_SPEED = 170, RESTING_SQUASH = 0.022, ROLL_SPEED_FOR_MAX_GLIDE = 320, ROLL_FRICTION_FAST = 0.9992, ROLL_FRICTION_SLOW = 0.965, ROLL_STOP_SPEED = 0.045, ROLL_BACK_TRIGGER = 0.11, ROLL_BACK_FACTOR = -0.22, FLING_SAMPLE_WINDOW_MS = 72, FLING_GAIN = 1.22, COLLISION_ITERATIONS = IS_POST_PAGE ? 5 : 7, PENETRATION_SLOP = 0.15, POSITION_CORRECTION_PERCENT = 0.9, FIXED_DT = PREFERS_REDUCED_MOTION ? 1 / 45 : IS_POST_PAGE ? 1 / 72 : 1 / 96, MAX_SUBSTEPS = IS_POST_PAGE ? 4 : 5;
 let viewportWidth = window.innerWidth, viewportHeight = window.innerHeight, bodies = [], lastTs = performance.now(), accumulator = 0, shapeCount = 0, dragState = null, pendingImpactPulses = [], hoveringBall = false, gravityX = 0, gravityY = GRAVITY, gravityTargetX = 0, gravityTargetY = GRAVITY, gyroPermissionAttempted = false, hasUserInteracted = sessionStorage.getItem(CLUE_CONSUMED_KEY) === "1", clueActivatedByFooter = false, clueBall = null, clueAnchorX = 0, clueHopClock = 0, clueNextHopAt = 0;
+let footerResizeObserver = null, documentResizeObserver = null, anchorUpdateScheduled = false;
+const SLING_BURST_MIN_SPEED = 230;
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+function scheduleAnchorUpdate() {
+  if (anchorUpdateScheduled) return;
+  anchorUpdateScheduled = true;
+  requestAnimationFrame(() => {
+    anchorUpdateScheduled = false;
+    updateBottomAnchor();
+  });
+}
 function getLightingFromLocalTime(now = new Date()) {
   const h = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
   const solar = (h - 6) / 12 * Math.PI;
@@ -85,17 +97,41 @@ function updateViewportSize() {
 function updateBottomAnchor() {
   updateViewportSize();
   const footerEl = document.querySelector("footer");
-  let anchorTop = Math.max(0, document.documentElement.scrollHeight - viewportHeight);
+  const doc = document.documentElement;
+  let anchorTop = Math.max(0, doc.scrollHeight - viewportHeight);
   if (footerEl) {
+    anchorTop = Math.max(
+      0,
+      footerEl.offsetTop + footerEl.offsetHeight - viewportHeight,
+    );
     const rect = footerEl.getBoundingClientRect();
-    anchorTop = Math.max(0, rect.bottom + window.scrollY - viewportHeight);
     const footerVisible = rect.top < viewportHeight && rect.bottom > 0;
     if (footerVisible && !clueActivatedByFooter) {
       clueActivatedByFooter = true;
       !hasUserInteracted && !clueBall && setClueBall(pickClueBall());
     }
   }
-  container && (container.style.top = `${anchorTop}px`, container.style.height = `${viewportHeight}px`), overlayContainer && (overlayContainer.style.top = `${anchorTop}px`, overlayContainer.style.height = `${viewportHeight}px`);
+  container &&
+    ((container.style.top = `${anchorTop}px`),
+    (container.style.height = `${viewportHeight}px`));
+  overlayContainer &&
+    ((overlayContainer.style.top = `${anchorTop}px`),
+    (overlayContainer.style.height = `${viewportHeight}px`));
+}
+function observeAnchorChanges() {
+  if (typeof ResizeObserver !== "function") return;
+  const footerEl = document.querySelector("footer");
+
+  if (footerEl && !footerResizeObserver) {
+    footerResizeObserver = new ResizeObserver(() => scheduleAnchorUpdate());
+    footerResizeObserver.observe(footerEl);
+  }
+
+  if (!documentResizeObserver) {
+    documentResizeObserver = new ResizeObserver(() => scheduleAnchorUpdate());
+    documentResizeObserver.observe(document.documentElement);
+    documentResizeObserver.observe(document.body);
+  }
 }
 const toLocalPoint = (cx, cy) => {
   const r = container?.getBoundingClientRect();
@@ -103,7 +139,7 @@ const toLocalPoint = (cx, cy) => {
 }, shapeAndSizeForIndex = (i) => ({
   kind: "circle",
   size: i % 2 === 0 ? viewportWidth <= 768 ? 68 : 96 : viewportWidth <= 768 ? 48 : 72
-}), getTargetShapeCount = (w) => w <= 768 ? 6 : 12;
+}), getTargetShapeCount = (w) => w <= 768 ? IS_POST_PAGE ? 4 : 6 : IS_POST_PAGE ? 8 : 12;
 function createShapeElement(index) {
   const el = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   el.setAttribute("viewBox", "0 0 100 100"), el.setAttribute("overflow", "hidden"), el.classList.add("floating-element", "circle", "white"), el.dataset.bodyIndex = String(index);
@@ -196,7 +232,8 @@ function initializeBodies(restoreState) {
       touchingBody: false,
       squash: 0,
       anticipation: 0,
-      didGroundOverstep: false
+      didGroundOverstep: false,
+      slingBurstArmed: false
     };
     if (restoreState?.[i]) {
       const s = restoreState[i];
@@ -225,6 +262,22 @@ function queueImpactPulseCurve(src, speed) {
     { x: src.x, y: src.y, mass: src.mass, speed: speed * 0.34, delay: 0.115, source: src }
   );
 }
+function spawnSlingBurst(x, y) {
+  if (!overlayContainer) return;
+  const burst = document.createElement("span");
+  burst.className = "ballsling-sling-burst";
+  burst.style.left = `${Math.round(x)}px`;
+  burst.style.top = `${Math.round(y)}px`;
+
+  for (let i = 1; i <= 3; i++) {
+    const line = document.createElement("span");
+    line.className = `ballsling-sling-line ballsling-sling-line-${i}`;
+    burst.appendChild(line);
+  }
+
+  overlayContainer.appendChild(burst);
+  window.setTimeout(() => burst.remove(), 360);
+}
 function clampInsideViewport(b) {
   const e = b.radius;
   b.x - e < 0 && (b.x = e, b.vx = Math.abs(b.vx) * WALL_BOUNCE, b.av += Math.abs(b.vy) * 9e-4), b.x + e > viewportWidth && (b.x = viewportWidth - e, b.vx = -Math.abs(b.vx) * WALL_BOUNCE, b.av -= Math.abs(b.vy) * 9e-4), b.y - e < 0 && (b.y = e, b.vy = Math.abs(b.vy) * WALL_BOUNCE, b.av += b.vx * 12e-4);
@@ -233,7 +286,7 @@ function clampInsideViewport(b) {
     const impactSpeed = Math.abs(b.vy);
     b.y = floorY;
     const rest = Math.min(0.92, FLOOR_BOUNCE + FLOOR_AIRTIME_BONUS * Math.min(1, b.airTime / AIRTIME_FOR_MAX_BOUNCE) + clamp((impactSpeed - 440) / 1e3, 0, 0.16));
-    b.vy = -Math.abs(b.vy) * rest, b.squash = Math.max(b.squash, Math.min(IMPACT_SQUASH_MAX, impactSpeed / 2e3)), b.av += b.vx * 18e-4, b.vx *= FLOOR_FRICTION, b.av *= FLOOR_FRICTION, b.didGroundOverstep = false, impactSpeed < GEL_LOW_IMPACT_SPEED && (b.vy *= 0.28, b.vx *= 0.97, b.av *= 0.55), b.touchingFloor = true, b.airTime = 0, Math.abs(b.vy) < 14 && (b.vy = 0), Math.abs(b.vx) < 0.02 && (b.vx = 0), Math.abs(b.av) < 2e-3 && (b.av = 0), applyGroundImpactImpulse(b, impactSpeed), queueImpactPulseCurve(b, impactSpeed);
+    b.vy = -Math.abs(b.vy) * rest, b.squash = Math.max(b.squash, Math.min(IMPACT_SQUASH_MAX, impactSpeed / 2e3)), b.av += b.vx * 18e-4, b.vx *= FLOOR_FRICTION, b.av *= FLOOR_FRICTION, b.didGroundOverstep = false, impactSpeed < GEL_LOW_IMPACT_SPEED && (b.vy *= 0.28, b.vx *= 0.97, b.av *= 0.55), b.touchingFloor = true, b.airTime = 0, Math.abs(b.vy) < 14 && (b.vy = 0), Math.abs(b.vx) < 0.02 && (b.vx = 0), Math.abs(b.av) < 2e-3 && (b.av = 0), applyGroundImpactImpulse(b, impactSpeed), queueImpactPulseCurve(b, impactSpeed), b.slingBurstArmed && (impactSpeed >= SLING_BURST_MIN_SPEED && spawnSlingBurst(b.x, b.y - b.radius - 8), b.slingBurstArmed = false);
   } else b.y >= floorY - 0.5 && b.vy >= -8 && (b.y = floorY, b.touchingFloor = true, Math.abs(b.vy) < 8 && (b.vy = 0));
 }
 function getCollisionInfo(a, b) {
@@ -393,7 +446,7 @@ function endDrag(e) {
     fvx *= 1 - 0.72 * vd;
   }
   bvy < -40 && (fvy -= Math.min(210, 36 + Math.abs(bvy) * 0.06));
-  dragState.body.vx = clamp(fvx, -MAX_LINEAR_SPEED, MAX_LINEAR_SPEED), dragState.body.vy = clamp(fvy, -MAX_LINEAR_SPEED, MAX_LINEAR_SPEED), dragState.body.av = clamp(dragState.body.vx * 31e-4, -MAX_ANGULAR_SPEED, MAX_ANGULAR_SPEED), container?.appendChild(dragState.body.el), dragState.body.el.classList.remove("is-dragging"), document.documentElement.classList.remove("ballsling-dragging"), dragState = null, e.preventDefault();
+  dragState.body.vx = clamp(fvx, -MAX_LINEAR_SPEED, MAX_LINEAR_SPEED), dragState.body.vy = clamp(fvy, -MAX_LINEAR_SPEED, MAX_LINEAR_SPEED), dragState.body.av = clamp(dragState.body.vx * 31e-4, -MAX_ANGULAR_SPEED, MAX_ANGULAR_SPEED), dragState.body.slingBurstArmed = true, container?.appendChild(dragState.body.el), dragState.body.el.classList.remove("is-dragging"), document.documentElement.classList.remove("ballsling-dragging"), dragState = null, e.preventDefault();
 }
 async function tryEnableGyro() {
   if (gyroPermissionAttempted) return;
@@ -407,12 +460,27 @@ async function tryEnableGyro() {
     }
 }
 function tick(ts) {
+  if (document.hidden) {
+    lastTs = ts;
+    requestAnimationFrame(tick);
+    return;
+  }
   const dt = Math.min(0.05, (ts - lastTs) / 1e3);
   lastTs = ts, accumulator += dt;
-  for (let s = 0; accumulator >= FIXED_DT && s < 6; s++)
+  for (let s = 0; accumulator >= FIXED_DT && s < MAX_SUBSTEPS; s++)
     step(FIXED_DT), accumulator -= FIXED_DT;
   renderBodies(), requestAnimationFrame(tick);
 }
+function bootSimulation() {
+  observeAnchorChanges();
+  initializeBodies(loadBodyState());
+  updateBottomAnchor();
+  requestAnimationFrame((ts) => {
+    lastTs = ts;
+    tick(ts);
+  });
+}
+
 window.addEventListener("resize", () => {
   shapeCount = 0, initializeBodies(), updateBottomAnchor();
 }), window.visualViewport?.addEventListener("resize", () => {
@@ -424,6 +492,7 @@ window.addEventListener("resize", () => {
   const g = sampleToGravity(e.beta, e.gamma);
   gravityTargetX = g.x, gravityTargetY = g.y;
 }, { passive: true }), window.addEventListener("pointerdown", (e) => {
+  !bodies.length && bootSimulation();
   tryEnableGyro(), startDrag(e) && e.preventDefault();
 }, { capture: true }), window.addEventListener("pointermove", updateDrag, { passive: false }), window.addEventListener("mousemove", (e) => {
   if (dragState) return;
@@ -433,11 +502,17 @@ window.addEventListener("resize", () => {
   dragState && e.preventDefault();
 }), window.addEventListener("mouseleave", () => {
   dragState || (hoveringBall = false, document.documentElement.classList.remove("ballsling-hover"));
-}), initializeBodies(loadBodyState()), updateBottomAnchor(), window.addEventListener("beforeunload", () => {
+}), window.addEventListener("beforeunload", () => {
+  footerResizeObserver?.disconnect();
+  documentResizeObserver?.disconnect();
   saveBodyState(), stopIdleClue();
-}), requestAnimationFrame((ts) => {
-  lastTs = ts, tick(ts);
 });
+
+if ("requestIdleCallback" in window) {
+  window.requestIdleCallback(() => bootSimulation(), { timeout: 1200 });
+} else {
+  window.setTimeout(bootSimulation, 250);
+}
 </script>
 
 <style is:global>
@@ -510,6 +585,78 @@ window.addEventListener("resize", () => {
 }
 .floating-element.white {
   color: rgb(var(--ballsling-base-r, 243), var(--ballsling-base-g, 239), var(--ballsling-base-b, 231));
+}
+
+.ballsling-sling-burst {
+  position: absolute;
+  width: 56px;
+  height: 56px;
+  pointer-events: none;
+  z-index: 10001;
+  transform: translate(-50%, -50%);
+}
+
+.ballsling-sling-line {
+  position: absolute;
+  left: var(--line-x);
+  top: var(--line-y);
+  width: 2px;
+  height: 14px;
+  border-radius: 9999px;
+  background: #111;
+  opacity: 0;
+  transform: translate(-50%, -50%) rotate(var(--line-rotate)) translate(0, 0)
+    scaleY(0.35);
+  transform-origin: center;
+  animation: clap-line-burst 280ms ease-out forwards;
+}
+
+.ballsling-sling-line-1 {
+  --line-x: 22%;
+  --line-y: 12%;
+  --line-rotate: -34deg;
+  --travel: -12px;
+  animation-delay: 10ms;
+}
+
+.ballsling-sling-line-2 {
+  --line-x: 50%;
+  --line-y: 8%;
+  --line-rotate: 0deg;
+  --travel: -12px;
+  animation-delay: 0ms;
+}
+
+.ballsling-sling-line-3 {
+  --line-x: 78%;
+  --line-y: 12%;
+  --line-rotate: 34deg;
+  --travel: -12px;
+  animation-delay: 20ms;
+}
+
+.ballsling-sling-line-4 {
+  --line-x: 22%;
+  --line-y: 88%;
+  --line-rotate: 34deg;
+  --travel: 12px;
+  animation-delay: 10ms;
+}
+
+.ballsling-sling-line-5 {
+  --line-x: 50%;
+  --line-y: 92%;
+  --line-rotate: 0deg;
+  --travel: 12px;
+  animation-delay: 0ms;
+}
+
+.ballsling-sling-line-6 {
+  --line-x: 78%;
+  --line-y: 88%;
+  --line-rotate: -34deg;
+  --travel: 12px;
+  animation-delay: 20ms;
 }
 
 </style>

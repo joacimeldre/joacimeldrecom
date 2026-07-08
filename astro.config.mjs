@@ -4,6 +4,7 @@ import vercel from "@astrojs/vercel";
 
 import sitemap from "@astrojs/sitemap";
 import mdx from "@astrojs/mdx";
+import { unified } from "@astrojs/markdown-remark";
 import rehypeExternalLinks from "rehype-external-links";
 
 const siteUrl = "https://joacimeldrecom.vercel.app";
@@ -76,26 +77,28 @@ export default defineConfig({
   },
   markdown: {
     drafts: true,
-    rehypePlugins: [
-      rehypeImageClassFromTitle,
-      [
-        rehypeExternalLinks,
-        {
-          target: "_blank",
-          rel: ["noopener", "noreferrer"],
-          test: (element) => {
-            const href = element.properties?.href;
-            if (typeof href !== "string") return false;
+    processor: unified({
+      rehypePlugins: [
+        rehypeImageClassFromTitle,
+        [
+          rehypeExternalLinks,
+          {
+            target: "_blank",
+            rel: ["noopener", "noreferrer"],
+            test: (element) => {
+              const href = element.properties?.href;
+              if (typeof href !== "string") return false;
 
-            try {
-              return new URL(href, siteUrl).hostname !== siteHostname;
-            } catch {
-              return false;
-            }
+              try {
+                return new URL(href, siteUrl).hostname !== siteHostname;
+              } catch {
+                return false;
+              }
+            },
           },
-        },
+        ],
       ],
-    ],
+    }),
     shikiConfig: {
       theme: "css-variables",
     },

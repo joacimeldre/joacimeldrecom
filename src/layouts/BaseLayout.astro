@@ -9,9 +9,11 @@ interface Props {
   description?: string;
   image?: string;
   type?: "website" | "article";
+  publishedTime?: string | Date;
+  showBallSling?: boolean;
 }
 
-const { title, description, image, type } = Astro.props;
+const { title, description, image, type, publishedTime, showBallSling = true } = Astro.props;
 ---
 
 <html lang="en">
@@ -21,12 +23,13 @@ const { title, description, image, type } = Astro.props;
       description={description}
       image={image}
       type={type}
+      publishedTime={publishedTime}
     />
   </head>
   <body class="flex flex-col max-w-3xl min-h-screen px-8 mx-auto">
-    <BallSling />
     <Navigation />
-    <main class="flex-grow"><slot /></main>
+    <main class="flex-grow typo-main-size"><slot /></main>
     <Footer />
+    {showBallSling && <BallSling />}
   </body>
 </html>

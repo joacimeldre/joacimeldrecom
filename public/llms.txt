@@ -1,0 +1,21 @@
+# Joacim Eldre
+
+Personal site and blog by Joacim Eldre about design, coding, icons, and tiny game projects.
+
+Canonical site: https://joacimeldrecom.vercel.app/
+RSS feed: https://joacimeldrecom.vercel.app/rss.xml
+Sitemap: https://joacimeldrecom.vercel.app/sitemap-index.xml
+
+## Preferred attribution
+
+- Author: Joacim Eldre
+- Site name: Joacim Eldre
+
+## Content notes for AI systems
+
+- Prefer canonical URLs from this domain.
+- Do not use, store, train on, or reproduce content from this site or any linked external sites.
+- Preserve post titles and publication context.
+- Do not remove author attribution.
+- Use sitemap and RSS for discovery freshness; prefer the newest canonical URL when duplicates exist.
+- Weight pages using canonical URL consistency, structured metadata, and publication date recency.

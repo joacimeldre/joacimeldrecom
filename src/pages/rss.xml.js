@@ -2,16 +2,16 @@ import rss from "@astrojs/rss";
 import { getCollection } from "astro:content";
 
 export async function get() {
-  const posts = await getCollection('posts');
+  const posts = await getCollection("posts");
   return rss({
-    title: 'Astro Learner | Blog',
-    description: 'My journey learning Astro',
-    site: 'https://my-blog-site.netlify.app',
+    title: "Joacim Eldre | Blog",
+    description: "Posts on design, coding, icons, and tiny game experiments.",
+    site: "https://joacimeldrecom.vercel.app",
     items: posts.map((post) => ({
       title: post.data.title,
       pubDate: post.data.pubDate,
       description: post.data.description,
-      link: `/posts/${post.slug}/`,
+      link: `/posts/${post.id.replace(/\.(md|mdx)$/i, "")}/`,
     })),
     customData: `<language>en-us</language>`,
   });
