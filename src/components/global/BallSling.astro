@@ -139,7 +139,7 @@ const toLocalPoint = (cx, cy) => {
 }, shapeAndSizeForIndex = (i) => ({
   kind: "circle",
   size: i % 2 === 0 ? viewportWidth <= 768 ? 68 : 96 : viewportWidth <= 768 ? 48 : 72
-}), getTargetShapeCount = (w) => w <= 768 ? IS_POST_PAGE ? 4 : 6 : IS_POST_PAGE ? 8 : 12;
+}), getTargetShapeCount = (w) => w <= 768 ? 6 : IS_POST_PAGE ? 8 : 12;
 function createShapeElement(index) {
   const el = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   el.setAttribute("viewBox", "0 0 100 100"), el.setAttribute("overflow", "hidden"), el.classList.add("floating-element", "circle", "white"), el.dataset.bodyIndex = String(index);

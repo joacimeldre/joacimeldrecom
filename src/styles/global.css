@@ -385,7 +385,7 @@ li a:not(.rounded-full):not(.logo-link):hover::after {
 
   @media (max-width: 640px) {
     html {
-      font-size: 14px;
+      font-size: 1rem;
     }
 
     .typo-display-xl {
@@ -401,7 +401,7 @@ li a:not(.rounded-full):not(.logo-link):hover::after {
     .typo-main-size,
     .typo-main,
     .typo-main-muted {
-      font-size: clamp(0.95rem, 0.92rem + 0.4vw, 1.08rem);
+      font-size: clamp(1rem, 0.95rem + 0.45vw, 1.12rem);
       line-height: 1.58;
     }
 
@@ -409,12 +409,12 @@ li a:not(.rounded-full):not(.logo-link):hover::after {
     .typo-ui,
     .typo-nav,
     .typo-ui-strong {
-      font-size: clamp(0.88rem, 0.86rem + 0.22vw, 0.96rem);
+      font-size: clamp(0.92rem, 0.88rem + 0.26vw, 1rem);
       line-height: 1.42;
     }
 
     .typo-prose {
-      font-size: clamp(0.96rem, 0.92rem + 0.35vw, 1.04rem);
+      font-size: clamp(1rem, 0.95rem + 0.4vw, 1.08rem);
     }
   }
 
