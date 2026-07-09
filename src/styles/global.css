@@ -173,35 +173,41 @@
   }
 }
 
-a:not(.rounded-full) {
+a:not(.rounded-full):not(.logo-link) {
   position: relative;
   width: fit-content;
   text-decoration-line: underline;
 }
 
+a.logo-link {
+  position: relative;
+  width: fit-content;
+  text-decoration: none;
+}
+
 /* Sibling links (tag lists, inline links) */
-a:not(.rounded-full):nth-of-type(4n + 1) {
+a:not(.rounded-full):not(.logo-link):nth-of-type(4n + 1) {
   --lc: #ff5fa2;
   text-decoration-color: #ff5fa2 !important;
   text-decoration-style: solid !important;
   text-decoration-thickness: 2px !important;
 }
 
-a:not(.rounded-full):nth-of-type(4n + 2) {
+a:not(.rounded-full):not(.logo-link):nth-of-type(4n + 2) {
   --lc: #ffc800;
   text-decoration-color: #ffc800 !important;
   text-decoration-style: solid !important;
   text-decoration-thickness: 2px !important;
 }
 
-a:not(.rounded-full):nth-of-type(4n + 3) {
+a:not(.rounded-full):not(.logo-link):nth-of-type(4n + 3) {
   --lc: #5f71ff;
   text-decoration-color: #5f71ff !important;
   text-decoration-style: solid !important;
   text-decoration-thickness: 2px !important;
 }
 
-a:not(.rounded-full):nth-of-type(4n + 4) {
+a:not(.rounded-full):not(.logo-link):nth-of-type(4n + 4) {
   --lc: #39edae;
   text-decoration-color: #39edae !important;
   text-decoration-style: solid !important;
@@ -209,28 +215,28 @@ a:not(.rounded-full):nth-of-type(4n + 4) {
 }
 
 /* List item links — rotate by li position since each link is its own parent */
-li:nth-child(4n + 1) a:not(.rounded-full) {
+li:nth-child(4n + 1) a:not(.rounded-full):not(.logo-link) {
   --lc: #ff5fa2;
   text-decoration-color: #ff5fa2 !important;
   text-decoration-style: solid !important;
   text-decoration-thickness: 2px !important;
 }
 
-li:nth-child(4n + 2) a:not(.rounded-full) {
+li:nth-child(4n + 2) a:not(.rounded-full):not(.logo-link) {
   --lc: #ffc800;
   text-decoration-color: #ffc800 !important;
   text-decoration-style: solid !important;
   text-decoration-thickness: 2px !important;
 }
 
-li:nth-child(4n + 3) a:not(.rounded-full) {
+li:nth-child(4n + 3) a:not(.rounded-full):not(.logo-link) {
   --lc: #5f71ff;
   text-decoration-color: #5f71ff !important;
   text-decoration-style: solid !important;
   text-decoration-thickness: 2px !important;
 }
 
-li:nth-child(4n + 4) a:not(.rounded-full) {
+li:nth-child(4n + 4) a:not(.rounded-full):not(.logo-link) {
   --lc: #39edae;
   text-decoration-color: #39edae !important;
   text-decoration-style: solid !important;
@@ -238,32 +244,48 @@ li:nth-child(4n + 4) a:not(.rounded-full) {
 }
 
 /* Prose links — rotate by paragraph/list item order for predictable post-page colors. */
-:is(.prose, .typo-prose) p:nth-of-type(4n + 1) a:not(.rounded-full),
-:is(.prose, .typo-prose) li:nth-of-type(4n + 1) a:not(.rounded-full) {
+:is(.prose, .typo-prose)
+  p:nth-of-type(4n + 1)
+  a:not(.rounded-full):not(.logo-link),
+:is(.prose, .typo-prose)
+  li:nth-of-type(4n + 1)
+  a:not(.rounded-full):not(.logo-link) {
   --lc: #ff5fa2;
   text-decoration-color: #ff5fa2 !important;
   text-decoration-style: solid !important;
   text-decoration-thickness: 2px !important;
 }
 
-:is(.prose, .typo-prose) p:nth-of-type(4n + 2) a:not(.rounded-full),
-:is(.prose, .typo-prose) li:nth-of-type(4n + 2) a:not(.rounded-full) {
+:is(.prose, .typo-prose)
+  p:nth-of-type(4n + 2)
+  a:not(.rounded-full):not(.logo-link),
+:is(.prose, .typo-prose)
+  li:nth-of-type(4n + 2)
+  a:not(.rounded-full):not(.logo-link) {
   --lc: #ffc800;
   text-decoration-color: #ffc800 !important;
   text-decoration-style: solid !important;
   text-decoration-thickness: 2px !important;
 }
 
-:is(.prose, .typo-prose) p:nth-of-type(4n + 3) a:not(.rounded-full),
-:is(.prose, .typo-prose) li:nth-of-type(4n + 3) a:not(.rounded-full) {
+:is(.prose, .typo-prose)
+  p:nth-of-type(4n + 3)
+  a:not(.rounded-full):not(.logo-link),
+:is(.prose, .typo-prose)
+  li:nth-of-type(4n + 3)
+  a:not(.rounded-full):not(.logo-link) {
   --lc: #5f71ff;
   text-decoration-color: #5f71ff !important;
   text-decoration-style: solid !important;
   text-decoration-thickness: 2px !important;
 }
 
-:is(.prose, .typo-prose) p:nth-of-type(4n + 4) a:not(.rounded-full),
-:is(.prose, .typo-prose) li:nth-of-type(4n + 4) a:not(.rounded-full) {
+:is(.prose, .typo-prose)
+  p:nth-of-type(4n + 4)
+  a:not(.rounded-full):not(.logo-link),
+:is(.prose, .typo-prose)
+  li:nth-of-type(4n + 4)
+  a:not(.rounded-full):not(.logo-link) {
   --lc: #39edae;
   text-decoration-color: #39edae !important;
   text-decoration-style: solid !important;
@@ -271,16 +293,16 @@ li:nth-child(4n + 4) a:not(.rounded-full) {
 }
 
 /* On hover: fade out the solid underline, replace with two wavy pseudo-elements */
-a:not(.rounded-full):hover,
-li a:not(.rounded-full):hover {
+a:not(.rounded-full):not(.logo-link):hover,
+li a:not(.rounded-full):not(.logo-link):hover {
   text-decoration-color: transparent !important;
   font-style: oblique 8deg;
 }
 
-a:not(.rounded-full):hover::before,
-a:not(.rounded-full):hover::after,
-li a:not(.rounded-full):hover::before,
-li a:not(.rounded-full):hover::after {
+a:not(.rounded-full):not(.logo-link):hover::before,
+a:not(.rounded-full):not(.logo-link):hover::after,
+li a:not(.rounded-full):not(.logo-link):hover::before,
+li a:not(.rounded-full):not(.logo-link):hover::after {
   content: "";
   position: absolute;
   left: 0;
@@ -294,14 +316,14 @@ li a:not(.rounded-full):hover::after {
 }
 
 /* First wavy line */
-a:not(.rounded-full):hover::before,
-li a:not(.rounded-full):hover::before {
+a:not(.rounded-full):not(.logo-link):hover::before,
+li a:not(.rounded-full):not(.logo-link):hover::before {
   bottom: 0;
 }
 
 /* Second wavy line, 1px below — no gap */
-a:not(.rounded-full):hover::after,
-li a:not(.rounded-full):hover::after {
+a:not(.rounded-full):not(.logo-link):hover::after,
+li a:not(.rounded-full):not(.logo-link):hover::after {
   bottom: -1px;
 }
 
@@ -356,6 +378,41 @@ li a:not(.rounded-full):hover::after {
   /* Prose: markdown/content body */
   .typo-prose {
     @apply prose prose-xl text-base-900;
+  }
+
+  @media (max-width: 640px) {
+    html {
+      font-size: 14px;
+    }
+
+    .typo-display-xl {
+      font-size: clamp(1.9rem, 1.55rem + 2vw, 2.6rem);
+      line-height: 1.1;
+    }
+
+    .typo-display-lg {
+      font-size: clamp(1.45rem, 1.25rem + 1.2vw, 1.9rem);
+      line-height: 1.15;
+    }
+
+    .typo-main-size,
+    .typo-main,
+    .typo-main-muted {
+      font-size: clamp(0.95rem, 0.92rem + 0.4vw, 1.08rem);
+      line-height: 1.58;
+    }
+
+    .typo-ui-size,
+    .typo-ui,
+    .typo-nav,
+    .typo-ui-strong {
+      font-size: clamp(0.88rem, 0.86rem + 0.22vw, 0.96rem);
+      line-height: 1.42;
+    }
+
+    .typo-prose {
+      font-size: clamp(0.96rem, 0.92rem + 0.35vw, 1.04rem);
+    }
   }
 
   .clap-line {
