@@ -5,6 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "astro dev",
+    "dev:force": "astro dev --force",
+    "dev:clean": "rm -rf .astro && astro dev --force",
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
