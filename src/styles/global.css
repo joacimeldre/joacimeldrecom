@@ -309,6 +309,9 @@ li a:not(.rounded-full):not(.logo-link):hover::after {
   right: 0;
   height: 4px;
   background-color: var(--lc, currentColor);
+  -webkit-mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='4'><path d='M0 2 Q2 0 4 2 Q6 4 8 2' fill='none' stroke='white' stroke-width='1.5'/></svg>");
+  -webkit-mask-repeat: repeat-x;
+  -webkit-mask-size: 8px 4px;
   mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='4'><path d='M0 2 Q2 0 4 2 Q6 4 8 2' fill='none' stroke='white' stroke-width='1.5'/></svg>");
   mask-repeat: repeat-x;
   mask-size: 8px 4px;

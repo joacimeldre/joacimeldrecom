@@ -3,7 +3,7 @@ pubDate: 2026-01-19
 title: Hello World!
 description: "First post on my new website, whoo! The first of many, maybe. Probably."
 image:
-  url: "../images/posts/hello_world_joacim_eldre.png"
+  url: "../images/posts/hello_world_joacim_eldre.webp"
   alt: "An icon of a conch (a swirly seashell), made by me (Joacim Eldre)!"
 tags: ["All"]
 ---

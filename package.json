@@ -8,7 +8,11 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "optimize:assets": "node scripts/optimize-assets.mjs",
+    "optimize:assets:dry": "node scripts/optimize-assets.mjs --dry-run",
+    "optimize:assets:webp": "node scripts/optimize-assets.mjs --convert-to webp --include src/content/images",
+    "optimize:assets:webp:dry": "node scripts/optimize-assets.mjs --convert-to webp --include src/content/images --dry-run"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.9",
@@ -25,6 +29,8 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.2",
+    "sharp": "^0.35.3",
+    "svgo": "^4.0.1",
     "tailwindcss": "^4.3.2"
   }
 }

@@ -3,7 +3,7 @@ pubDate: 2026-06-24
 title: Bloob icons
 description: "Tiny icons for a tiny video game. I love icons, so of course I've made custom icons for Bloob. 9 icons measuring 5x5 pixels."
 image:
-  url: "../images/posts/bloob_icons.png"
+  url: "../images/posts/bloob_icons.webp"
   alt: "Bloob icon set by Joacim Eldre"
 tags: ["All", "PICO-8", "Game Development", "Design", "Icon"]
 ---
@@ -40,41 +40,41 @@ So the challenge was to make recognizable shapes in such a small space.
 
 Bloob. The base icon. A square with two eyes. Very simple, and it works. The shape is similar enough to Bloob in game.
 
-![Bloob icon by Joacim Eldre](../images/posts/bloob_icon_bloob.png "Bloob icon {.flat}")
+![Bloob icon by Joacim Eldre](../images/posts/bloob_icon_bloob.webp "Bloob icon {.flat}")
 
 Left arrow. Reset. Back to start. This one hurt a bit, I might make a curved arrow instead. But it's tricky with 5 pixels. I think I need 8x8 for that, and I want 5x5.
 
-![Left arrow icon by Joacim Eldre](../images/posts/bloob_icon_arrowleft.png "Left arrow icon {.flat}")
+![Left arrow icon by Joacim Eldre](../images/posts/bloob_icon_arrowleft.webp "Left arrow icon {.flat}")
 
 Down arrow. Sit down to read the menu. No, honestly the button was available. Hehe! And some people wanted the jump to be separated from the arrow controls, which is easy to understand if you want to move like a parkour.. er.. or have sausage fingers.
 
-![Right arrow icon by Joacim Eldre](../images/posts/bloob_icon_arrowdown.png "Right arrow icon {.flat}")
+![Right arrow icon by Joacim Eldre](../images/posts/bloob_icon_arrowdown.webp "Right arrow icon {.flat}")
 
 Map! As simple as it gets.
 
-![Map icon by Joacim Eldre](../images/posts/bloob_icon_map.png "Map icon {.flat}")
+![Map icon by Joacim Eldre](../images/posts/bloob_icon_map.webp "Map icon {.flat}")
 
 Clock. Looks like the time is 12:15, or is that 15:00? Readability checks out, ish!
 
-![Clock icon by Joacim Eldre](../images/posts/bloob_icon_clock.png "Clock icon {.flat}")
+![Clock icon by Joacim Eldre](../images/posts/bloob_icon_clock.webp "Clock icon {.flat}")
 
 Menu. I don't like hamburgers, oh who am I kidding, I love hamburgers. But I'm tired of hamburgers, so I made some small changes, since it's more than a menu, more of a pause button and stats and some more stuff. I think the general hamburger shape menu still reads.
 
-![Menu icon by Joacim Eldre](../images/posts/bloob_icon_lines.png "Menu icon {.flat}")
+![Menu icon by Joacim Eldre](../images/posts/bloob_icon_lines.webp "Menu icon {.flat}")
 
 Secret. It was either a gem or a star. I went with gem, since the only thing in my mind while making it was what the icon should communicate? So I thought of what the secret hid in the game. Form follows function and all that jazz.
 
 Kind of looks like a gem, I mean, 5x5 is tiny after all.
 
-![Secret icon by Joacim Eldre](../images/posts/bloob_icon_diamond.png "Secret icon {.flat}")
+![Secret icon by Joacim Eldre](../images/posts/bloob_icon_diamond.webp "Secret icon {.flat}")
 
 Jump. The jump icon needed to differ from an arrow, since it's.. a jump, not up. So I made a little arc. It's very simple obviously, and I like that.
 
-![Jump icon by Joacim Eldre](../images/posts/bloob_icon_up.png "Jump icon {.flat}")
+![Jump icon by Joacim Eldre](../images/posts/bloob_icon_up.webp "Jump icon {.flat}")
 
 Dash. The dash icon needed to differ from an arrow, since it's.. a dash, not right. So I made two little arcs, one big followed by one small, kind of like Bloob when it dashes. Also very simple, and I like that too.
 
-![Dash icon by Joacim Eldre](../images/posts/bloob_icon_doublearrow.png "Dash icon {.flat}")
+![Dash icon by Joacim Eldre](../images/posts/bloob_icon_doublearrow.webp "Dash icon {.flat}")
 
 Wheee! I like all of my tiny icon babies. I hope you like them too.
 

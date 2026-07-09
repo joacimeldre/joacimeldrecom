@@ -3,7 +3,7 @@ pubDate: 2026-02-20
 title: A bloob is born
 description: "The beginning of Bloob. A tiny PICO-8 video game I'm making."
 image:
-  url: "../images/posts/bloob_joacim_eldre.png"
+  url: "../images/posts/bloob_joacim_eldre.webp"
   alt: "A rectangle made of green jelly."
 tags: ["All", "Game Development", "PICO-8"]
 ---

@@ -3,7 +3,7 @@ pubDate: 2026-05-12
 title: Good enough
 description: "Most things made today are mostly just enough. Without good. Do we really need another good enough?"
 image:
-  url: "../images/posts/Good_Enough.png"
+  url: "../images/posts/Good_Enough.webp"
   alt: "Good enough illustration by Joacim Eldre"
 tags: ["All", "Rant", "Design"]
 ---
@@ -34,7 +34,7 @@ If your breath is rapidly increasing and your pants are tightening while you rea
 
 Instead you should get up and out of your chair, and make the right thing by talking to humans. Preferably drawing squiggly lines while you talk to them, so you truly understand each other. You know humans? Those strange upright creatures on two legs and an O in the middle of their face that open and close. And sometimes, or often depending on how self-centered the human is, there’s noise coming out of the hole. Oh no, run!
 
-![Two legs and a long shape, on the butt end is two dots and a mouth. Also known as a hooman. Drawn by Joacim Eldre](../images/posts/hooman.png "Human in a meeting")
+![Two legs and a long shape, on the butt end is two dots and a mouth. Also known as a hooman. Drawn by Joacim Eldre](../images/posts/hooman.webp "Human in a meeting")
 
 No, really though, test the solution on the people (or robots, robots have feelings too according to some CEOs) who use the thing or are going to use the thing. Get their feedback on the thing. Use their feedback to make the thing better than what they need. Not good enough. Better. Then test it again and keep improving until it’s done. Is it ever done? It is if you’re good.
 

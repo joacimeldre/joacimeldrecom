@@ -3,7 +3,7 @@ pubDate: 2026-02-06
 title: Design resources
 description: "Design resources that make me a finer designer."
 image:
-  url: "../images/posts/design_resources_joacim_eldre.png"
+  url: "../images/posts/design_resources_joacim_eldre.webp"
   alt: "A triangle, square, and circle on a gray background, the triangle is black, the square has the bottom traced with a mouse cursor on the end. Made by Joacim Eldre."
 tags: ["All", "Design", "Resource"]
 ---

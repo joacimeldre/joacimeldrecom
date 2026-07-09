@@ -3,7 +3,7 @@ pubDate: 2026-06-12
 title: Bloob, a tiny video game
 description: "Bloob is a tiny video game made in a tiny fantasy video game console called PICO-8. It's a platformer with no enemies, no text, and no score. Just you, the bloob, and the world to explore."
 image:
-  url: "../images/posts/bloob.png"
+  url: "../images/posts/bloob.webp"
   alt: "Bloob eyes by Joacim Eldre"
 tags: ["All", "PICO-8", "Game Development"]
 ---
@@ -50,25 +50,25 @@ I wanted to make a platformer that _feels good_. I've spent most of my time crea
 
 ## Bloob
 
-![Bloob, a green square of jelly](../images/posts/bloob.gif "Bloob, a green square of jelly")
+![Bloob, a green square of jelly](../images/posts/bloob.webp "Bloob, a green square of jelly")
 
 Bloob is the player character. A green square of jelly that you can move left, right, jump, and dash. You can also jump from walls and glide on them! Magnificent. I wanted Bloob to be simple, cute, and fun to move. I still want to improve animations, but ah. Perhaps in _Bloob 2: The Jelly Kingdom_!
 
 ## Walk
 
-![A green square of jelly walking inside a dungeon](../images/posts/bloob_walk.gif "Bloob walks")
+![A green square of jelly walking inside a dungeon](../images/posts/bloob_walk.webp "Bloob walks")
 
 Walk is the most basic movement in Bloob. You can walk left and right. To make walking feel alright there's a tiny bit of acceleration on the x movement, and a tiny bit of deceleration when you stop walking. I also added another sprite so Bloob bobs up and down as it wobble around. Walk isn't the most exciting feature, but it's good to have it feel good.
 
 ## Bloobs
 
-![A green bloob floating around as Bloob rushes to absorb it](../images/posts/bloob_bloobs.gif "Bloob bloobs")
+![A green bloob floating around as Bloob rushes to absorb it](../images/posts/bloob_bloobs.webp "Bloob bloobs")
 
 Bloobs are like Bloob, but smoll. You can find more bloobs throughout the world. They float around and you can absorb them to gain more.. Bloob. You need bloobs to jump higher and dash further to explore all of the world.
 
 ## Jump
 
-![A green square of jelly jumping inside a dungeon](../images/posts/bloob_jump.gif "Bloob jumps")
+![A green square of jelly jumping inside a dungeon](../images/posts/bloob_jump.webp "Bloob jumps")
 
 Jump is a fundamental part of the game. You can jump on the ground, in the air, and on walls. You can use the walls to jump your way higher and gain height. I wanted jumping to be fun and satisfying. It's the main way to get around in the game.
 
@@ -76,13 +76,13 @@ Jumping require bloobs. Bloobs are like Bloob, but smoll. You can find more bloo
 
 ## Dash
 
-![A green square of jelly dashing inside a dungeon](../images/posts/bloob_dash.gif "Bloob dashes")
+![A green square of jelly dashing inside a dungeon](../images/posts/bloob_dash.webp "Bloob dashes")
 
 Dash is another fundamental part of the game. You can dash in the air to gain more distance and height. You can also dash on the ground to move faster. Dashing also require bloobs, so you need to find bloobs to be able to dash.
 
 ## Key
 
-![A green floating key inside a dungeon](../images/posts/bloob_key.gif "A key")
+![A green floating key inside a dungeon](../images/posts/bloob_key.webp "A key")
 
 Keys! The main collectible in Bloob. At the beginning it was key, but then there were keys. I thought that design was a bit more fun. It meant that I could make more world! In the concepts I played around with a hidden.. level, and the key design made that feel sort of natural. Or well, it pushed the player to be curious, explore, and learn. I like that.
 
@@ -90,7 +90,7 @@ You need to find the keys to open the door and make Bloob free. The keys are hid
 
 ## Door
 
-![A door with a green key, maybe you can open it?](../images/posts/bloob_door.gif "A door")
+![A door with a green key, maybe you can open it?](../images/posts/bloob_door.webp "A door")
 
 Ah. The door! Perhaps one of the best features of a video game. Did you know that some developers make it a thing to have the most mechanically complex door designs? I'm not talking just the visual design, also the unlocking, locking, and general how to of the door itself.
 
@@ -100,7 +100,7 @@ Anyway. I wanted to have a door as the end goal of the level in Bloob. You need 
 
 ## Secret
 
-![A secret, it's secret. A small visual indication in the form of four pixeled colors, they turn off if the player pick up the secret](../images/posts/bloob_secret.gif "A secret")
+![A secret, it's secret. A small visual indication in the form of four pixeled colors, they turn off if the player pick up the secret](../images/posts/bloob_secret.webp "A secret")
 
 What's a video game without a secret? A video game. 🥁
 
@@ -108,19 +108,19 @@ I did want a tiny secret in this tiny dungeon though, so I added a secret that y
 
 ## Wall slide (glide?)
 
-![A green square of jelly sliding on a wall inside a dungeon](../images/posts/bloob_wallslide.gif "Bloob wall slides")
+![A green square of jelly sliding on a wall inside a dungeon](../images/posts/bloob_wallslide.webp "Bloob wall slides")
 
 Wall slide is a silly movement that happen when Bloob hits a wall at a height. It makes Bloob slide down the wall instead of just falling down. I wanted to add this feature to make the game feel more fun and to encourage players to use the walls to their advantage. To make it a bit more interesting I added dust particles and a sprite swap.
 
 ## Crumble tile
 
-![A crumble tile, a tile that crumble when you step on it](../images/posts/bloob_crumble.gif "A crumble tile")
+![A crumble tile, a tile that crumble when you step on it](../images/posts/bloob_crumble.webp "A crumble tile")
 
 Crumble tile crumbles and disappear when Bloob step on them. This kind of tile is a pretty standard feature in platformers, so I wanted to add it to Bloob and see if I could solve that in a fun way. The particles, crumble effect, and missing tile indicator are all neat details that I think add up to make it feel good.
 
 ## Checkpoint
 
-![Checkpoint, a tiny tile that you can activate to respawn at](../images/posts/bloob_checkpoint.gif "A checkpoint")
+![Checkpoint, a tiny tile that you can activate to respawn at](../images/posts/bloob_checkpoint.webp "A checkpoint")
 
 Ah. The checkpoint. A forgiving feature that lets the player respawn at a point in the level instead of starting over.
 
@@ -130,7 +130,7 @@ So in Bloob, you have checkpoints. They're tiny little tiles that activate when 
 
 ## Respawn
 
-![Respawn, a small animation that play when you jellify](../images/posts/bloob_respawn.gif "Bloob respawns")
+![Respawn, a small animation that play when you jellify](../images/posts/bloob_respawn.webp "Bloob respawns")
 
 When you jellify, you respawn at the last checkpoint you activated. I wanted to make the respawn to feel like it made sense, so when Bloob turns into a bunch of jellies it made sense to stuff the jellies back together into Bloob. So I made a small particle effect of Bloob imploding on spawn, while still showing jellification.
 
@@ -138,7 +138,7 @@ Good thing I like jelly. Did you know that inside green jelly, there's apparentl
 
 ## Particles
 
-![Particles, a small screen that show particles](../images/posts/bloob_particles.gif "Bloob particles")
+![Particles, a small screen that show particles](../images/posts/bloob_particles.webp "Bloob particles")
 
 Particles! Bringing life to a video game.
 
@@ -148,19 +148,19 @@ Particles are a tiny and important detail for a good feeling. A long long time a
 
 Look at some more particles.
 
-![Small dust particles that float and then disappear](../images/posts/bloob_particle_dust.gif "Bloob dust particles")
+![Small dust particles that float and then disappear](../images/posts/bloob_particle_dust.webp "Bloob dust particles")
 
-![Small dust particles from bloob sliding on the wall](../images/posts/bloob_particle_glide.gif "Bloob wall glide particles")
+![Small dust particles from bloob sliding on the wall](../images/posts/bloob_particle_glide.webp "Bloob wall glide particles")
 
 ## Stats
 
-![Stats, a small screen that show your stats](../images/posts/bloob_stats.gif "Bloob stats")
+![Stats, a small screen that show your stats](../images/posts/bloob_stats.webp "Bloob stats")
 
 Statistics! I included stats for time spent in the game, how many times Bloob has jumped and dashed, which level and room you're currently in, and how many secrets you've found. I have some co-workers who began speed running and they requested milliseconds in the timer, seconds wasn't precise enough for them. They're glorious. :D
 
 ## Decoration
 
-![Vines that sway when Bloob touch them, purely decoration](../images/posts/bloob_vine.gif "Bloob vine")
+![Vines that sway when Bloob touch them, purely decoration](../images/posts/bloob_vine.webp "Bloob vine")
 
 There's some decoration in Bloob. I wanted to make the world feel alive and interesting, and I love interactive environments so there's vines that sway when Bloob touch them. And there's grass and flowers that are added on top of the stone tiles, these are purely visual, and there's some growth over the door. Decoration in PICO-8 is super fun because every single pixel is so important, and I restrained myself to 8x8 tiles for most things except the door.
 
