@@ -321,13 +321,13 @@ li a:not(.rounded-full):not(.logo-link):hover::after {
 /* First wavy line */
 a:not(.rounded-full):not(.logo-link):hover::before,
 li a:not(.rounded-full):not(.logo-link):hover::before {
-  bottom: 0;
+  bottom: 2px;
 }
 
 /* Second wavy line, 1px below — no gap */
 a:not(.rounded-full):not(.logo-link):hover::after,
 li a:not(.rounded-full):not(.logo-link):hover::after {
-  bottom: -1px;
+  bottom: 1px;
 }
 
 @layer utilities {
@@ -561,11 +561,19 @@ li a:not(.rounded-full):not(.logo-link):hover::after {
   }
 
   .prose input[type="checkbox"] {
-    @apply w-4 h-4 rounded border-2 border-base-900 mr-1 ring-base-900 !accent-transparent align-middle;
+    @apply w-4 h-4 rounded border-2 border-base-900 mr-1 ring-base-900 accent-transparent align-middle;
   }
 
   .prose input[type="checkbox"]:checked {
     @apply bg-base-900 ring-base-900 ring-2;
+  }
+
+  .inline-highlight::-moz-selection,
+  .inline-highlight::selection,
+  .prose mark::-moz-selection,
+  .prose mark::selection {
+    background-color: var(--selection-highlight, #fde68a);
+    color: inherit;
   }
 
   .prose mark {

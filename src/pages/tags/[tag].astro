@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import BlogEntries from "@/components/entries/BlogEntry.astro";
-import { getCollection } from "astro:content";
+import { getCollection, type CollectionEntry } from "astro:content";
 export const prerender = true;
 
 export async function getStaticPaths() {
@@ -28,6 +28,9 @@ export async function getStaticPaths() {
 }
 
 const allPosts = await getCollection("posts");
+const tagAccentColors = ["#ff5fa2", "#ffc800", "#5f71ff", "#39edae"] as const;
+const getTagAccentColor = (index: number) =>
+  tagAccentColors[index % tagAccentColors.length];
 
 // Sort tags by name in alphabetical order, ignoring case sensitivity
 const tags = [...new Set(allPosts.map((post) => post.data.tags).flat())].sort(
@@ -35,38 +38,42 @@ const tags = [...new Set(allPosts.map((post) => post.data.tags).flat())].sort(
 );
 
 const { tag } = Astro.params;
-const { posts } = Astro.props;
+const { posts } = Astro.props as { posts: CollectionEntry<"posts">[] };
+const activeTagIndex = tags.findIndex((currentTag) => currentTag === tag);
+const activeTagAccentColor = getTagAccentColor(
+  activeTagIndex === -1 ? 0 : activeTagIndex,
+);
 ---
 
 <BaseLayout title={`${tag} posts - Joacim Eldre`}>
   <section>
     <div class="py-24">
-      <h2
-        class="typo-display-lg mb-2"
+      <h1
+        class="typo-display-xl mb-2"
       >
         Show posts tagged with
-      </h2>
+      </h1>
       <div class="flex flex-wrap gap-3 mt-2">
         {
           tags.map((t) => {
             const isActive = t === tag;
             const classes = isActive
-              ? "font-bold typo-nav"
-              : "underline hover:decoration-wavy typo-nav";
+              ? "font-bold typo-main"
+              : "typo-main";
 
             return (
-              <a class={classes} href={`/tags/${t}`}>
+              <a class={classes} href={`/tags/${encodeURIComponent(t)}`}>
                 {t}
               </a>
             );
           })
         }
       </div>
-      <h1
-        class="typo-display-xl max-w-xl mt-8"
+      <h2
+        class="typo-display-lg max-w-xl mt-8"
       >
-        ö <span class="bg-amber-200 px-2 rounded">{tag}</span>
-      </h1>
+        ö <span class="px-2 rounded" style={`background-color: ${activeTagAccentColor}`}>{tag}</span>
+      </h2>
       <ul class="mt-4">
         {
           posts.map((post) => (

@@ -28,7 +28,7 @@ const { title, description, image, type, publishedTime, showBallSling = true } =
   </head>
   <body class="flex flex-col max-w-3xl min-h-screen px-8 mx-auto">
     <Navigation />
-    <main class="flex-grow typo-main-size"><slot /></main>
+    <main class="grow typo-main-size"><slot /></main>
     <Footer />
     {showBallSling && <BallSling />}
   </body>

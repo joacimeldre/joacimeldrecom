@@ -20,8 +20,8 @@ const pageTitle = "posts - Joacim Eldre";
         {
           sortedTags.map((tag) => (
             <a
-              class="typo-nav"
-              href={`/tags/${tag}`}
+              class="typo-main"
+              href={`/tags/${encodeURIComponent(tag)}`}
             >
               {tag}
             </a>

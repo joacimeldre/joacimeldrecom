@@ -64,7 +64,7 @@ const formattedDate = (() => {
               normalizedTags.map((tag: string, index: number) => (
                 <>
                   {index > 0 && " & "}
-                  <a href={`/tags/${encodeURIComponent(tag)}`} class="underline hover:decoration-wavy typo-nav">{tag}</a>
+                  <a href={`/tags/${encodeURIComponent(tag)}`} class="typo-nav">{tag}</a>
                 </>
               ))
             }

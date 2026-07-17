@@ -1,6 +1,6 @@
 ---
 import { Image } from "astro:assets";
-import logo from "../../content/images/logo.svg";
+import logo from "../../content/images/logo_normal.svg";
 ---
 
 <div
@@ -11,22 +11,22 @@ import logo from "../../content/images/logo.svg";
       <Image
         src={logo}
         alt="Joacim Eldre Logo"
-        width={69}
-        height={23}
-        class="h-5 w-auto max-w-none block"
+        width={32}
+        height={32}
+        class="h-8 w-8 max-w-none block"
       />
     </a>
   </div>
-  <nav class="flex ml-auto gap-4 items-center">
+  <nav class="flex ml-auto items-center gap-4 sm:gap-6">
     <a
       href="/about"
-      class="underline typo-nav transition duration-200 hover:decoration-wavy"
+      class="typo-nav transition duration-200"
     >
       About
     </a>
     <a
       href="mailto:hei@joacimeldre.com"
-      class="bg-accent typo-nav py-2 px-4 rounded-full transition duration-200 hover:bg-white hover:text-base-900"
+      class="bg-accent text-base-900 typo-nav py-2 px-3 sm:px-4 rounded-full transition duration-200 hover:bg-base-900 hover:text-base-50"
       >Hello <span aria-hidden="true">:)</span></a
     >
   </nav>
