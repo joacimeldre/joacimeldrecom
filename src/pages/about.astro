@@ -2,6 +2,7 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { Image } from "astro:assets";
 import Adventure from "../content/images/page/about/Adventure.webp";
+import logoMark from "../content/images/logo_normal.svg";
 ---
 
 <BaseLayout
@@ -9,7 +10,7 @@ import Adventure from "../content/images/page/about/Adventure.webp";
     description="Learn more about Joacim Eldre, a designer, coder, adventurer, and lover of all things yellow."
 >
     <section>
-        <div class="py-24 max-w-xl2">
+        <div class="pt-16 pb-24 max-w-xl2">
             <h1 class="typo-display-xl mb-4">
                 I'm a boy, friend, dad, adventurer, nerd, rainbow spewer, human.
             </h1>
@@ -19,7 +20,7 @@ import Adventure from "../content/images/page/about/Adventure.webp";
                 Loving.
             </p>
             <p class="mt-6 typo-main">
-                I'm formally trained as a visual designer and game designer, and I have a strong interest in and some work experience with code. Mostly no/low code, but I prefer to write and enjoy code that's not abstracted away. I'm currently exploring how to become more proficient in code, and I bring a design mindset into that journey, reiterating fast to get somewhere, testing, and improving.
+                I'm formally educated as a visual designer and game designer, and I have a strong interest in and some work experience with code. Mostly no/low code, but I prefer to write and enjoy code that's not abstracted away. I'm currently exploring how to become more proficient in code, and I bring a design mindset into that journey, reiterating fast to get somewhere, testing, and improving.
             </p>
             <p class="mt-6 typo-main">
                 I design software in public healthcare. We're currently working
@@ -52,6 +53,19 @@ import Adventure from "../content/images/page/about/Adventure.webp";
                 <li>drawing.</li>
                 <li>video games.</li>
             </ul>
+            <p class="mt-6 typo-main">
+                                <span class="inline-block h-[1.25em] w-[1.25em] leading-none">
+                    <Image
+                        src={logoMark}
+                        alt=""
+                        aria-hidden="true"
+                        width={20}
+                        height={20}
+                        class="inline-block h-full w-full max-w-none rounded-none m-0 pr-2 align-middle"
+                    />
+                </span>
+                Perhaps you've figured out what my logo is? The feeling when a design finally clicks is chef's kiss.
+            </p>
         </div>
     </section>
 </BaseLayout>

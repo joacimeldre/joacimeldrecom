@@ -6,7 +6,7 @@ const isAboutActive = Astro.url.pathname === "/about" || Astro.url.pathname === 
 ---
 
 <div
-  class="mt-6 relative flex flex-row w-full mx-auto items-center justify-between"
+  class="mt-5 relative flex flex-row w-full mx-auto items-center justify-between"
 >
   <div>
     <a href="/" aria-label="Home" class="logo-link">
@@ -19,7 +19,7 @@ const isAboutActive = Astro.url.pathname === "/about" || Astro.url.pathname === 
       />
     </a>
   </div>
-  <nav class="flex ml-auto items-center gap-4 sm:gap-6">
+  <nav class="flex ml-auto items-center gap-3 sm:gap-5">
     <a
       href="/about"
       class:list={["typo-nav nav-link transition duration-200", { "font-bold": isAboutActive }]}
@@ -29,7 +29,7 @@ const isAboutActive = Astro.url.pathname === "/about" || Astro.url.pathname === 
     </a>
     <a
       href="mailto:hei@joacimeldre.com"
-      class="bg-accent text-base-900 typo-nav py-2 px-3 sm:px-4 rounded-full transition duration-200 hover:bg-base-900 hover:text-base-50"
+      class="button-link bg-accent text-base-900 typo-nav py-2 px-3 sm:px-4 rounded-full transition duration-200 hover:bg-base-900 hover:text-base-50"
       >Hello <span aria-hidden="true">:)</span></a
     >
   </nav>

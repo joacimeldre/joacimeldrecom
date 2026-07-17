@@ -189,6 +189,18 @@ a.nav-link:visited {
   text-decoration: none;
 }
 
+a.nav-link:hover,
+a.nav-link:focus-visible {
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+  text-decoration-color: currentColor;
+  text-decoration-thickness: 1.5px;
+}
+
+a.button-link {
+  border-radius: 1rem !important;
+}
+
 a.logo-link {
   position: relative;
   width: fit-content;
