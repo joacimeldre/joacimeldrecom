@@ -1,5 +1,4 @@
 ---
-import { Image } from "astro:assets";
 import logoSrc from "../../content/images/logo_normal.svg";
 
 interface Props {
@@ -21,10 +20,12 @@ const {
   style,
   ariaHidden,
 } = Astro.props;
+
+const src = typeof logoSrc === "string" ? logoSrc : logoSrc.src;
 ---
 
-<Image
-  src={logoSrc}
+<img
+  src={src}
   alt={alt}
   width={width}
   height={height}

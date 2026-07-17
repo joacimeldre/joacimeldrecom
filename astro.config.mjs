@@ -9,6 +9,7 @@ import rehypeExternalLinks from "rehype-external-links";
 
 const siteUrl = "https://joacimeldrecom.vercel.app";
 const siteHostname = new URL(siteUrl).hostname;
+const includeDrafts = process.env.NODE_ENV !== "production";
 
 function rehypeImageClassFromTitle() {
   return (tree) => {
@@ -76,7 +77,7 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
   markdown: {
-    drafts: true,
+    drafts: includeDrafts,
     processor: unified({
       rehypePlugins: [
         rehypeImageClassFromTitle,
@@ -106,7 +107,7 @@ export default defineConfig({
   shikiConfig: {
     wrap: true,
     skipInline: false,
-    drafts: true,
+    drafts: includeDrafts,
   },
   site: siteUrl,
   integrations: [sitemap(), mdx()],
