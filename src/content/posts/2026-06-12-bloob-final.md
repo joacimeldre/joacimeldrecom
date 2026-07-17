@@ -8,8 +8,6 @@ image:
 tags: ["All", "PICO-8", "Game Development"]
 ---
 
-Dunno what's up with the hero image, I'll fix that later.
-
 # Game
 
 A while back [I wrote about an idea for a tiny video game](/posts/2026-02-20-start-of-bloob) and then [I wrote about the playable prototype of the video game](/posts/2026-05-29-bloob-prototype).
