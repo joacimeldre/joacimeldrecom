@@ -173,10 +173,20 @@
   }
 }
 
-a:not(.rounded-full):not(.logo-link) {
+a:not(.rounded-full):not(.logo-link):not(.nav-link) {
   position: relative;
   width: fit-content;
   text-decoration-line: underline;
+}
+
+a.nav-link {
+  text-decoration: none;
+  font-style: normal;
+}
+
+a.nav-link:visited {
+  color: inherit;
+  text-decoration: none;
 }
 
 a.logo-link {
@@ -186,28 +196,28 @@ a.logo-link {
 }
 
 /* Sibling links (tag lists, inline links) */
-a:not(.rounded-full):not(.logo-link):nth-of-type(4n + 1) {
+a:not(.rounded-full):not(.logo-link):not(.nav-link):nth-of-type(4n + 1) {
   --lc: #ff5fa2;
   text-decoration-color: #ff5fa2 !important;
   text-decoration-style: solid !important;
   text-decoration-thickness: 2px !important;
 }
 
-a:not(.rounded-full):not(.logo-link):nth-of-type(4n + 2) {
+a:not(.rounded-full):not(.logo-link):not(.nav-link):nth-of-type(4n + 2) {
   --lc: #ffc800;
   text-decoration-color: #ffc800 !important;
   text-decoration-style: solid !important;
   text-decoration-thickness: 2px !important;
 }
 
-a:not(.rounded-full):not(.logo-link):nth-of-type(4n + 3) {
+a:not(.rounded-full):not(.logo-link):not(.nav-link):nth-of-type(4n + 3) {
   --lc: #5f71ff;
   text-decoration-color: #5f71ff !important;
   text-decoration-style: solid !important;
   text-decoration-thickness: 2px !important;
 }
 
-a:not(.rounded-full):not(.logo-link):nth-of-type(4n + 4) {
+a:not(.rounded-full):not(.logo-link):not(.nav-link):nth-of-type(4n + 4) {
   --lc: #39edae;
   text-decoration-color: #39edae !important;
   text-decoration-style: solid !important;
@@ -215,28 +225,28 @@ a:not(.rounded-full):not(.logo-link):nth-of-type(4n + 4) {
 }
 
 /* List item links — rotate by li position since each link is its own parent */
-li:nth-child(4n + 1) a:not(.rounded-full):not(.logo-link) {
+li:nth-child(4n + 1) a:not(.rounded-full):not(.logo-link):not(.nav-link) {
   --lc: #ff5fa2;
   text-decoration-color: #ff5fa2 !important;
   text-decoration-style: solid !important;
   text-decoration-thickness: 2px !important;
 }
 
-li:nth-child(4n + 2) a:not(.rounded-full):not(.logo-link) {
+li:nth-child(4n + 2) a:not(.rounded-full):not(.logo-link):not(.nav-link) {
   --lc: #ffc800;
   text-decoration-color: #ffc800 !important;
   text-decoration-style: solid !important;
   text-decoration-thickness: 2px !important;
 }
 
-li:nth-child(4n + 3) a:not(.rounded-full):not(.logo-link) {
+li:nth-child(4n + 3) a:not(.rounded-full):not(.logo-link):not(.nav-link) {
   --lc: #5f71ff;
   text-decoration-color: #5f71ff !important;
   text-decoration-style: solid !important;
   text-decoration-thickness: 2px !important;
 }
 
-li:nth-child(4n + 4) a:not(.rounded-full):not(.logo-link) {
+li:nth-child(4n + 4) a:not(.rounded-full):not(.logo-link):not(.nav-link) {
   --lc: #39edae;
   text-decoration-color: #39edae !important;
   text-decoration-style: solid !important;
@@ -246,10 +256,10 @@ li:nth-child(4n + 4) a:not(.rounded-full):not(.logo-link) {
 /* Prose links — rotate by paragraph/list item order for predictable post-page colors. */
 :is(.prose, .typo-prose)
   p:nth-of-type(4n + 1)
-  a:not(.rounded-full):not(.logo-link),
+  a:not(.rounded-full):not(.logo-link):not(.nav-link),
 :is(.prose, .typo-prose)
   li:nth-of-type(4n + 1)
-  a:not(.rounded-full):not(.logo-link) {
+  a:not(.rounded-full):not(.logo-link):not(.nav-link) {
   --lc: #ff5fa2;
   text-decoration-color: #ff5fa2 !important;
   text-decoration-style: solid !important;
@@ -258,10 +268,10 @@ li:nth-child(4n + 4) a:not(.rounded-full):not(.logo-link) {
 
 :is(.prose, .typo-prose)
   p:nth-of-type(4n + 2)
-  a:not(.rounded-full):not(.logo-link),
+  a:not(.rounded-full):not(.logo-link):not(.nav-link),
 :is(.prose, .typo-prose)
   li:nth-of-type(4n + 2)
-  a:not(.rounded-full):not(.logo-link) {
+  a:not(.rounded-full):not(.logo-link):not(.nav-link) {
   --lc: #ffc800;
   text-decoration-color: #ffc800 !important;
   text-decoration-style: solid !important;
@@ -270,10 +280,10 @@ li:nth-child(4n + 4) a:not(.rounded-full):not(.logo-link) {
 
 :is(.prose, .typo-prose)
   p:nth-of-type(4n + 3)
-  a:not(.rounded-full):not(.logo-link),
+  a:not(.rounded-full):not(.logo-link):not(.nav-link),
 :is(.prose, .typo-prose)
   li:nth-of-type(4n + 3)
-  a:not(.rounded-full):not(.logo-link) {
+  a:not(.rounded-full):not(.logo-link):not(.nav-link) {
   --lc: #5f71ff;
   text-decoration-color: #5f71ff !important;
   text-decoration-style: solid !important;
@@ -282,10 +292,10 @@ li:nth-child(4n + 4) a:not(.rounded-full):not(.logo-link) {
 
 :is(.prose, .typo-prose)
   p:nth-of-type(4n + 4)
-  a:not(.rounded-full):not(.logo-link),
+  a:not(.rounded-full):not(.logo-link):not(.nav-link),
 :is(.prose, .typo-prose)
   li:nth-of-type(4n + 4)
-  a:not(.rounded-full):not(.logo-link) {
+  a:not(.rounded-full):not(.logo-link):not(.nav-link) {
   --lc: #39edae;
   text-decoration-color: #39edae !important;
   text-decoration-style: solid !important;
@@ -293,16 +303,16 @@ li:nth-child(4n + 4) a:not(.rounded-full):not(.logo-link) {
 }
 
 /* On hover: fade out the solid underline, replace with two wavy pseudo-elements */
-a:not(.rounded-full):not(.logo-link):hover,
-li a:not(.rounded-full):not(.logo-link):hover {
+a:not(.rounded-full):not(.logo-link):not(.nav-link):hover,
+li a:not(.rounded-full):not(.logo-link):not(.nav-link):hover {
   text-decoration-color: transparent !important;
   font-style: oblique 8deg;
 }
 
-a:not(.rounded-full):not(.logo-link):hover::before,
-a:not(.rounded-full):not(.logo-link):hover::after,
-li a:not(.rounded-full):not(.logo-link):hover::before,
-li a:not(.rounded-full):not(.logo-link):hover::after {
+a:not(.rounded-full):not(.logo-link):not(.nav-link):hover::before,
+a:not(.rounded-full):not(.logo-link):not(.nav-link):hover::after,
+li a:not(.rounded-full):not(.logo-link):not(.nav-link):hover::before,
+li a:not(.rounded-full):not(.logo-link):not(.nav-link):hover::after {
   content: "";
   position: absolute;
   left: 0;
@@ -319,14 +329,14 @@ li a:not(.rounded-full):not(.logo-link):hover::after {
 }
 
 /* First wavy line */
-a:not(.rounded-full):not(.logo-link):hover::before,
-li a:not(.rounded-full):not(.logo-link):hover::before {
+a:not(.rounded-full):not(.logo-link):not(.nav-link):hover::before,
+li a:not(.rounded-full):not(.logo-link):not(.nav-link):hover::before {
   bottom: 2px;
 }
 
 /* Second wavy line, 1px below — no gap */
-a:not(.rounded-full):not(.logo-link):hover::after,
-li a:not(.rounded-full):not(.logo-link):hover::after {
+a:not(.rounded-full):not(.logo-link):not(.nav-link):hover::after,
+li a:not(.rounded-full):not(.logo-link):not(.nav-link):hover::after {
   bottom: 1px;
 }
 
@@ -389,19 +399,19 @@ li a:not(.rounded-full):not(.logo-link):hover::after {
     }
 
     .typo-display-xl {
-      font-size: clamp(1.9rem, 1.55rem + 2vw, 2.6rem);
+      font-size: clamp(2.15rem, 1.8rem + 2vw, 2.85rem);
       line-height: 1.1;
     }
 
     .typo-display-lg {
-      font-size: clamp(1.45rem, 1.25rem + 1.2vw, 1.9rem);
+      font-size: clamp(1.7rem, 1.5rem + 1.2vw, 2.15rem);
       line-height: 1.15;
     }
 
     .typo-main-size,
     .typo-main,
     .typo-main-muted {
-      font-size: clamp(1rem, 0.95rem + 0.45vw, 1.12rem);
+      font-size: clamp(1.25rem, 1.2rem + 0.45vw, 1.37rem);
       line-height: 1.58;
     }
 
@@ -409,12 +419,12 @@ li a:not(.rounded-full):not(.logo-link):hover::after {
     .typo-ui,
     .typo-nav,
     .typo-ui-strong {
-      font-size: clamp(0.92rem, 0.88rem + 0.26vw, 1rem);
+      font-size: clamp(1.17rem, 1.13rem + 0.26vw, 1.25rem);
       line-height: 1.42;
     }
 
     .typo-prose {
-      font-size: clamp(1rem, 0.95rem + 0.4vw, 1.08rem);
+      font-size: clamp(1.25rem, 1.2rem + 0.4vw, 1.33rem);
     }
   }
 

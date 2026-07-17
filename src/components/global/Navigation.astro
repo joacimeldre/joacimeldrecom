@@ -1,6 +1,8 @@
 ---
 import { Image } from "astro:assets";
 import logo from "../../content/images/logo_normal.svg";
+
+const isAboutActive = Astro.url.pathname === "/about" || Astro.url.pathname === "/about/";
 ---
 
 <div
@@ -20,7 +22,8 @@ import logo from "../../content/images/logo_normal.svg";
   <nav class="flex ml-auto items-center gap-4 sm:gap-6">
     <a
       href="/about"
-      class="typo-nav transition duration-200"
+      class:list={["typo-nav nav-link transition duration-200", { "font-bold": isAboutActive }]}
+      aria-current={isAboutActive ? "page" : undefined}
     >
       About
     </a>
