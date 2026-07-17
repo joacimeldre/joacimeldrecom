@@ -14,6 +14,7 @@ const IS_POST_PAGE = window.location.pathname.startsWith("/posts/");
 const PREFERS_REDUCED_MOTION = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const GRAVITY = 2e3, GYRO_GRAVITY_FACTOR = 0.95, AIR_DRAG = 0.997, FLOOR_BOUNCE = 0.62, FLOOR_AIRTIME_BONUS = 0.42, AIRTIME_FOR_MAX_BOUNCE = 0.95, WALL_BOUNCE = 0.84, FLOOR_FRICTION = 0.96, BODY_BOUNCE = 0.72, BODY_AIRTIME_BONUS = 0.24, ANGULAR_DRAG = 0.991, COM_RESTORE = 4.2, MAX_LINEAR_SPEED = 2600, MAX_ANGULAR_SPEED = 3.2, GROUND_IMPACT_MIN_SPEED = 210, GROUND_IMPACT_STRENGTH = 0.6, GROUND_IMPACT_RADIUS = 380, IMPACT_SQUASH_MAX = 0.1, ANTICIPATION_HEIGHT = 90, ANTICIPATION_SPEED = 240, GEL_LOW_IMPACT_SPEED = 170, RESTING_SQUASH = 0.022, ROLL_SPEED_FOR_MAX_GLIDE = 320, ROLL_FRICTION_FAST = 0.9992, ROLL_FRICTION_SLOW = 0.965, ROLL_STOP_SPEED = 0.045, ROLL_BACK_TRIGGER = 0.11, ROLL_BACK_FACTOR = -0.22, FLING_SAMPLE_WINDOW_MS = 72, FLING_GAIN = 1.22, COLLISION_ITERATIONS = IS_POST_PAGE ? 5 : 7, PENETRATION_SLOP = 0.15, POSITION_CORRECTION_PERCENT = 0.9, FIXED_DT = PREFERS_REDUCED_MOTION ? 1 / 45 : IS_POST_PAGE ? 1 / 72 : 1 / 96, MAX_SUBSTEPS = IS_POST_PAGE ? 4 : 5;
 let viewportWidth = window.innerWidth, viewportHeight = window.innerHeight, bodies = [], lastTs = performance.now(), accumulator = 0, shapeCount = 0, dragState = null, pendingImpactPulses = [], hoveringBall = false, gravityX = 0, gravityY = GRAVITY, gravityTargetX = 0, gravityTargetY = GRAVITY, gyroPermissionAttempted = false, hasUserInteracted = sessionStorage.getItem(CLUE_CONSUMED_KEY) === "1", clueActivatedByFooter = false, clueBall = null, clueAnchorX = 0, clueHopClock = 0, clueNextHopAt = 0;
+const HAS_BOOTED_KEY = "ballslingBooted";
 let footerResizeObserver = null, documentResizeObserver = null, anchorUpdateScheduled = false;
 const SLING_BURST_MIN_SPEED = 230;
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
@@ -276,7 +277,7 @@ function spawnSlingBurst(x, y) {
   }
 
   overlayContainer.appendChild(burst);
-  window.setTimeout(() => burst.remove(), 360);
+  window.setTimeout(() => burst.remove(), 330);
 }
 function clampInsideViewport(b) {
   const e = b.radius;
@@ -286,7 +287,7 @@ function clampInsideViewport(b) {
     const impactSpeed = Math.abs(b.vy);
     b.y = floorY;
     const rest = Math.min(0.92, FLOOR_BOUNCE + FLOOR_AIRTIME_BONUS * Math.min(1, b.airTime / AIRTIME_FOR_MAX_BOUNCE) + clamp((impactSpeed - 440) / 1e3, 0, 0.16));
-    b.vy = -Math.abs(b.vy) * rest, b.squash = Math.max(b.squash, Math.min(IMPACT_SQUASH_MAX, impactSpeed / 2e3)), b.av += b.vx * 18e-4, b.vx *= FLOOR_FRICTION, b.av *= FLOOR_FRICTION, b.didGroundOverstep = false, impactSpeed < GEL_LOW_IMPACT_SPEED && (b.vy *= 0.28, b.vx *= 0.97, b.av *= 0.55), b.touchingFloor = true, b.airTime = 0, Math.abs(b.vy) < 14 && (b.vy = 0), Math.abs(b.vx) < 0.02 && (b.vx = 0), Math.abs(b.av) < 2e-3 && (b.av = 0), applyGroundImpactImpulse(b, impactSpeed), queueImpactPulseCurve(b, impactSpeed), b.slingBurstArmed && (impactSpeed >= SLING_BURST_MIN_SPEED && spawnSlingBurst(b.x, b.y - b.radius - 8), b.slingBurstArmed = false);
+    b.vy = -Math.abs(b.vy) * rest, b.squash = Math.max(b.squash, Math.min(IMPACT_SQUASH_MAX, impactSpeed / 2e3)), b.av += b.vx * 18e-4, b.vx *= FLOOR_FRICTION, b.av *= FLOOR_FRICTION, b.didGroundOverstep = false, impactSpeed < GEL_LOW_IMPACT_SPEED && (b.vy *= 0.28, b.vx *= 0.97, b.av *= 0.55), b.touchingFloor = true, b.airTime = 0, Math.abs(b.vy) < 14 && (b.vy = 0), Math.abs(b.vx) < 0.02 && (b.vx = 0), Math.abs(b.av) < 2e-3 && (b.av = 0), applyGroundImpactImpulse(b, impactSpeed), queueImpactPulseCurve(b, impactSpeed), b.slingBurstArmed && (impactSpeed >= SLING_BURST_MIN_SPEED && spawnSlingBurst(b.x, b.y - b.radius - Math.max(4, b.radius * 0.2)), b.slingBurstArmed = false);
   } else b.y >= floorY - 0.5 && b.vy >= -8 && (b.y = floorY, b.touchingFloor = true, Math.abs(b.vy) < 8 && (b.vy = 0));
 }
 function getCollisionInfo(a, b) {
@@ -471,9 +472,10 @@ function tick(ts) {
     step(FIXED_DT), accumulator -= FIXED_DT;
   renderBodies(), requestAnimationFrame(tick);
 }
-function bootSimulation() {
+function bootSimulation(restoreState = loadBodyState()) {
+  sessionStorage.setItem(HAS_BOOTED_KEY, "1");
   observeAnchorChanges();
-  initializeBodies(loadBodyState());
+  initializeBodies(restoreState);
   updateBottomAnchor();
   requestAnimationFrame((ts) => {
     lastTs = ts;
@@ -502,13 +504,20 @@ window.addEventListener("resize", () => {
   dragState && e.preventDefault();
 }), window.addEventListener("mouseleave", () => {
   dragState || (hoveringBall = false, document.documentElement.classList.remove("ballsling-hover"));
+}), window.addEventListener("pagehide", () => {
+  saveBodyState();
 }), window.addEventListener("beforeunload", () => {
   footerResizeObserver?.disconnect();
   documentResizeObserver?.disconnect();
   saveBodyState(), stopIdleClue();
 });
 
-if ("requestIdleCallback" in window) {
+const cachedState = loadBodyState();
+const hasBootedInSession = sessionStorage.getItem(HAS_BOOTED_KEY) === "1";
+
+if (hasBootedInSession && cachedState) {
+  bootSimulation(cachedState);
+} else if ("requestIdleCallback" in window) {
   window.requestIdleCallback(() => bootSimulation(), { timeout: 1200 });
 } else {
   window.setTimeout(bootSimulation, 250);
@@ -608,7 +617,7 @@ if ("requestIdleCallback" in window) {
   transform: translate(-50%, -50%) rotate(var(--line-rotate)) translate(0, 0)
     scaleY(0.35);
   transform-origin: center;
-  animation: clap-line-burst 280ms ease-out forwards;
+  animation: clap-line-burst 250ms ease-out forwards;
 }
 
 .ballsling-sling-line-1 {

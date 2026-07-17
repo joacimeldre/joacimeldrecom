@@ -1,4 +1,4 @@
-import { defineConfig } from "astro/config";
+import { defineConfig, passthroughImageService } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
 import vercel from "@astrojs/vercel";
 
@@ -10,6 +10,7 @@ import rehypeExternalLinks from "rehype-external-links";
 const siteUrl = "https://joacimeldrecom.vercel.app";
 const siteHostname = new URL(siteUrl).hostname;
 const includeDrafts = process.env.NODE_ENV !== "production";
+const usePassthroughImages = process.env.ASTRO_PASSTHROUGH_IMAGES === "1";
 
 function rehypeImageClassFromTitle() {
   return (tree) => {
@@ -73,6 +74,13 @@ function rehypeImageClassFromTitle() {
 export default defineConfig({
   output: "server",
   adapter: vercel(),
+  ...(usePassthroughImages
+    ? {
+        image: {
+          service: passthroughImageService(),
+        },
+      }
+    : {}),
   vite: {
     plugins: [tailwindcss()],
   },

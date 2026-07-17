@@ -31,5 +31,28 @@ const { title, description, image, type, publishedTime, showBallSling = true } =
     <main class="grow typo-main-size"><slot /></main>
     <Footer />
     {showBallSling && <BallSling />}
+    <script is:inline>
+      const assignRotatingLinkColors = () => {
+        const links = document.querySelectorAll(
+          "a:not(.rounded-full):not(.logo-link):not(.nav-link):not(.tag-link)",
+        );
+        const tokens = ["1", "2", "3", "4"];
+
+        links.forEach((link, index) => {
+          const token = tokens[index % tokens.length];
+          link.dataset.lc = token;
+        });
+      };
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", assignRotatingLinkColors, {
+          once: true,
+        });
+      } else {
+        assignRotatingLinkColors();
+      }
+
+      document.addEventListener("astro:after-swap", assignRotatingLinkColors);
+    </script>
   </body>
 </html>

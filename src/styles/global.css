@@ -265,10 +265,7 @@ li:nth-child(4n + 4) a:not(.rounded-full):not(.logo-link):not(.nav-link) {
   text-decoration-thickness: 2px !important;
 }
 
-/* Prose links — rotate by paragraph/list item order for predictable post-page colors. */
-:is(.prose, .typo-prose)
-  p:nth-of-type(4n + 1)
-  a:not(.rounded-full):not(.logo-link):not(.nav-link),
+/* Prose list links — keep list-item rotation in long-form content. */
 :is(.prose, .typo-prose)
   li:nth-of-type(4n + 1)
   a:not(.rounded-full):not(.logo-link):not(.nav-link) {
@@ -279,9 +276,6 @@ li:nth-child(4n + 4) a:not(.rounded-full):not(.logo-link):not(.nav-link) {
 }
 
 :is(.prose, .typo-prose)
-  p:nth-of-type(4n + 2)
-  a:not(.rounded-full):not(.logo-link):not(.nav-link),
-:is(.prose, .typo-prose)
   li:nth-of-type(4n + 2)
   a:not(.rounded-full):not(.logo-link):not(.nav-link) {
   --lc: #ffc800;
@@ -290,9 +284,6 @@ li:nth-child(4n + 4) a:not(.rounded-full):not(.logo-link):not(.nav-link) {
   text-decoration-thickness: 2px !important;
 }
 
-:is(.prose, .typo-prose)
-  p:nth-of-type(4n + 3)
-  a:not(.rounded-full):not(.logo-link):not(.nav-link),
 :is(.prose, .typo-prose)
   li:nth-of-type(4n + 3)
   a:not(.rounded-full):not(.logo-link):not(.nav-link) {
@@ -303,15 +294,33 @@ li:nth-child(4n + 4) a:not(.rounded-full):not(.logo-link):not(.nav-link) {
 }
 
 :is(.prose, .typo-prose)
-  p:nth-of-type(4n + 4)
-  a:not(.rounded-full):not(.logo-link):not(.nav-link),
-:is(.prose, .typo-prose)
   li:nth-of-type(4n + 4)
   a:not(.rounded-full):not(.logo-link):not(.nav-link) {
   --lc: #39edae;
   text-decoration-color: #39edae !important;
   text-decoration-style: solid !important;
   text-decoration-thickness: 2px !important;
+}
+
+/* Randomized link colors assigned at runtime via data-lc token. */
+a:not(.rounded-full):not(.logo-link):not(.nav-link)[data-lc="1"] {
+  --lc: #ff5fa2;
+  text-decoration-color: #ff5fa2 !important;
+}
+
+a:not(.rounded-full):not(.logo-link):not(.nav-link)[data-lc="2"] {
+  --lc: #ffc800;
+  text-decoration-color: #ffc800 !important;
+}
+
+a:not(.rounded-full):not(.logo-link):not(.nav-link)[data-lc="3"] {
+  --lc: #5f71ff;
+  text-decoration-color: #5f71ff !important;
+}
+
+a:not(.rounded-full):not(.logo-link):not(.nav-link)[data-lc="4"] {
+  --lc: #39edae;
+  text-decoration-color: #39edae !important;
 }
 
 /* On hover: fade out the solid underline, replace with two wavy pseudo-elements */

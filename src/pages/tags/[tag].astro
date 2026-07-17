@@ -58,8 +58,8 @@ const activeTagAccentColor = getTagAccentColor(
           tags.map((t) => {
             const isActive = t === tag;
             const classes = isActive
-              ? "font-bold typo-main"
-              : "typo-main";
+              ? "font-bold typo-main tag-link"
+              : "typo-main tag-link";
 
             return (
               <a class={classes} href={`/tags/${encodeURIComponent(t)}`}>
