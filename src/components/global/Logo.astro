@@ -1,0 +1,34 @@
+---
+import { Image } from "astro:assets";
+import logoSrc from "../../content/images/logo_normal.svg";
+
+interface Props {
+  alt?: string;
+  width?: number;
+  height?: number;
+  class?: string;
+  style?: string;
+  ariaHidden?: boolean;
+}
+
+const DEFAULT_LOGO_ALT = "Joacim Eldre logo";
+
+const {
+  alt = DEFAULT_LOGO_ALT,
+  width = 32,
+  height = 32,
+  class: className,
+  style,
+  ariaHidden,
+} = Astro.props;
+---
+
+<Image
+  src={logoSrc}
+  alt={alt}
+  width={width}
+  height={height}
+  class={className}
+  style={style}
+  aria-hidden={ariaHidden}
+/>
