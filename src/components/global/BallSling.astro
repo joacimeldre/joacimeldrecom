@@ -101,9 +101,13 @@ function updateBottomAnchor() {
   const doc = document.documentElement;
   let anchorTop = Math.max(0, doc.scrollHeight - viewportHeight);
   if (footerEl) {
+    const footerGapSource = footerEl.querySelector("[data-balls-gap]") || footerEl;
+    const footerGap = Number.parseFloat(
+      getComputedStyle(footerGapSource).paddingBottom,
+    ) || 0;
     anchorTop = Math.max(
       0,
-      footerEl.offsetTop + footerEl.offsetHeight - viewportHeight,
+      footerEl.offsetTop + footerEl.offsetHeight - viewportHeight + footerGap,
     );
     const rect = footerEl.getBoundingClientRect();
     const footerVisible = rect.top < viewportHeight && rect.bottom > 0;
@@ -381,6 +385,14 @@ function renderBodies() {
   }
 }
 const saveBodyState = () => sessionStorage.setItem("ballSlingState", JSON.stringify(bodies.map((b) => ({ x: b.x, y: b.y, vx: b.vx, vy: b.vy, angle: b.angle, av: b.av }))));
+const snapshotBodyState = () => bodies.map((b) => ({
+  x: b.x,
+  y: b.y,
+  vx: b.vx,
+  vy: b.vy,
+  angle: b.angle,
+  av: b.av,
+}));
 function loadBodyState() {
   try {
     return JSON.parse(sessionStorage.getItem("ballSlingState") ?? "null");
@@ -484,7 +496,9 @@ function bootSimulation(restoreState = loadBodyState()) {
 }
 
 window.addEventListener("resize", () => {
-  shapeCount = 0, initializeBodies(), updateBottomAnchor();
+  const restoreState = bodies.length ? snapshotBodyState() : loadBodyState();
+  initializeBodies(restoreState);
+  updateBottomAnchor();
 }), window.visualViewport?.addEventListener("resize", () => {
   updateViewportSize();
   for (const b of bodies) clampInsideViewport(b);

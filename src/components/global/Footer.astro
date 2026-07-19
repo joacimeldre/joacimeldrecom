@@ -1,30 +1,43 @@
+---
+import BallSling from "@/components/global/BallSling.astro";
+
+interface Props {
+  showBallSling?: boolean;
+}
+
+const { showBallSling = true } = Astro.props;
+---
+
 <footer>
-  <div class="pt-4 md:pt-5 lg:pt-3 pb-[calc(clamp(5.5rem,12vw,12rem)+0.75rem)] lg:pb-[calc(clamp(5.5rem,12vw,12rem)-1rem)]">
-    <div class="text-center mb-6">
+  <div data-balls-gap class="pt-16 pb-16">
+    <div class="text-center mb-8">
       <a
         href="#top"
         class="button-link bg-accent text-base-900 typo-nav py-2 px-4 rounded-full transition duration-200 hover:bg-base-900 hover:text-base-50"
         ><span aria-hidden="true">△</span> Go to top</a
       >
     </div>
-    <p class="typo-nav text-balance text-center">
-      © Joacim Eldre {new Date().getFullYear()}. All tights deserved. I promise that
-      everything on this website is and will always be made by me, an ordinary
-      human being made of <span class="inline-highlight px-1 bg-green-200 rounded" style="--selection-highlight: #bbf7d0;">jelly</span>.
-    </p>
-    <p class="typo-nav text-balance text-center mt-4">
-      Say hi on <a
-        href="mailto:hei@joacimeldre.com"
-        class="transition duration-200"
-      >
-        hei@joacimeldre.com</a
-      >{" "}or{" "}
-      <a
-        href="https://bsky.app/profile/joacimeldre.com"
-        class="transition duration-200"
-      >
-        Bluesky</a
-      >.
-    </p>
+    <div class="space-y-5">
+      <p class="typo-nav text-balance text-center">
+        © Joacim Eldre {new Date().getFullYear()}. All tights deserved. I promise that
+        everything on this website is and will always be made by me, an ordinary
+        human being made of <span class="inline-highlight px-1 bg-green-200 rounded" style="--selection-highlight: #bbf7d0;">jelly</span>.
+      </p>
+      <p class="typo-nav text-balance text-center">
+        Say hi on <a
+          href="mailto:hei@joacimeldre.com"
+          class="transition duration-200"
+        >
+          hei@joacimeldre.com</a
+        >{" "}or{" "}
+        <a
+          href="https://bsky.app/profile/joacimeldre.com"
+          class="transition duration-200"
+        >
+          Bluesky</a
+        >.
+      </p>
+    </div>
   </div>
+  {showBallSling && <BallSling />}
 </footer>

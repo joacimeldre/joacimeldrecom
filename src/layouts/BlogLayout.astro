@@ -34,7 +34,7 @@ const formattedDate = (() => {
   publishedTime={frontmatter.pubDate}
 >
   <section>
-    <div class="pt-16 pb-24 max-w-3xl">
+    <div class="pt-16 max-w-3xl">
       <div>
         <div class="mx-auto">
           <h1 class="typo-display-xl">
@@ -51,7 +51,7 @@ const formattedDate = (() => {
             loading="eager"
             fetchpriority="high"
             sizes="(max-width: 768px) 100vw, 768px"
-            style="display:block;width:100%;height:auto;aspect-ratio:1280 / 630;object-fit:cover;object-position:center;margin-top:1rem;margin-left:auto;margin-right:auto;border-radius:0.75rem;"
+            style="display:block;width:100%;max-width:100%;height:auto;aspect-ratio:1280 / 630;object-fit:cover;object-position:center;margin-top:1rem;margin-left:auto;margin-right:auto;border-radius:0.75rem;"
           />
           <p class="mx-auto mt-4 typo-nav">
             Published on <time datetime={frontmatter.pubDate}

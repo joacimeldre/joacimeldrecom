@@ -156,6 +156,9 @@
     @apply rounded-lg;
     @apply ml-auto;
     @apply mr-auto;
+    max-width: 100%;
+    width: 100%;
+    height: auto;
   }
 
   img.flat {
@@ -362,6 +365,18 @@ li a:not(.rounded-full):not(.logo-link):not(.nav-link):hover::after {
 }
 
 @layer utilities {
+  .responsive-iframe {
+    width: 100%;
+    aspect-ratio: var(--iframe-w, 16) / var(--iframe-h, 9);
+    margin: 1.1em auto;
+  }
+
+  .responsive-iframe__inner {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+  }
+
   /* Type scale tokens: use these semantic classes across pages/components. */
   /* Display: page and section headings */
   .clap-burst {

@@ -2,7 +2,6 @@
 import BaseHead from "@/components/BaseHead.astro";
 import Navigation from "@/components/global/Navigation.astro";
 import Footer from "@/components/global/Footer.astro";
-import BallSling from "@/components/global/BallSling.astro";
 
 interface Props {
   title?: string;
@@ -29,8 +28,7 @@ const { title, description, image, type, publishedTime, showBallSling = true } =
   <body class="flex flex-col max-w-3xl min-h-screen px-8 mx-auto">
     <Navigation />
     <main class="grow typo-main-size"><slot /></main>
-    <Footer />
-    {showBallSling && <BallSling />}
+    <Footer showBallSling={showBallSling} />
     <script is:inline>
       const assignRotatingLinkColors = () => {
         const links = document.querySelectorAll(
@@ -44,15 +42,49 @@ const { title, description, image, type, publishedTime, showBallSling = true } =
         });
       };
 
+      const makeIframesResponsive = () => {
+        const iframes = document.querySelectorAll("main iframe");
+
+        iframes.forEach((iframe) => {
+          if (iframe.closest(".responsive-iframe")) return;
+
+          const width = Number.parseFloat(iframe.getAttribute("width") || "");
+          const height = Number.parseFloat(iframe.getAttribute("height") || "");
+          const ratioW = Number.isFinite(width) && width > 0 ? width : 16;
+          const ratioH = Number.isFinite(height) && height > 0 ? height : 9;
+
+          const wrapper = document.createElement("div");
+          wrapper.className = "responsive-iframe";
+          wrapper.style.setProperty("--iframe-w", String(ratioW));
+          wrapper.style.setProperty("--iframe-h", String(ratioH));
+
+          if (Number.isFinite(width) && width > 0) {
+            wrapper.style.maxWidth = `${width}px`;
+          }
+
+          iframe.parentNode?.insertBefore(wrapper, iframe);
+          wrapper.appendChild(iframe);
+
+          iframe.classList.add("responsive-iframe__inner");
+          iframe.removeAttribute("width");
+          iframe.removeAttribute("height");
+        });
+      };
+
+      const applyRuntimeEnhancements = () => {
+        assignRotatingLinkColors();
+        makeIframesResponsive();
+      };
+
       if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", assignRotatingLinkColors, {
+        document.addEventListener("DOMContentLoaded", applyRuntimeEnhancements, {
           once: true,
         });
       } else {
-        assignRotatingLinkColors();
+        applyRuntimeEnhancements();
       }
 
-      document.addEventListener("astro:after-swap", assignRotatingLinkColors);
+      document.addEventListener("astro:after-swap", applyRuntimeEnhancements);
     </script>
   </body>
 </html>
