@@ -16,23 +16,21 @@ Back to icons!
 
 # 5x5
 
-Hold up! Isn't the PICO-8 sprite size 8x8 pixels? Yeah, but I want more limitation so I made them smaller! And I wanted uniform height and width so they read well when placed together.
+Hold up! Isn't the PICO-8 sprite size 8x8 pixels? Yeah, but I want more limitation so I made them smaller! And I wanted uniform height and width so they read well when placed together, and fit the size of the pixel font that's 5 pixels high.
 
 I'm not sure what the smallest legible pixel font is. If it's monospaced, I'm guessing it's 5x5 pixels. Oh.. Oh no, now I want to make my own pixel font for the fun of it. Perhaps get the font published on Google Fonts? Sounds like a new project.
 
 But, let's get back to the icons, again.
 
-Five pixels by five pixels. That's tiiiiiiiiny. 🤏🏻
+Five by five pixels is tiiiiiiiiny. 🤏🏻
 
-Is it enough?
+Is it enough to read easily?
 
-Will it be expressive enough?
-
-Can it be read?
+Is it expressive enough to look like what it's communicating?
 
 Scroll along to find out.
 
-But I thought it was just enough to be expressive and readable. I started by drawing the icon for Bloob. If I could get that shape right I thought I could get the rest right too. Kind of like how icon sets often start by defining a key icon like a house or head.
+I started by drawing the icon for Bloob. If I could get that shape right I would get the rest right too. Kind of like how many non-game icon sets often start by defining a key icon like a house or head.
 
 So the challenge was to make recognizable shapes in such a small space.
 
