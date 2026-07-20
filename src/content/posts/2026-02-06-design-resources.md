@@ -14,6 +14,8 @@ tags: ["All", "Design", "Resource"]
 
 [Bezier](https://bezier.method.ac/) is a browser game that helps you learn the vector pen tool.
 
+[Pixel Art Park](https://pixelartpark.com/en/) is a Japanese event for pixel artists to share their work, and a place to find inspiration.
+
 [Not Boring Software](https://www.notboring.software/) build fun apps for boring routines.
 
 [Drams](https://drams.framer.website/) is a collection of Framer components inspired by Dieter Rams' design principles.
