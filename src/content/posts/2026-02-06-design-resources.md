@@ -225,3 +225,7 @@ Computer. I use a MacBook.
 # Code
 
 [Invent with Python](https://inventwithpython.com/) is a series of books written by Al Sweigart on Python. They're available for free to read online, and they're written in a practical way to code along with.
+
+# Game Development
+
+[Levelling the Playing Field](https://courses.ramiismail.com/) is a course by Rami Ismail on everything in game development that isn't game development. Business, marketing, community, and more.
