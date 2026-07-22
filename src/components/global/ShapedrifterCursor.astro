@@ -1,0 +1,237 @@
+<style is:global>
+  html.shapedrifter-cursor-on,
+  html.shapedrifter-cursor-on * {
+    cursor: none !important;
+  }
+</style>
+
+<script>
+  (() => {
+    const hasFinePointer = window.matchMedia("(pointer: fine)").matches;
+    if (!hasFinePointer) {
+      return;
+    }
+
+    document.documentElement.classList.add("shapedrifter-cursor-on");
+
+    const prefersReducedMotion = window
+      .matchMedia("(prefers-reduced-motion: reduce)")
+      .matches;
+
+    const cursor = document.createElement("img");
+    cursor.src = "/drifter.svg";
+    cursor.alt = "";
+    cursor.setAttribute("aria-hidden", "true");
+    cursor.style.position = "fixed";
+    cursor.style.left = "0";
+    cursor.style.top = "0";
+    cursor.style.width = "22px";
+    cursor.style.height = "32px";
+    cursor.style.borderRadius = "0";
+    cursor.style.pointerEvents = "none";
+    cursor.style.userSelect = "none";
+    cursor.style.zIndex = "2147483647";
+    cursor.style.willChange = "transform, opacity";
+    cursor.style.opacity = "0";
+    document.body.appendChild(cursor);
+
+    let targetX = window.innerWidth / 2;
+    let targetY = window.innerHeight / 2;
+    let currentX = targetX;
+    let currentY = targetY;
+    let velocityX = 0;
+    let velocityY = 0;
+    let headingRad = -Math.PI / 2;
+    let pointerVisible = false;
+    let lastMarkAt = 0;
+    let lastLeftTire = null;
+    let lastRightTire = null;
+    let leftTireFollower = null;
+    let rightTireFollower = null;
+    const activeSkidMarks = [];
+    const CURSOR_FORWARD_OFFSET_DEG = 90;
+    const SKID_MARK_LIFETIME_MS = 2300;
+    const SKID_MARK_INTERVAL_MS = 12;
+
+    const followLazyPoint = (current, target, radius, friction) => {
+      const dx = target.x - current.x;
+      const dy = target.y - current.y;
+      const distance = Math.hypot(dx, dy);
+
+      if (distance <= radius) {
+        return current;
+      }
+
+      const step = (distance - radius) * (1 - friction);
+      const scale = step / distance;
+
+      return {
+        x: current.x + dx * scale,
+        y: current.y + dy * scale,
+      };
+    };
+
+    const spawnSkidMark = (x, y, speed, angle, customLength, bornAt) => {
+      const mark = document.createElement("div");
+      const length = customLength ?? Math.min(12, 5 + speed * 0.2);
+
+      mark.style.position = "fixed";
+      mark.style.left = `${x}px`;
+      mark.style.top = `${y}px`;
+      mark.style.width = `${length}px`;
+      mark.style.height = "3px";
+      mark.style.borderRadius = "999px";
+      mark.style.background = "rgba(146, 142, 136, 0.95)";
+      mark.style.opacity = "1";
+      mark.style.pointerEvents = "none";
+      mark.style.zIndex = "2147483646";
+      mark.style.transformOrigin = "left center";
+      mark.style.transform = `rotate(${angle}deg)`;
+      document.body.appendChild(mark);
+      activeSkidMarks.push({ element: mark, bornAt });
+    };
+
+    const spawnTireSegment = (fromX, fromY, toX, toY, speed, segmentStartAt, segmentEndAt) => {
+      const segmentDx = toX - fromX;
+      const segmentDy = toY - fromY;
+      const segmentDistance = Math.hypot(segmentDx, segmentDy);
+      if (segmentDistance < 0.5) return;
+
+      const segmentAngle = (Math.atan2(segmentDy, segmentDx) * 180) / Math.PI;
+      const stampSpacing = 1.35;
+      const stampLength = Math.min(8, Math.max(5, segmentDistance + 0.6));
+      const stampCount = Math.max(1, Math.ceil(segmentDistance / stampSpacing));
+
+      for (let i = 0; i <= stampCount; i += 1) {
+        const t = i / stampCount;
+        const stampX = fromX + segmentDx * t;
+        const stampY = fromY + segmentDy * t;
+        const stampBornAt = segmentStartAt + (segmentEndAt - segmentStartAt) * t;
+        spawnSkidMark(stampX, stampY, speed, segmentAngle, stampLength, stampBornAt);
+      }
+    };
+
+    const update = () => {
+      const now = performance.now();
+
+      for (let i = activeSkidMarks.length - 1; i >= 0; i -= 1) {
+        const skidMark = activeSkidMarks[i];
+        if (now - skidMark.bornAt >= SKID_MARK_LIFETIME_MS) {
+          skidMark.element.remove();
+          activeSkidMarks.splice(i, 1);
+        }
+      }
+
+      const easing = prefersReducedMotion ? 0.42 : 0.2;
+      const dx = targetX - currentX;
+      const dy = targetY - currentY;
+
+      currentX += dx * easing;
+      currentY += dy * easing;
+
+      velocityX = velocityX * 0.68 + dx * 0.32;
+      velocityY = velocityY * 0.68 + dy * 0.32;
+
+      const speed = Math.hypot(velocityX, velocityY);
+      if (speed > 0.15) {
+        const targetHeadingRad = Math.atan2(velocityY, velocityX);
+        const turnEase = prefersReducedMotion ? 0.4 : 0.25;
+        const sinHeading =
+          Math.sin(headingRad) * (1 - turnEase) +
+          Math.sin(targetHeadingRad) * turnEase;
+        const cosHeading =
+          Math.cos(headingRad) * (1 - turnEase) +
+          Math.cos(targetHeadingRad) * turnEase;
+        headingRad = Math.atan2(sinHeading, cosHeading);
+      }
+
+      const driftAngle = (headingRad * 180) / Math.PI + CURSOR_FORWARD_OFFSET_DEG;
+
+      cursor.style.opacity = pointerVisible ? "1" : "0";
+      cursor.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) rotate(${driftAngle}deg)`;
+
+      if (!prefersReducedMotion) {
+        const centerX = currentX + 11;
+        const centerY = currentY + 16;
+        const headingX = Math.cos(headingRad);
+        const headingY = Math.sin(headingRad);
+        const perpendicularX = -headingY;
+        const perpendicularY = headingX;
+        const rearX = centerX - Math.cos(headingRad) * 9;
+        const rearY = centerY - Math.sin(headingRad) * 9;
+        const tireOffset = 5.2;
+        const leftX = rearX + perpendicularX * tireOffset - headingX;
+        const leftY = rearY + perpendicularY * tireOffset - headingY;
+        const rightX = rearX - perpendicularX * tireOffset - headingX;
+        const rightY = rearY - perpendicularY * tireOffset - headingY;
+
+        if (!leftTireFollower || !rightTireFollower) {
+          leftTireFollower = { x: leftX, y: leftY };
+          rightTireFollower = { x: rightX, y: rightY };
+        }
+
+        const lazyRadius = 2.6;
+        const lazyFriction = 0.2;
+        leftTireFollower = followLazyPoint(leftTireFollower, { x: leftX, y: leftY }, lazyRadius, lazyFriction);
+        rightTireFollower = followLazyPoint(rightTireFollower, { x: rightX, y: rightY }, lazyRadius, lazyFriction);
+
+        if (speed > 0.05 && now - lastMarkAt > SKID_MARK_INTERVAL_MS) {
+          const angle = (Math.atan2(velocityY, velocityX) * 180) / Math.PI + 180;
+          const segmentStartAt = lastMarkAt || now;
+          const segmentEndAt = now;
+
+          if (lastLeftTire && lastRightTire) {
+            spawnTireSegment(
+              lastLeftTire.x,
+              lastLeftTire.y,
+              leftTireFollower.x,
+              leftTireFollower.y,
+              speed,
+              segmentStartAt,
+              segmentEndAt,
+            );
+            spawnTireSegment(
+              lastRightTire.x,
+              lastRightTire.y,
+              rightTireFollower.x,
+              rightTireFollower.y,
+              speed,
+              segmentStartAt,
+              segmentEndAt,
+            );
+          } else {
+            spawnSkidMark(leftTireFollower.x, leftTireFollower.y, speed, angle, undefined, now);
+            spawnSkidMark(rightTireFollower.x, rightTireFollower.y, speed, angle, undefined, now);
+          }
+
+          lastLeftTire = { x: leftTireFollower.x, y: leftTireFollower.y };
+          lastRightTire = { x: rightTireFollower.x, y: rightTireFollower.y };
+          lastMarkAt = now;
+        } else if (speed < 2.4) {
+          lastLeftTire = null;
+          lastRightTire = null;
+          leftTireFollower = null;
+          rightTireFollower = null;
+        }
+      }
+
+      requestAnimationFrame(update);
+    };
+
+    window.addEventListener("pointermove", (event) => {
+      targetX = event.clientX;
+      targetY = event.clientY;
+    });
+
+    window.addEventListener("pointerenter", () => {
+      pointerVisible = true;
+    });
+
+    window.addEventListener("pointerleave", () => {
+      pointerVisible = false;
+    });
+
+    pointerVisible = true;
+    requestAnimationFrame(update);
+  })();
+</script>

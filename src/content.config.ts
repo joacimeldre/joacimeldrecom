@@ -12,6 +12,8 @@ const postsCollection = defineCollection({
         url: image(),
         alt: z.string(),
       }),
+      ogImage: image().optional(),
+      cursorEffect: z.enum(["shapedrifter"]).optional(),
       tags: z.array(z.string()),
     }),
 });
