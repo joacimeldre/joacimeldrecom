@@ -14,7 +14,7 @@ You can play Shapedrifter in your browser.
 <iframe src="https://www.lexaloffle.com/bbs/widget.php?pid=shapedrifter" allowfullscreen width="600" height="600" style="border:none;"></iframe>
 
 Or download the Shapedrifter cartridge to play on your preferred PICO-8 emulator device (the Miyoo Mini is pretty great).
-![Shapedrifter cartridge](/shapedrifter-0.p8.png "Shapedrifter cartridge")
+![Shapedrifter cartridge](/shapedrifter-1.p8.png "Shapedrifter cartridge")
 
 # Zzzzz
 
