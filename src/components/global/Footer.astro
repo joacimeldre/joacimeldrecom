@@ -1,5 +1,6 @@
 ---
 import BallSling from "@/components/global/BallSling.astro";
+import SmartLink from "@/components/global/SmartLink.astro";
 
 interface Props {
   showBallSling?: boolean;
@@ -11,10 +12,10 @@ const { showBallSling = true } = Astro.props;
 <footer>
   <div data-balls-gap class="pt-16 pb-16">
     <div class="text-center mb-8">
-      <a
+      <SmartLink
         href="#top"
         class="button-link bg-accent text-base-900 typo-nav py-2 px-4 rounded-full transition duration-200 hover:bg-base-900 hover:text-base-50"
-        ><span aria-hidden="true">△</span> Go to top</a
+        ><span aria-hidden="true">△</span> Go to top</SmartLink
       >
     </div>
     <div class="space-y-5">
@@ -24,19 +25,20 @@ const { showBallSling = true } = Astro.props;
         human being made of <span class="inline-highlight px-1 bg-green-200 rounded" style="--selection-highlight: #bbf7d0;">jelly</span>.
       </p>
       <p class="typo-nav text-balance text-center">
-        Say hi on <a
+        Say hi on <SmartLink
           href="mailto:hei@joacimeldre.com"
           class="transition duration-200"
         >
-          hei@joacimeldre.com</a
+          hei@joacimeldre.com</SmartLink
         >{" "}or{" "}
-        <a
+        <SmartLink
           href="https://bsky.app/profile/joacimeldre.com"
           class="transition duration-200"
         >
-          Bluesky</a
+          Bluesky</SmartLink
         >.
       </p>
+      <p class="typo-nav text-balance text-center">You can also visit my <SmartLink href="https://www.redbubble.com/people/ThingsWithFaces/shop" class="transition duration-200">Redbubble shop</SmartLink> with clothes, stickers, and more.</p>
     </div>
   </div>
   {showBallSling && <BallSling />}

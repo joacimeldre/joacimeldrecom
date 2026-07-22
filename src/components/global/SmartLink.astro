@@ -1,0 +1,43 @@
+---
+interface Props {
+  href: string;
+  class?: string;
+  target?: string;
+  rel?: string;
+}
+
+const {
+  href,
+  class: className,
+  target,
+  rel,
+  ...rest
+} = Astro.props;
+
+const internalHostnames = new Set([
+  "joacimeldre.com",
+  "www.joacimeldre.com",
+  "joacimeldrecom.vercel.app",
+]);
+
+const isSpecialProtocol = /^(mailto:|tel:|sms:)/i.test(href);
+const isRelative = /^(\/|#|\.\/|\.\.\/)/.test(href);
+
+let isExternal = false;
+
+if (!isRelative && !isSpecialProtocol) {
+  try {
+    const url = new URL(href);
+    isExternal = /^https?:$/i.test(url.protocol) && !internalHostnames.has(url.hostname);
+  } catch {
+    isExternal = false;
+  }
+}
+
+const resolvedTarget = target ?? (isExternal ? "_blank" : undefined);
+const resolvedRel = rel ?? (isExternal ? "noreferrer noopener" : undefined);
+---
+
+<a href={href} class={className} target={resolvedTarget} rel={resolvedRel} {...rest}>
+  <slot />
+</a>
