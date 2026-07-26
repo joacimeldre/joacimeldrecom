@@ -27,3 +27,4 @@ And now I want to make another tiny game. I wonder what? Maybe climbing, or bomb
 - v0: Game published
 - v1: Tweaked Bubble Drive
 - v2: Changed open menu button, tweaked drift handling and draw order.
+- v3: Seagulls now draw on top of the player. Poor seagulls in previous version! I can confirm that no seagulls have been harmed in the production and playing of this game though. It's all digital. Phew!
