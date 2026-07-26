@@ -10,6 +10,8 @@ tags: ["All", "Design", "Resource"]
 
 # Fun, Inspiration
 
+[The future of creativity on the internet in a world with AI](https://www.youtube.com/watch?v=17_HcR95YBc)
+
 [Color Match](https://colormatch.pages.dev/) is a browser game where you match colors on time.
 
 [Bezier](https://bezier.method.ac/) is a browser game that helps you learn the vector pen tool.
