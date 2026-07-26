@@ -1,6 +1,6 @@
 ---
 pubDate: 2026-06-12
-title: Bloob, a tiny video game
+title: Bloob
 description: "Bloob is a tiny video game made in a tiny fantasy video game console called PICO-8. It's a platformer with no enemies, no text, and no score. Just you, the bloob, and the world to explore."
 image:
   url: "../images/posts/bloob_final.webp"
