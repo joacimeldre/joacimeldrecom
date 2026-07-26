@@ -24,6 +24,6 @@ And now I want to make another tiny game. I wonder what? Maybe climbing, or bomb
 
 # Changelog
 
-v0: Game published
-v1: Tweaked Bubble Drive
-v2: Changed open menu button, tweaked drift handling and draw order.
+- v0: Game published
+- v1: Tweaked Bubble Drive
+- v2: Changed open menu button, tweaked drift handling and draw order.
