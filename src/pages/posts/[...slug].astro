@@ -5,7 +5,11 @@ export const prerender = true;
 
 export async function getStaticPaths() {
   const blogEntries = await getCollection("posts");
-  return blogEntries.map((entry) => ({
+  const visibleEntries = import.meta.env.DEV
+    ? blogEntries
+    : blogEntries.filter((entry) => entry.data.published);
+
+  return visibleEntries.map((entry) => ({
     params: {
       slug: entry.id.replace(/\.(md|mdx)$/i, ""),
     },

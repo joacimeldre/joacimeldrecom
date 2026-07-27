@@ -8,11 +8,28 @@ const postsCollection = defineCollection({
       title: z.string(),
       pubDate: z.date(),
       description: z.string(),
-      image: z.object({
-        url: image(),
-        alt: z.string(),
-      }),
-      ogImage: image().optional(),
+      published: z.preprocess((value) => {
+        if (typeof value === "string") {
+          const normalized = value.trim().toLowerCase();
+          if (normalized === "yes") return true;
+          if (normalized === "no") return false;
+        }
+
+        return value;
+      }, z.boolean().default(true)),
+      image: z.preprocess(
+        (value) => (value == null ? undefined : value),
+        z
+          .object({
+            url: image(),
+            alt: z.string(),
+          })
+          .optional(),
+      ),
+      ogImage: z.preprocess(
+        (value) => (value == null ? undefined : value),
+        image().optional(),
+      ),
       cursorEffect: z.enum(["shapedrifter"]).optional(),
       tags: z.array(z.string()),
     }),

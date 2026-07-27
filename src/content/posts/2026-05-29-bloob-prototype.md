@@ -2,6 +2,7 @@
 pubDate: 2026-05-29
 title: Bloob prototype
 description: "Tiny jelly (8x8 pixels), small game (24 KB to be exact). Previously a concept. Now a playable prototype!"
+published: yes
 image:
   url: "../images/posts/bloob_prototype.webp"
   alt: "Bloob illustration by Joacim Eldre"

@@ -2,10 +2,11 @@
 pubDate: 2026-01-19
 title: Hello World!
 description: "First post on my new website, whoo! The first of many, maybe. Probably."
+published: yes
 image:
   url: "../images/posts/hello_world_joacim_eldre.webp"
   alt: "An icon of a conch (a swirly seashell), made by me (Joacim Eldre)!"
-tags: ["All"]
+tags: ["All", "Bla bla"]
 ---
 
 I'm a visual thinker. If you say "glorbulorp", I see _glorbulorp_ in my head, in three dimensional space. I can grab and rotate to view another angle, or zoom in and out to view details. I can even remove or add more things to _glorbulorp_, like a party hat. It's fun and exhausting to think like this.
@@ -42,7 +43,7 @@ I'm not going anywhere with this post. It's just exciting to have a place where 
 
 I don't want that. So I'm just gonna write whatever I want on here, and I'll have fun doing it.
 
-# ~Pancake~ Website stack 🥞
+# ~~Pancake~~ Website stack 🥞
 
 This website is built on several technologies to be able to float into your eyes and/or ears, like it's doing now.
 

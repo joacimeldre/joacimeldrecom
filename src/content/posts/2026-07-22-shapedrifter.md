@@ -2,6 +2,7 @@
 pubDate: 2026-07-22
 title: Shapedrifter
 description: "Shapedrifter is a PICO-8 game about shapes and drifting. And bubbles. Now playable in your browser (desktop, tablet, and phone) and if you prefer, on your PICO-8 emulator device of choice."
+published: yes
 image:
   url: "../images/posts/shapedrifter_title.gif"
   alt: "Shapedrifter title art"

@@ -2,10 +2,11 @@
 pubDate: 2026-05-12
 title: Good enough
 description: "Most things made today are mostly just enough. Without good. Do we really need another good enough?"
+published: yes
 image:
   url: "../images/posts/Good_Enough.webp"
   alt: "Good enough illustration by Joacim Eldre"
-tags: ["All", "Rant", "Design"]
+tags: ["All", "Bla bla"]
 ---
 
 I work in public healthcare, and I would be so happy if I could say that we’re good enough. But we’re told we’re barely enough. I wade in good enough up to my neck every day and it’s crushing my soul. The government in Norway, where I live and have lived my whole life, keeps talking about this wave of old people that’ll crash into the society and crush the public services if we keep doing things the way that we do them. When? Soon they keep saying. They’ve said soon for as long as I can remember and I’m soon 40 years old. Aaa, I’m getting older! So, it’s been said for a while. Perhaps it’s a really large and slow wave? Maybe the kind of wave that’ll fizzle out and never become a wave. Or, maybe the kind of wave that is convenient to talk about and use as a distant threat to keep getting money to keep talking. I don’t know.

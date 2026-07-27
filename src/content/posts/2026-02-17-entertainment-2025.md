@@ -2,10 +2,11 @@
 pubDate: 2026-02-17
 title: My favourite entertainment in 2025
 description: "The video games, books, music, movies, and TV shows that were my favourites in 2025."
+published: yes
 image:
   url: "../images/posts/entertainment_2025_joacim_eldre.webp"
   alt: "A circle, triangle, square, and pentagon on colored lines on a beige background."
-tags: ["All", "Entertainment"]
+tags: ["All", "Bla bla"]
 ---
 
 Okay, hold on. I drew that image up above for this post, I wanted something abstract that was colorful, that would convey a sense of playfullness and fun. Now that I've seen the image over and over, it's inspiring me to want to create a game where you have to match shapes and colors on time. I can imagine how it would play. Maybe I'll make that one day!
@@ -20,7 +21,7 @@ Astro Bot is **one of my favourite video games, ever**. I picked it up in the en
 
 ![Astro Bot the small robot gliding in the air with a dog attached to their back, futuristic buildings can be seen in the background](../images/posts/astro_bot.webp "Astro Bot and dog in the air")
 
-You play as Astro, a small robot that's on a mission to rescue all of their friends and find parts to fix their spaceship, a PlayStation 5. 
+You play as Astro, a small robot that's on a mission to rescue all of their friends and find parts to fix their spaceship, a PlayStation 5.
 
 Throughout the game you meet various attachments that lets you do different things, like frog gloves that springs your punch, or monkey hands that lets you grab and climb. You run around and jump on platforms, solve puzzles, and bonk peculiar enemies and bosses. Oh and along the way you collect little bots and secrets hidden throughout the game world. It's a super creative game made with a lot of heart and attention to detail.
 
@@ -52,13 +53,13 @@ Written by Sonoko Machida is a warm novel about finding joy in the small every d
 
 ![A convenience store, a black and white cat, a store manager with a pink shirt, lots of aisles](../images/posts/the_convenience_store_by_the_sea.webp "The Convenience Store by the Sea cover")
 
-The convenience store has a strange manager with his own fanclub. One of the employees writes and draws a manga about the manager. The story is quirky and wholesome. The book gave me comfort during a time when I was left by *the person* I've been closest to, I needed all the pick me ups I could get.
+The convenience store has a strange manager with his own fanclub. One of the employees writes and draws a manga about the manager. The story is quirky and wholesome. The book gave me comfort during a time when I was left by _the person_ I've been closest to, I needed all the pick me ups I could get.
 
-# Music 
+# Music
 
 ## Glass Animals - I Love You So F***ing Much
 
-I liked Glass Animals from the moment I heard their hit song, Heat Waves. I Love You So F\*\*\*ing Much is their fourth studio album, it sounds very different to their previous albums. I think that's a good thing. It's great when artists experiment and discover new ways to express themselves. 
+I liked Glass Animals from the moment I heard their hit song, Heat Waves. I Love You So F\*\*\*ing Much is their fourth studio album, it sounds very different to their previous albums. I think that's a good thing. It's great when artists experiment and discover new ways to express themselves.
 
 ![Two faces where you only see the eyes, opposing each other, perhaps in a moment of connection or conflict](../images/posts/glass_animals_i_love_you_so_fing_much.webp "Glass Animals - I Love You So F***ing Much album cover")
 

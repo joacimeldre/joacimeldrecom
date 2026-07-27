@@ -6,13 +6,16 @@ export const prerender = true;
 
 export async function getStaticPaths() {
   const allPosts = await getCollection("posts");
+  const visiblePosts = import.meta.env.DEV
+    ? allPosts
+    : allPosts.filter((post) => post.data.published);
   const uniqueTags = [
-    ...new Set(allPosts.map((post) => post.data.tags).flat()),
+    ...new Set(visiblePosts.map((post) => post.data.tags).flat()),
   ];
 
   return uniqueTags.map((tag) => {
     // Filter posts by tag
-    const filteredPosts = allPosts.filter((post) =>
+    const filteredPosts = visiblePosts.filter((post) =>
       post.data.tags.includes(tag),
     );
     // Sort filtered posts by date in descending order
@@ -28,12 +31,15 @@ export async function getStaticPaths() {
 }
 
 const allPosts = await getCollection("posts");
+const visiblePosts = import.meta.env.DEV
+  ? allPosts
+  : allPosts.filter((post) => post.data.published);
 const tagAccentColors = ["#ff5fa2", "#ffc800", "#5f71ff", "#39edae"] as const;
 const getTagAccentColor = (index: number) =>
   tagAccentColors[index % tagAccentColors.length];
 
 // Sort tags by name in alphabetical order, ignoring case sensitivity
-const tags = [...new Set(allPosts.map((post) => post.data.tags).flat())].sort(
+const tags = [...new Set(visiblePosts.map((post) => post.data.tags).flat())].sort(
   (a, b) => a.toLowerCase().localeCompare(b.toLowerCase()),
 );
 
@@ -81,6 +87,7 @@ const activeTagAccentColor = getTagAccentColor(
               url={"/posts/" + post.id.replace(/\.(md|mdx)$/i, "")}
               title={post.data.title}
               pubDate={post.data.pubDate.toISOString().split("T")[0]}
+              draft={!post.data.published}
             />
           ))
         }

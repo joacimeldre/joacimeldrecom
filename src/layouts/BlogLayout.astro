@@ -8,6 +8,8 @@ const normalizedTags = (frontmatter.tags ?? [])
   .filter((tag: string) => tag.length > 0);
 const headerImage = frontmatter.image?.url;
 const isGifHeader = headerImage?.format === "gif";
+const isDraft = frontmatter.published === false;
+const pageTitle = `${frontmatter.title}${isDraft && import.meta.env.DEV ? " (draft)" : ""} - Joacim Eldre`;
 
 // Get the resolved image src for meta tags
 const imageUrl = frontmatter.ogImage?.src || headerImage?.src || "/ogdefault.png";
@@ -30,7 +32,7 @@ const formattedDate = (() => {
 ---
 
 <BaseLayout
-  title={`${frontmatter.title} - Joacim Eldre`}
+  title={pageTitle}
   description={frontmatter.description}
   image={imageUrl}
   type="article"
@@ -42,15 +44,16 @@ const formattedDate = (() => {
         <div class="mx-auto">
           <h1 class="typo-display-xl">
             {frontmatter.title}
+            {isDraft && import.meta.env.DEV && " (draft)"}
           </h1>
           <p class="mt-3 typo-main">
             {frontmatter.description}
           </p>
-          {
+          {headerImage && (
             isGifHeader ? (
               <img
                 src={headerImage?.src}
-                alt={frontmatter.image.alt}
+                alt={frontmatter.image?.alt}
                 width="1280"
                 height="630"
                 loading="eager"
@@ -61,15 +64,15 @@ const formattedDate = (() => {
               <Image
                 width={1280}
                 height={630}
-                src={frontmatter.image.url}
-                alt={frontmatter.image.alt}
+                src={headerImage}
+                alt={frontmatter.image?.alt}
                 loading="eager"
                 fetchpriority="high"
                 sizes="(max-width: 768px) 100vw, 768px"
                 style="display:block;width:100%;max-width:100%;height:auto;aspect-ratio:1280 / 630;object-fit:cover;object-position:center;margin-top:1rem;margin-left:auto;margin-right:auto;border-radius:0.75rem;"
               />
             )
-          }
+          )}
           <p class="mx-auto mt-4 typo-nav">
             Published on <time datetime={frontmatter.pubDate}
               >{formattedDate}</time

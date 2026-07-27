@@ -74,11 +74,14 @@ Required frontmatter fields are validated in `src/content/config.ts`:
 pubDate: 2026-06-24
 title: Post title
 description: Short summary
+published: yes
 image:
 	url: "../images/posts/example.png"
 	alt: "Accessible description"
 tags: ["All", "Design"]
 ---
+
+Set `published: no` to hide a post from the homepage, tag pages, RSS feed, and direct page generation.
 ```
 
 Post images should live under `src/content/images/posts/` and be referenced relatively from each post.

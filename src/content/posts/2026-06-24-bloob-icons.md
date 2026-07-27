@@ -2,10 +2,11 @@
 pubDate: 2026-06-24
 title: Bloob icons
 description: "Tiny icons for a tiny video game. I love icons, so of course I've made custom icons for Bloob. 9 icons measuring 5x5 pixels."
+published: yes
 image:
   url: "../images/posts/bloob_icons.webp"
   alt: "Bloob icon set by Joacim Eldre"
-tags: ["All", "PICO-8", "Game Development", "Design", "Icon"]
+tags: ["All", "Icon design"]
 ---
 
 # No text

@@ -3,8 +3,11 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import BlogEntries from "@/components/entries/BlogEntry.astro";
 import { getCollection } from "astro:content";
 const allPosts = await getCollection("posts");
+const visiblePosts = import.meta.env.DEV
+  ? allPosts
+  : allPosts.filter((post) => post.data.published);
 // Sort posts by date in descending order (newest first)
-const sortedPosts = allPosts.sort(
+const sortedPosts = visiblePosts.sort(
   (a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime(),
 );
 ---
@@ -40,6 +43,7 @@ const sortedPosts = allPosts.sort(
                 url={"/posts/" + post.id.replace(/\.(md|mdx)$/i, "")}
                 title={post.data.title}
                 pubDate={post.data.pubDate.toISOString().split("T")[0]}
+                draft={!post.data.published}
               />
             ))
         }
