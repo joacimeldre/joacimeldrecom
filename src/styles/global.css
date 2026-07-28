@@ -326,6 +326,42 @@ a:not(.rounded-full):not(.logo-link):not(.nav-link)[data-lc="4"] {
   text-decoration-color: #39edae !important;
 }
 
+/* Markdown blockquotes: rotate through the same accent palette as links. */
+:is(.prose, .typo-prose) blockquote {
+  --quote-accent: currentColor;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 1.4em 0;
+  padding: 0.25rem 1em 0.25rem 0.95em;
+  border-left: 0 !important;
+  border-inline-start: 0 !important;
+}
+
+:is(.prose, .typo-prose) blockquote::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.5em;
+  bottom: 0.5em;
+  width: 0.2rem;
+  border-radius: 0;
+  background-color: var(--quote-accent);
+}
+
+:is(.prose, .typo-prose) ol > li::marker {
+  color: currentColor;
+}
+
+:is(.prose, .typo-prose) ol > li {
+  color: currentColor;
+}
+
+:is(.prose, .typo-prose) blockquote p:first-of-type::before,
+:is(.prose, .typo-prose) blockquote p:last-of-type::after {
+  content: none;
+}
+
 /* On hover: fade out the solid underline, replace with two wavy pseudo-elements */
 a:not(.rounded-full):not(.logo-link):not(.nav-link):hover,
 li a:not(.rounded-full):not(.logo-link):not(.nav-link):hover {

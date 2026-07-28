@@ -1,8 +1,44 @@
 ---
 pubDate: 2026-07-27
 title: What is design?
-description: "Design is many things and nothing. No thing. But what is design to me?"
+description: "Design is everything and nothing. But what is design to me?"
 published: no
 image:
 tags: ["All", "Bla bla"]
 ---
+
+Design means different things to different people. Here's what the word is defined as, by someone, sometime.
+
+# **Definition**
+
+_noun_
+
+> 1. a plan, model, or drawing produced to show the look and function of a building, garment, or other artefact before it is built or made.
+
+Example: she has just unveiled her design for the new museum.
+
+> 2. an arrangement of lines or shapes created to form a pattern or decoration.
+
+Example: pottery with a lovely blue and white design.
+
+> 3. purpose or planning that exists behind an action, fact, or object.
+
+Example: the appearance of design in the universe.
+
+# Etymology
+
+Late 14c., _to make, shape_ ultimately from Latin _designare_ (mark out, point out; devise; choose, designate, appoint) from _de_ (out) + _signare_ (to mark) from _signum_ (identifying mark, sign).
+
+The Italian verb _disegnare_ in 16c. developed the senses _to contrive, plot, intend_ and _to draw, paint, embroider_. French took both these senses from Italian, in different forms, and passed them on to English, which uses design in all senses.
+
+From 1540s as _to plan or outline, form a scheme_, from 1703 as _to contrive for a purpose_. Transitive sense of _draw the outline or figure of,_ especially of a proposed work, is from 1630s; the meaning _plan and execute, fashion with artistic skill_ is from 1660s. The intransitive sense of _do original work in a graphic or plastic art_ is from 1854. Also used in 17c. English with the meaning now attached to designate.
+
+# To design
+
+To design for me, is to make something for someone. Based on what they need, not necessarily what they want. It's to make something, no matter what, that to who it's made for, is useful, usable, and preferably enjoyable. And fun.
+
+So, I think everyone is a designer, and everything is design. We all design things, every day. To decide is to design. To design is to be human.
+
+Is art design? Yep.
+
+That's it.
