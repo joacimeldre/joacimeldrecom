@@ -1,7 +1,6 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { Image } from "astro:assets";
-import Logo from "@/components/global/Logo.astro";
 import Adventure from "../content/images/page/about/Adventure.webp";
 ---
 
@@ -64,6 +63,105 @@ import Adventure from "../content/images/page/about/Adventure.webp";
             <p class="mt-6 typo-main">
                 We also like to play outside, doing fun little things like pretending that the ground is lava! And we have to step on small rocks and grass patches or balance along trees to not fall into the lava.
             </p>
+            <h2 class="mt-10 typo-display-lg mb-4">
+                Contact
+            </h2>
+            <form id="contact-form" class="mt-4 space-y-4" novalidate>
+                <div>
+                    <label for="contact-subject" class="block typo-nav mb-1 text-base-900">What?</label>
+                    <input
+                        id="contact-subject"
+                        name="subject"
+                        type="text"
+                        required
+                        placeholder="Subject"
+                        class="typo-nav w-full rounded-md border border-base-900/25 bg-orange-50 px-3 py-2 transition-colors duration-200 placeholder:text-base-900/45 focus:border-base-900 focus:ring-0"
+                    />
+                </div>
+
+                <div>
+                    <label for="contact-body" class="block typo-nav mb-1 text-base-900">Why? When? Who? Where?</label>
+                    <textarea
+                        id="contact-body"
+                        name="body"
+                        required
+                        rows="6"
+                        placeholder="Body"
+                        class="typo-nav w-full rounded-md border border-base-900/25 bg-orange-50 px-3 py-2 transition-colors duration-200 placeholder:text-base-900/45 focus:border-base-900 focus:ring-0"
+                    ></textarea>
+                </div>
+
+                <button
+                    id="contact-submit"
+                    type="submit"
+                    class="button-link bg-accent text-base-900 typo-nav py-2 px-3 sm:px-4 rounded-full transition duration-200 hover:bg-base-900 hover:text-base-50 cursor-pointer"
+                >
+                    Open in email app
+                </button>
+            </form>
         </div>
     </section>
+
+    <script is:inline>
+        const contactForm = document.getElementById("contact-form");
+        const submitButton = document.getElementById("contact-submit");
+        const subjectInput = document.getElementById("contact-subject");
+        const bodyInput = document.getElementById("contact-body");
+
+        const buildMailtoHref = () => {
+            const subject =
+                subjectInput instanceof HTMLInputElement
+                    ? subjectInput.value.trim()
+                    : "";
+            const body =
+                bodyInput instanceof HTMLTextAreaElement
+                    ? bodyInput.value.trim()
+                    : "";
+
+            return `mailto:hei@joacimeldre.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        };
+
+        const updateMailtoPreview = () => {
+            if (submitButton instanceof HTMLButtonElement) {
+                submitButton.title = buildMailtoHref();
+            }
+        };
+
+        if (subjectInput instanceof HTMLInputElement) {
+            subjectInput.addEventListener("input", updateMailtoPreview);
+        }
+
+        if (bodyInput instanceof HTMLTextAreaElement) {
+            bodyInput.addEventListener("input", updateMailtoPreview);
+        }
+
+        if (submitButton instanceof HTMLButtonElement) {
+            submitButton.addEventListener("mouseenter", updateMailtoPreview);
+            submitButton.addEventListener("focus", updateMailtoPreview);
+        }
+
+        updateMailtoPreview();
+
+        if (contactForm instanceof HTMLFormElement) {
+            contactForm.addEventListener("submit", (event) => {
+                event.preventDefault();
+
+                if (
+                    !(subjectInput instanceof HTMLInputElement) ||
+                    !(bodyInput instanceof HTMLTextAreaElement)
+                ) {
+                    return;
+                }
+
+                if (!subjectInput.value.trim() || !bodyInput.value.trim()) {
+                    contactForm.reportValidity();
+                    return;
+                }
+
+                const mailtoHref = buildMailtoHref();
+
+                window.location.href = mailtoHref;
+            });
+        }
+    </script>
 </BaseLayout>
