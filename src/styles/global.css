@@ -200,8 +200,17 @@ a.nav-link:focus-visible {
   text-decoration-thickness: 1.5px;
 }
 
-a.button-link {
+.button-link {
   border-radius: 1rem !important;
+}
+
+.button-secondary {
+  @apply border border-base-900/40 bg-transparent px-3 py-2 text-base-900 sm:px-4;
+}
+
+.button-secondary:hover,
+.button-secondary:focus-visible {
+  @apply border-base-900 bg-base-900 text-base-50;
 }
 
 a.logo-link {
