@@ -1,0 +1,126 @@
+---
+interface Props {
+  recipient?: string;
+  class?: string;
+}
+
+const {
+  recipient = "hei@joacimeldre.com",
+  class: className = "",
+} = Astro.props;
+---
+
+<form data-contact-form data-recipient={recipient} class:list={["mt-4 space-y-4", className]} novalidate>
+  <div>
+    <label data-contact-label="subject" class="block typo-nav mb-1 text-base-900">What's the subject?</label>
+    <input
+      data-contact-input="subject"
+      name="subject"
+      type="text"
+      required
+      placeholder="Subject"
+      class="typo-nav w-full rounded-md border border-base-900/25 bg-orange-50 px-3 py-2 transition-colors duration-200 placeholder:text-base-900/45 focus:border-base-900 focus:ring-0"
+    />
+  </div>
+
+  <div>
+    <label data-contact-label="body" class="block typo-nav mb-1 text-base-900">What do you want to say?</label>
+    <textarea
+      data-contact-input="body"
+      name="body"
+      required
+      rows="6"
+      placeholder="Message"
+      class="typo-nav w-full rounded-md border border-base-900/25 bg-orange-50 px-3 py-2 transition-colors duration-200 placeholder:text-base-900/45 focus:border-base-900 focus:ring-0"
+    ></textarea>
+  </div>
+
+  <button
+    data-contact-submit
+    type="submit"
+    class="button-link button-secondary typo-nav transition duration-200 cursor-pointer"
+  >
+    <span aria-hidden="true">@</span> Open in your email app
+  </button>
+</form>
+
+<script>
+  const forms = document.querySelectorAll("[data-contact-form]");
+
+  forms.forEach((formElement) => {
+    if (!(formElement instanceof HTMLFormElement)) {
+      return;
+    }
+
+    if (formElement.dataset.contactFormReady === "true") {
+      return;
+    }
+
+    const subjectInput = formElement.querySelector(
+      '[data-contact-input="subject"]',
+    );
+    const bodyInput = formElement.querySelector('[data-contact-input="body"]');
+    const submitButton = formElement.querySelector("[data-contact-submit]");
+    const subjectLabel = formElement.querySelector(
+      '[data-contact-label="subject"]',
+    );
+    const bodyLabel = formElement.querySelector('[data-contact-label="body"]');
+    const recipient = formElement.dataset.recipient ?? "hei@joacimeldre.com";
+
+    if (!(subjectInput instanceof HTMLInputElement)) {
+      return;
+    }
+
+    if (!(bodyInput instanceof HTMLTextAreaElement)) {
+      return;
+    }
+
+    if (!(submitButton instanceof HTMLButtonElement)) {
+      return;
+    }
+
+    // Generate unique ids at runtime so label/input links stay valid for each instance.
+    const uid = Math.random().toString(36).slice(2, 10);
+    subjectInput.id = `contact-subject-${uid}`;
+    bodyInput.id = `contact-body-${uid}`;
+
+    if (subjectLabel instanceof HTMLLabelElement) {
+      subjectLabel.htmlFor = subjectInput.id;
+    }
+
+    if (bodyLabel instanceof HTMLLabelElement) {
+      bodyLabel.htmlFor = bodyInput.id;
+    }
+
+    const buildMailtoHref = () => {
+      const subject = subjectInput.value.trim();
+      const body = bodyInput.value.trim();
+
+      return `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    };
+
+    const updateMailtoPreview = () => {
+      submitButton.title = buildMailtoHref();
+    };
+
+    subjectInput.addEventListener("input", updateMailtoPreview);
+    bodyInput.addEventListener("input", updateMailtoPreview);
+    submitButton.addEventListener("mouseenter", updateMailtoPreview);
+    submitButton.addEventListener("focus", updateMailtoPreview);
+
+    updateMailtoPreview();
+
+    formElement.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      if (!subjectInput.value.trim() || !bodyInput.value.trim()) {
+        formElement.reportValidity();
+        return;
+      }
+
+      window.location.href = buildMailtoHref();
+    });
+
+    formElement.dataset.contactFormReady = "true";
+  });
+</script>
