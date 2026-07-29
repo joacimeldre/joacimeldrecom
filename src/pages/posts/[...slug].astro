@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from "astro:content";
 import MarkdownPostLayout from "../../layouts/BlogLayout.astro";
+import { estimateReadingStats } from "@/utils/readingTime";
 export const prerender = true;
 
 export async function getStaticPaths() {
@@ -18,8 +19,9 @@ export async function getStaticPaths() {
 }
 const { entry } = Astro.props;
 const { Content } = await render(entry);
+const readingStats = estimateReadingStats(entry.body);
 ---
 
-<MarkdownPostLayout frontmatter={entry.data}>
+<MarkdownPostLayout frontmatter={entry.data} readingStats={readingStats}>
   <Content />
 </MarkdownPostLayout>

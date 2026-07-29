@@ -11,7 +11,7 @@ Design means different things to different people. Here's what the word is defin
 
 # **Definition**
 
-_noun_
+Design, _noun_.
 
 > 1. a plan, model, or drawing produced to show the look and function of a building, garment, or other artefact before it is built or made.
 

@@ -2,7 +2,7 @@
 import { Image } from "astro:assets";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import ShapedrifterCursor from "@/components/global/ShapedrifterCursor.astro";
-const { frontmatter } = Astro.props;
+const { frontmatter, readingStats } = Astro.props;
 const normalizedTags = (frontmatter.tags ?? [])
   .map((tag: string) => tag.trim())
   .filter((tag: string) => tag.length > 0);
@@ -78,6 +78,11 @@ const formattedDate = (() => {
               >{formattedDate}</time
             >
           </p>
+          {readingStats && (
+            <p class="mx-auto mt-2 typo-nav">
+              {readingStats.words.toLocaleString("en-US")} {readingStats.words === 1 ? "word" : "words"} ~ {readingStats.minutes} {readingStats.minutes === 1 ? "minute" : "minutes"} read
+            </p>
+          )}
           <p class="mx-auto mt-2 typo-nav">
             Tagged as{" "}
             {
