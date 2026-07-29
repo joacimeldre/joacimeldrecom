@@ -49,6 +49,11 @@
     let leftTireFollower = null;
     let rightTireFollower = null;
     const activeSkidMarks = [];
+    const CURSOR_WIDTH = 22;
+    const CURSOR_HEIGHT = 32;
+    const CURSOR_HALF_WIDTH = CURSOR_WIDTH / 2;
+    const CURSOR_HALF_HEIGHT = CURSOR_HEIGHT / 2;
+    const CURSOR_FORWARD_ANCHOR_OFFSET_PX = 2;
     const CURSOR_FORWARD_OFFSET_DEG = 90;
     const SKID_MARK_LIFETIME_MS = 2300;
     const SKID_MARK_INTERVAL_MS = 12;
@@ -145,16 +150,18 @@
         headingRad = Math.atan2(sinHeading, cosHeading);
       }
 
+      const headingX = Math.cos(headingRad);
+      const headingY = Math.sin(headingRad);
+      const renderCenterX = currentX - headingX * CURSOR_FORWARD_ANCHOR_OFFSET_PX;
+      const renderCenterY = currentY - headingY * CURSOR_FORWARD_ANCHOR_OFFSET_PX;
       const driftAngle = (headingRad * 180) / Math.PI + CURSOR_FORWARD_OFFSET_DEG;
 
       cursor.style.opacity = pointerVisible ? "1" : "0";
-      cursor.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) rotate(${driftAngle}deg)`;
+      cursor.style.transform = `translate3d(${renderCenterX - CURSOR_HALF_WIDTH}px, ${renderCenterY - CURSOR_HALF_HEIGHT}px, 0) rotate(${driftAngle}deg)`;
 
       if (!prefersReducedMotion) {
-        const centerX = currentX + 11;
-        const centerY = currentY + 16;
-        const headingX = Math.cos(headingRad);
-        const headingY = Math.sin(headingRad);
+        const centerX = renderCenterX;
+        const centerY = renderCenterY;
         const perpendicularX = -headingY;
         const perpendicularY = headingX;
         const rearX = centerX - Math.cos(headingRad) * 9;
