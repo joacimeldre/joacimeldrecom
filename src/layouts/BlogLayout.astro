@@ -73,27 +73,29 @@ const formattedDate = (() => {
               />
             )
           )}
-          <p class="mx-auto mt-4 typo-nav">
-            Published on <time datetime={frontmatter.pubDate}
-              >{formattedDate}</time
-            >
-          </p>
-          {readingStats && (
-            <p class="mx-auto mt-2 typo-nav">
-              {readingStats.words.toLocaleString("en-US")} {readingStats.words === 1 ? "word" : "words"} ~ {readingStats.minutes} {readingStats.minutes === 1 ? "minute" : "minutes"} read
+          <div class="mx-auto mt-4 space-y-2">
+            <p class="typo-nav">
+              <span aria-hidden="true">↯</span> Published on <time datetime={frontmatter.pubDate}
+                >{formattedDate}</time
+              >
             </p>
-          )}
-          <p class="mx-auto mt-2 typo-nav">
-            Tagged as{" "}
-            {
-              normalizedTags.map((tag: string, index: number) => (
-                <>
-                  {index > 0 && " & "}
-                  <a href={`/tags/${encodeURIComponent(tag)}`} class="typo-nav">{tag}</a>
-                </>
-              ))
-            }
-          </p>
+            {readingStats && (
+              <p class="typo-nav">
+                <span aria-hidden="true">◷</span> {readingStats.words.toLocaleString("en-US")} {readingStats.words === 1 ? "word" : "words"} ~ {readingStats.minutes} {readingStats.minutes === 1 ? "minute" : "minutes"} read
+              </p>
+            )}
+            <p class="typo-nav">
+              <span aria-hidden="true">⌗</span> Tagged as{" "}
+              {
+                normalizedTags.map((tag: string, index: number) => (
+                  <>
+                    {index > 0 && " & "}
+                    <a href={`/tags/${encodeURIComponent(tag)}`} class="typo-nav">{tag}</a>
+                  </>
+                ))
+              }
+            </p>
+          </div>
         </div>
 
         <div class="typo-main prose typo-prose max-w-3xl mt-12 mx-auto">
