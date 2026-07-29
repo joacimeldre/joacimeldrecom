@@ -65,6 +65,8 @@ Computer. I use a MacBook.
 
 # Software, Apps, Web apps
 
+[Paper](https://paper.design/) is a collaborative web and desktop application for designing and prototyping user interfaces.
+
 [Figma](https://www.figma.com/) is a collaborative web application for wireframe and prototype design.
 
 [Frame0](https://frame0.app/) is a MacOS, Windows, and Linux software to design wireframes.
@@ -105,11 +107,11 @@ Computer. I use a MacBook.
 
 # Accessibility
 
-[a11y, Accessibility Project](https://www.a11yproject.com/).
+[a11y, Accessibility Project](https://www.a11yproject.com/) is a website with resources and guidelines for web accessibility.
 
-[The Micropedia](https://www.themicropedia.org/).
+[The Micropedia](https://www.themicropedia.org/) is a collection of micro aggressions. Stuff you shouldn't do, really.
 
-[Empathy Prompts](http://empathyprompts.net/).
+[Empathy Prompts](http://empathyprompts.net/) is a collection of small prompts that you can use to test accessibility and empathy in your designs.
 
 # Design System
 
@@ -157,13 +159,13 @@ Computer. I use a MacBook.
 
 [Laws of UX](http://lawsofux.com/) is a book about the principles of user experience design.
 
-[Built for Mars](https://builtformars.com/).
+[Built for Mars](https://builtformars.com/) is a website about user experience and digital product design.
 
-[Apple & Banana](https://www.appleandbanana.org/).
+[Apple & Banana](https://www.appleandbanana.org/) is a website filled with resources on user experience and product design.
 
-[Growth Design Psychology](https://growth.design/).
+[Growth Design Psychology](https://growth.design/) is a website about the psychology behind user experience in digital products.
 
-[UX Signals](https://www.uxsignals.com/).
+[UX Signals](https://www.uxsignals.com/) is a web application to test user experience signals in your digital product.
 
 [Raut](https://raut.no/) is a Norwegian newsletter about user experience.
 
@@ -185,13 +187,13 @@ Computer. I use a MacBook.
 
 # Communicate, Plan, Document, Note
 
-[FigJam](https://www.figma.com/figjam/).
+[FigJam](https://www.figma.com/figjam/) is a collaborative online whiteboard for teams to brainstorm, plan, and document ideas.
 
-[Slack](https://slack.com/).
+[Slack](https://slack.com/) is a messaging platform for teams to communicate and collaborate.
 
-[Obsidian](https://obsidian.md/).
+[Obsidian](https://obsidian.md/) is a knowledge management and note-taking application that uses a local folder of Markdown files.
 
-[Linear](https://linear.app/).
+[Linear](https://linear.app/) is a project management tool for software development teams.
 
 # Type, Typography, Font
 
