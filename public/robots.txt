@@ -1,7 +1,5 @@
 User-agent: *
 Allow: /
-Allow: /_astro/
-Allow: /fonts/
 Disallow: /api/
 
 User-agent: GPTBot
@@ -23,4 +21,3 @@ User-agent: Google-Extended
 Disallow: /
 
 Sitemap: https://joacimeldrecom.vercel.app/sitemap-index.xml
-Sitemap: https://joacimeldrecom.vercel.app/rss.xml
