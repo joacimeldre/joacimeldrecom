@@ -25,6 +25,15 @@ const {
     ></textarea>
   </div>
 
+  <p
+    data-contact-validation
+    class="hidden typo-nav text-base-900/75"
+    role="status"
+    aria-live="polite"
+  >
+    Please write a message before opening your email app.
+  </p>
+
   <button
     data-contact-submit
     type="submit"
@@ -49,6 +58,9 @@ const {
     const bodyInput = formElement.querySelector('[data-contact-input="body"]');
     const submitButton = formElement.querySelector("[data-contact-submit]");
     const bodyLabel = formElement.querySelector('[data-contact-label="body"]');
+    const validationMessage = formElement.querySelector(
+      "[data-contact-validation]",
+    );
     const recipient = formElement.dataset.recipient ?? "hei@joacimeldre.com";
     const subject = formElement.dataset.subject ?? "hello through joacimeldre.com";
 
@@ -57,6 +69,10 @@ const {
     }
 
     if (!(submitButton instanceof HTMLButtonElement)) {
+      return;
+    }
+
+    if (!(validationMessage instanceof HTMLElement)) {
       return;
     }
 
@@ -74,23 +90,27 @@ const {
       return `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     };
 
-    const updateMailtoPreview = () => {
-      submitButton.title = buildMailtoHref();
+    const setValidationState = (isValid: boolean) => {
+      validationMessage.classList.toggle("hidden", isValid);
+      bodyInput.setAttribute("aria-invalid", String(!isValid));
     };
 
-    bodyInput.addEventListener("input", updateMailtoPreview);
-    submitButton.addEventListener("mouseenter", updateMailtoPreview);
-    submitButton.addEventListener("focus", updateMailtoPreview);
+    bodyInput.addEventListener("input", () => {
+      setValidationState(bodyInput.value.trim().length > 0);
+    });
 
-    updateMailtoPreview();
+    setValidationState(true);
 
     formElement.addEventListener("submit", (event) => {
       event.preventDefault();
 
       if (!bodyInput.value.trim()) {
-        formElement.reportValidity();
+        setValidationState(false);
+        bodyInput.focus();
         return;
       }
+
+      setValidationState(true);
 
       window.location.href = buildMailtoHref();
     });
