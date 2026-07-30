@@ -1,12 +1,14 @@
 ---
 import BallSling from "@/components/global/BallSling.astro";
 import SmartLink from "@/components/global/SmartLink.astro";
+import { buildContactMailtoHref } from "@/utils/contact";
 
 interface Props {
   showBallSling?: boolean;
 }
 
 const { showBallSling = true } = Astro.props;
+const contactHref = buildContactMailtoHref();
 ---
 
 <footer>
@@ -26,7 +28,7 @@ const { showBallSling = true } = Astro.props;
       </p>
       <p class="typo-nav text-balance text-center">
         Say hi on <SmartLink
-          href="mailto:hei@joacimeldre.com"
+          href={contactHref}
           class="transition duration-200"
         >
           hei@joacimeldre.com</SmartLink
