@@ -25,7 +25,7 @@ const { title, description, image, type, publishedTime, showBallSling = true } =
       publishedTime={publishedTime}
     />
   </head>
-  <body class="flex flex-col max-w-3xl min-h-screen px-8 mx-auto">
+  <body id="top" class="flex flex-col max-w-3xl min-h-screen px-8 mx-auto">
     <Navigation />
     <main class="grow typo-main-size"><slot /></main>
     <Footer showBallSling={showBallSling} />

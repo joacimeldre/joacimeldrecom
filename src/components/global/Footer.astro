@@ -1,5 +1,6 @@
 ---
 import BallSling from "@/components/global/BallSling.astro";
+import GoToTop from "@/components/global/GoToTop.astro";
 import SmartLink from "@/components/global/SmartLink.astro";
 import { buildContactMailtoHref } from "@/utils/contact";
 
@@ -13,13 +14,7 @@ const contactHref = buildContactMailtoHref();
 
 <footer>
   <div data-balls-gap class="pt-16 pb-16">
-    <div class="text-center mb-8">
-      <SmartLink
-        href="#top"
-        class="button-link bg-accent text-base-900 typo-nav py-2 px-4 rounded-full transition duration-200 hover:bg-base-900 hover:text-base-50"
-        ><span aria-hidden="true">⇡</span> Go to top</SmartLink
-      >
-    </div>
+    <GoToTop />
     <div class="space-y-5">
       <p class="typo-nav text-balance text-center">
         © Joacim Eldre {new Date().getFullYear()}. All tights deserved. I promise that

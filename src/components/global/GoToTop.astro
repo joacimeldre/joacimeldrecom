@@ -1,0 +1,102 @@
+---
+import SmartLink from "@/components/global/SmartLink.astro";
+---
+
+<div data-go-top-anchor class="go-top-anchor text-center mb-8">
+  <SmartLink
+    href="#top"
+    class="go-top-button button-link bg-accent text-base-900 typo-nav py-2 px-4 rounded-full transition duration-200 hover:bg-base-900 hover:text-base-50"
+    aria-label="Go to top"
+  >
+    <span aria-hidden="true">⇡</span> Go to top
+  </SmartLink>
+</div>
+
+<script is:inline>
+  const initGoToTopButtons = () => {
+    const anchors = document.querySelectorAll("[data-go-top-anchor]");
+
+    anchors.forEach((anchor) => {
+      if (anchor.dataset.goTopReady === "true") return;
+      anchor.dataset.goTopReady = "true";
+
+      const footer = anchor.closest("footer");
+      if (!footer) return;
+
+      let ticking = false;
+
+      const update = () => {
+        ticking = false;
+
+        const hasScrolled = window.scrollY > 16;
+        const viewportHeight = window.innerHeight;
+        const footerRect = footer.getBoundingClientRect();
+        const anchorRect = anchor.getBoundingClientRect();
+        const floatingBottom = viewportHeight * 0.05;
+        const footerIsVisible = footerRect.top < viewportHeight && footerRect.bottom > 0;
+        const anchorMatchedBottom = viewportHeight - anchorRect.bottom;
+
+        // Settle only when the in-footer slot reaches the current floating height.
+        const shouldSettle =
+          hasScrolled && footerIsVisible && anchorMatchedBottom >= floatingBottom - 1;
+
+        anchor.classList.toggle("is-visible", hasScrolled);
+        anchor.classList.toggle("is-floating", hasScrolled && !shouldSettle);
+        anchor.style.setProperty("--go-top-bottom", `${floatingBottom}px`);
+      };
+
+      const onScrollOrResize = () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(update);
+      };
+
+      update();
+      window.addEventListener("scroll", onScrollOrResize, { passive: true });
+      window.addEventListener("resize", onScrollOrResize);
+    });
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initGoToTopButtons, {
+      once: true,
+    });
+  } else {
+    initGoToTopButtons();
+  }
+
+  document.addEventListener("astro:after-swap", initGoToTopButtons);
+</script>
+
+<style>
+  .go-top-anchor {
+    min-height: 3rem;
+  }
+
+  .go-top-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(0.5rem);
+    transition:
+      opacity 220ms ease,
+      background-color 200ms ease,
+      color 200ms ease;
+  }
+
+  .go-top-anchor.is-visible .go-top-button {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .go-top-anchor.is-floating .go-top-button {
+    position: fixed;
+    left: 50%;
+    bottom: var(--go-top-bottom, 5vh);
+    transform: translateX(-50%);
+    z-index: 50;
+  }
+</style>
