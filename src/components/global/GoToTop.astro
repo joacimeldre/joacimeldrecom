@@ -32,7 +32,7 @@ import SmartLink from "@/components/global/SmartLink.astro";
         const viewportHeight = window.innerHeight;
         const footerRect = footer.getBoundingClientRect();
         const anchorRect = anchor.getBoundingClientRect();
-        const floatingBottom = viewportHeight * 0.05;
+        const floatingBottom = viewportHeight * 0.025;
         const footerIsVisible = footerRect.top < viewportHeight && footerRect.bottom > 0;
         const anchorMatchedBottom = viewportHeight - anchorRect.bottom;
 
@@ -95,7 +95,7 @@ import SmartLink from "@/components/global/SmartLink.astro";
   .go-top-anchor.is-floating .go-top-button {
     position: fixed;
     left: 50%;
-    bottom: var(--go-top-bottom, 5vh);
+    bottom: var(--go-top-bottom, 2.5%);
     transform: translateX(-50%);
     z-index: 50;
   }
