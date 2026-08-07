@@ -12,7 +12,7 @@ let elements = [];
 const CLUE_CONSUMED_KEY = "ballslingClueConsumed";
 const IS_POST_PAGE = window.location.pathname.startsWith("/posts/");
 const PREFERS_REDUCED_MOTION = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-const GRAVITY = 2e3, GYRO_GRAVITY_FACTOR = 0.95, AIR_DRAG = 0.997, FLOOR_BOUNCE = 0.62, FLOOR_AIRTIME_BONUS = 0.42, AIRTIME_FOR_MAX_BOUNCE = 0.95, WALL_BOUNCE = 0.84, FLOOR_FRICTION = 0.96, BODY_BOUNCE = 0.72, BODY_AIRTIME_BONUS = 0.24, ANGULAR_DRAG = 0.991, COM_RESTORE = 4.2, MAX_LINEAR_SPEED = 2600, MAX_ANGULAR_SPEED = 3.2, GROUND_IMPACT_MIN_SPEED = 210, GROUND_IMPACT_STRENGTH = 0.6, GROUND_IMPACT_RADIUS = 380, IMPACT_SQUASH_MAX = 0.1, ANTICIPATION_HEIGHT = 90, ANTICIPATION_SPEED = 240, GEL_LOW_IMPACT_SPEED = 170, RESTING_SQUASH = 0.022, ROLL_SPEED_FOR_MAX_GLIDE = 320, ROLL_FRICTION_FAST = 0.9992, ROLL_FRICTION_SLOW = 0.965, ROLL_STOP_SPEED = 0.045, ROLL_BACK_TRIGGER = 0.11, ROLL_BACK_FACTOR = -0.22, FLING_SAMPLE_WINDOW_MS = 72, FLING_GAIN = 1.22, COLLISION_ITERATIONS = IS_POST_PAGE ? 5 : 7, PENETRATION_SLOP = 0.15, POSITION_CORRECTION_PERCENT = 0.9, FIXED_DT = PREFERS_REDUCED_MOTION ? 1 / 45 : IS_POST_PAGE ? 1 / 72 : 1 / 96, MAX_SUBSTEPS = IS_POST_PAGE ? 4 : 5;
+const GRAVITY = 2e3, GYRO_GRAVITY_FACTOR = 0.95, AIR_DRAG = 0.997, FLOOR_BOUNCE = 0.62, FLOOR_AIRTIME_BONUS = 0.42, AIRTIME_FOR_MAX_BOUNCE = 0.95, WALL_BOUNCE = 0.84, FLOOR_FRICTION = 0.96, BODY_BOUNCE = 0.72, BODY_AIRTIME_BONUS = 0.24, ANGULAR_DRAG = 0.991, COM_RESTORE = 4.2, MAX_LINEAR_SPEED = 2600, MAX_ANGULAR_SPEED = 3.2, GROUND_IMPACT_MIN_SPEED = 210, GROUND_IMPACT_STRENGTH = 0.6, GROUND_IMPACT_RADIUS = 380, IMPACT_SQUASH_MAX = 0.1, ANTICIPATION_HEIGHT = 90, ANTICIPATION_SPEED = 240, GEL_LOW_IMPACT_SPEED = 170, RESTING_SQUASH = 0.022, ROLL_SPEED_FOR_MAX_GLIDE = 320, ROLL_FRICTION_FAST = 0.9992, ROLL_FRICTION_SLOW = 0.965, ROLL_STOP_SPEED = 0.045, ROLL_BACK_TRIGGER = 0.11, ROLL_SETTLE_SPRING = 12, ROLL_SETTLE_DAMPING = 4.8, ROLL_SETTLE_LOOKAHEAD = 0.16, FLING_SAMPLE_WINDOW_MS = 72, FLING_GAIN = 1.22, COLLISION_ITERATIONS = IS_POST_PAGE ? 5 : 7, PENETRATION_SLOP = 0.15, POSITION_CORRECTION_PERCENT = 0.9, FIXED_DT = PREFERS_REDUCED_MOTION ? 1 / 45 : IS_POST_PAGE ? 1 / 72 : 1 / 96, MAX_SUBSTEPS = IS_POST_PAGE ? 4 : 5;
 let viewportWidth = window.innerWidth, viewportHeight = window.innerHeight, bodies = [], lastTs = performance.now(), accumulator = 0, shapeCount = 0, dragState = null, pendingImpactPulses = [], hoveringBall = false, gravityX = 0, gravityY = GRAVITY, gravityTargetX = 0, gravityTargetY = GRAVITY, gyroPermissionAttempted = false, hasUserInteracted = sessionStorage.getItem(CLUE_CONSUMED_KEY) === "1", clueActivatedByFooter = false, clueBall = null, clueAnchorX = 0, clueHopClock = 0, clueNextHopAt = 0;
 const HAS_BOOTED_KEY = "ballslingBooted";
 let footerResizeObserver = null, documentResizeObserver = null, anchorUpdateScheduled = false;
@@ -56,7 +56,7 @@ function getLightingFromLocalTime(now = new Date()) {
     shadowCy,
     highlightOpacity: (0.2 + dayMix * 0.44).toFixed(3),
     shadowOpacity: (0.82 - dayMix * 0.26).toFixed(3),
-    noiseOpacity: (0.4 - dayMix * 0.14).toFixed(3),
+    noiseOpacity: (0.18 - dayMix * 0.05).toFixed(3),
     fillStopOpacity: (0.14 + dayMix * 0.1).toFixed(3),
     baseR: baseR.toString(),
     baseG: baseG.toString(),
@@ -165,20 +165,26 @@ function createShapeElement(index) {
           <stop offset="0%" stop-color="#000" stop-opacity=".2"/>
           <stop offset="78%" stop-color="#000" stop-opacity="0"/>
         </radialGradient>
-        <pattern id="bn-${n}" patternUnits="userSpaceOnUse" width="6" height="6">
-          <circle cx="0.9" cy="0.8" r=".58" fill="#000" fill-opacity=".28"/>
-          <circle cx="2.9" cy="1.6" r=".42" fill="#000" fill-opacity=".2"/>
-          <circle cx="4.6" cy="2.4" r=".5"  fill="#000" fill-opacity=".25"/>
-          <circle cx="1.8" cy="3.7" r=".38" fill="#000" fill-opacity=".18"/>
-          <circle cx="3.8" cy="4.4" r=".46" fill="#000" fill-opacity=".24"/>
-          <circle cx="5.3" cy="5.1" r=".34" fill="#000" fill-opacity=".2"/>
-        </pattern>
+        <filter id="bnf-${n}" x="-24%" y="-24%" width="148%" height="148%" color-interpolation-filters="sRGB">
+          <feTurbulence type="fractalNoise" baseFrequency="1.8" numOctaves="2" seed="${17 + n * 7}" stitchTiles="noStitch" result="noise"/>
+          <feColorMatrix in="noise" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0.1 0.1 0 0" result="grainAlpha"/>
+          <feGaussianBlur in="grainAlpha" stdDeviation="0.17" result="grainSoft"/>
+          <feTurbulence type="fractalNoise" baseFrequency="0.46" numOctaves="1" seed="${103 + n * 11}" stitchTiles="noStitch" result="speckNoise"/>
+          <feColorMatrix in="speckNoise" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.5 0.5 0.5 0 0" result="speckAlpha"/>
+          <feComponentTransfer in="speckAlpha" result="speckMask">
+            <feFuncA type="discrete" tableValues="0 0 0 0 0.06 0.2"/>
+          </feComponentTransfer>
+          <feGaussianBlur in="speckMask" stdDeviation="0.08" result="speckSoft"/>
+          <feBlend in="grainSoft" in2="speckSoft" mode="normal"/>
+        </filter>
       </defs>
       <g class="ball-lighting-layer" clip-path="url(#bc-${n})">
         <circle class="ball-base"      cx="50" cy="50" r="40" fill="url(#bf-${n})"/>
         <circle class="ball-shadow"    cx="50" cy="50" r="40" fill="url(#bs-${n})"/>
         <circle class="ball-highlight" cx="50" cy="50" r="40" fill="url(#bh-${n})"/>
-        <circle class="ball-noise"     cx="50" cy="50" r="40" fill="url(#bn-${n})"/>
+      </g>
+      <g class="ball-noise-layer" clip-path="url(#bc-${n})">
+        <circle class="ball-noise" cx="50" cy="50" r="40" fill="#000" filter="url(#bnf-${n})"/>
       </g>
       <circle class="ball-outline" cx="50" cy="50" r="40" fill="none"/>`, el;
 }
@@ -232,12 +238,15 @@ function initializeBodies(restoreState) {
       vy: 0,
       angle: 0,
       av: 0,
+      noiseAngle: 0,
       airTime: 0,
       touchingFloor: true,
       touchingBody: false,
       squash: 0,
       anticipation: 0,
       didGroundOverstep: false,
+      settlingRoll: false,
+      settleAnchorX: x,
       slingBurstArmed: false
     };
     if (restoreState?.[i]) {
@@ -349,7 +358,7 @@ function step(dt) {
       b.x = dragState.pointerX + dragState.grabOffsetX, b.y = dragState.pointerY + dragState.grabOffsetY, b.vx = 0, b.vy = 0, b.av *= 0.8, b.anticipation = 0, b.squash *= Math.pow(0.82, d * 60), clampInsideViewport(b);
       continue;
     }
-    b.touchingFloor || (b.airTime = Math.min(3, b.airTime + d), b.didGroundOverstep = false), b.vx += gravityX * d, b.vy += gravityY * d;
+    b.touchingFloor || (b.airTime = Math.min(3, b.airTime + d), b.didGroundOverstep = false, b.settlingRoll = false), b.vx += gravityX * d, b.vy += gravityY * d;
     if (!hasUserInteracted && clueActivatedByFooter && b === clueBall) {
       const floorY = viewportHeight - b.radius;
       b.x = clueAnchorX, b.vx = 0, b.av = 0;
@@ -365,11 +374,24 @@ function step(dt) {
     const settled = b.touchingFloor && Math.abs(b.vy) < 10 && Math.abs(b.vx) < 18;
     b.squash += ((settled ? RESTING_SQUASH : 0) - b.squash) * Math.min(1, d * (settled ? 8 : 4)), b.x += b.vx * d, b.y += b.vy * d, b.angle += b.av * d;
     const spd = Math.hypot(b.vx, b.vy);
+    const radiusForSpin = Math.max(18, b.radius * 0.9);
+    const rollSpin = b.vx / radiusForSpin;
+    const airborneSpin = b.av * 0.45;
+    const textureSpin = b.touchingFloor ? rollSpin : rollSpin * 0.35 + airborneSpin;
+    b.noiseAngle += textureSpin * d;
+    b.noiseAngle > Math.PI && (b.noiseAngle -= Math.PI * 2);
+    b.noiseAngle < -Math.PI && (b.noiseAngle += Math.PI * 2);
     if (spd > MAX_LINEAR_SPEED && (b.vx *= MAX_LINEAR_SPEED / spd, b.vy *= MAX_LINEAR_SPEED / spd), b.av = clamp(b.av, -MAX_ANGULAR_SPEED, MAX_ANGULAR_SPEED), clampInsideViewport(b), b.touchingFloor) {
       const mix = clamp(Math.abs(b.vx) / ROLL_SPEED_FOR_MAX_GLIDE, 0, 1);
       b.vx *= Math.pow(ROLL_FRICTION_SLOW + (ROLL_FRICTION_FAST - ROLL_FRICTION_SLOW) * mix, d * 60), b.av *= Math.pow(0.9 + 0.09 * mix, d * 60);
       const pfs = Math.abs(b.vx);
-      pfs < ROLL_BACK_TRIGGER && pfs > ROLL_STOP_SPEED && !b.didGroundOverstep && (b.vx *= ROLL_BACK_FACTOR, b.didGroundOverstep = true), Math.abs(b.vx) < ROLL_STOP_SPEED && (b.vx *= 0.96 + 0.04 * clamp(Math.abs(b.vx) / ROLL_STOP_SPEED, 0, 1), Math.abs(b.vx) < 0.012 && (b.vx = 0));
+      pfs > ROLL_BACK_TRIGGER * 1.8 && (b.settlingRoll = false), pfs < ROLL_BACK_TRIGGER && pfs > ROLL_STOP_SPEED && !b.settlingRoll && (b.settlingRoll = true, b.settleAnchorX = b.x + b.vx * ROLL_SETTLE_LOOKAHEAD);
+      if (b.settlingRoll) {
+        const anchorError = b.x - b.settleAnchorX;
+        b.vx += (-ROLL_SETTLE_SPRING * anchorError - ROLL_SETTLE_DAMPING * b.vx) * d;
+        Math.abs(anchorError) < 0.18 && (b.vx *= Math.pow(0.985, d * 60));
+        Math.abs(anchorError) < 0.06 && Math.abs(b.vx) < 0.008 && (b.x = b.settleAnchorX, b.vx = 0, b.settlingRoll = false);
+      } else Math.abs(b.vx) < ROLL_STOP_SPEED && (b.vx *= 0.96 + 0.04 * clamp(Math.abs(b.vx) / ROLL_STOP_SPEED, 0, 1), Math.abs(b.vx) < 0.012 && (b.vx = 0));
     }
   }
   resolveBodyCollisions(d);
@@ -381,7 +403,7 @@ function step(dt) {
 function renderBodies() {
   for (const b of bodies) {
     const tx = b.x - b.size / 2, ty = Math.round(b.y - b.size / 2), spd = Math.hypot(b.vx, b.vy), floorDist = Math.max(0, viewportHeight - b.radius - b.y), lowDamp = floorDist < 90 && spd < 340 ? clamp(floorDist / 90, 0.22, 1) : 1, stretch = (!b.touchingFloor && spd > 220 ? Math.min(0.016, Math.pow((spd - 220) / 1500, 1.15)) : 0) * lowDamp, sq = clamp((b.squash + b.anticipation) * lowDamp, 0, 0.12), hs = dragState?.body === b ? 1.045 : 1, sx = (1 + sq - stretch * 0.55) * hs, sy = (1 - sq * 0.78 + stretch) * hs, la = Math.atan2(b.vy, b.vx) - Math.PI / 2 - b.angle;
-    b.el.style.transform = `translate(${tx}px,${ty}px) rotate(${b.angle}rad) rotate(${la}rad) scale(${sx},${sy}) rotate(${-la}rad)`, b.el.style.setProperty("--lighting-counter-rotation", `${-b.angle}rad`);
+    b.el.style.transform = `translate(${tx}px,${ty}px) rotate(${b.angle}rad) rotate(${la}rad) scale(${sx},${sy}) rotate(${-la}rad)`, b.el.style.setProperty("--lighting-counter-rotation", `${-b.angle}rad`), b.el.style.setProperty("--noise-rotation", `${b.noiseAngle}rad`);
   }
 }
 const saveBodyState = () => sessionStorage.setItem("ballSlingState", JSON.stringify(bodies.map((b) => ({ x: b.x, y: b.y, vx: b.vx, vy: b.vy, angle: b.angle, av: b.av }))));
@@ -590,6 +612,11 @@ if (hasBootedInSession && cachedState) {
   transform-origin: 50% 50%;
   transform-box: fill-box;
   transform: rotate(var(--lighting-counter-rotation, 0rad));
+}
+.floating-element .ball-noise-layer {
+  transform-origin: 50% 50%;
+  transform-box: fill-box;
+  transform: rotate(calc(var(--lighting-counter-rotation, 0rad) + var(--noise-rotation, 0rad)));
 }
 .floating-element .ball-highlight {
   opacity: var(--ballsling-highlight-opacity, .62);
