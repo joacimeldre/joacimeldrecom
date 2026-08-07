@@ -12,7 +12,7 @@ let elements = [];
 const CLUE_CONSUMED_KEY = "ballslingClueConsumed";
 const IS_POST_PAGE = window.location.pathname.startsWith("/posts/");
 const PREFERS_REDUCED_MOTION = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-const GRAVITY = 2e3, GYRO_GRAVITY_FACTOR = 0.95, AIR_DRAG = 0.997, FLOOR_BOUNCE = 0.62, FLOOR_AIRTIME_BONUS = 0.42, AIRTIME_FOR_MAX_BOUNCE = 0.95, WALL_BOUNCE = 0.84, FLOOR_FRICTION = 0.96, BODY_BOUNCE = 0.72, BODY_AIRTIME_BONUS = 0.24, ANGULAR_DRAG = 0.991, COM_RESTORE = 4.2, MAX_LINEAR_SPEED = 2600, MAX_ANGULAR_SPEED = 3.2, GROUND_IMPACT_MIN_SPEED = 210, GROUND_IMPACT_STRENGTH = 0.6, GROUND_IMPACT_RADIUS = 380, IMPACT_SQUASH_MAX = 0.1, ANTICIPATION_HEIGHT = 90, ANTICIPATION_SPEED = 240, GEL_LOW_IMPACT_SPEED = 170, RESTING_SQUASH = 0.022, ROLL_SPEED_FOR_MAX_GLIDE = 320, ROLL_FRICTION_FAST = 0.9992, ROLL_FRICTION_SLOW = 0.965, ROLL_STOP_SPEED = 0.045, ROLL_BACK_TRIGGER = 0.11, ROLL_SETTLE_SPRING = 12, ROLL_SETTLE_DAMPING = 4.8, ROLL_SETTLE_LOOKAHEAD = 0.16, FLING_SAMPLE_WINDOW_MS = 72, FLING_GAIN = 1.22, COLLISION_ITERATIONS = IS_POST_PAGE ? 5 : 7, PENETRATION_SLOP = 0.15, POSITION_CORRECTION_PERCENT = 0.9, FIXED_DT = PREFERS_REDUCED_MOTION ? 1 / 45 : IS_POST_PAGE ? 1 / 72 : 1 / 96, MAX_SUBSTEPS = IS_POST_PAGE ? 4 : 5;
+const GRAVITY = 2e3, GYRO_GRAVITY_FACTOR = 0.95, AIR_DRAG = 0.997, FLOOR_BOUNCE = 0.62, FLOOR_AIRTIME_BONUS = 0.42, AIRTIME_FOR_MAX_BOUNCE = 0.95, WALL_BOUNCE = 0.84, FLOOR_FRICTION = 0.96, BODY_BOUNCE = 0.72, BODY_AIRTIME_BONUS = 0.24, ANGULAR_DRAG = 0.991, COM_RESTORE = 4.2, MAX_LINEAR_SPEED = 2600, MAX_ANGULAR_SPEED = 3.2, GROUND_IMPACT_MIN_SPEED = 210, GROUND_IMPACT_STRENGTH = 0.6, GROUND_IMPACT_RADIUS = 380, IMPACT_SQUASH_MAX = 0.1, ANTICIPATION_HEIGHT = 90, ANTICIPATION_SPEED = 240, GEL_LOW_IMPACT_SPEED = 170, RESTING_SQUASH = 0.022, ROLL_SPEED_FOR_MAX_GLIDE = 320, ROLL_FRICTION_FAST = 0.99935, ROLL_FRICTION_SLOW = 0.982, ROLL_STOP_SPEED = 0.024, ROLL_BACK_TRIGGER = 0.11, ROLL_SETTLE_SPRING = 12, ROLL_SETTLE_DAMPING = 4.8, ROLL_SETTLE_LOOKAHEAD = 0.16, FLING_SAMPLE_WINDOW_MS = 72, FLING_GAIN = 1.22, COLLISION_ITERATIONS = IS_POST_PAGE ? 5 : 7, PENETRATION_SLOP = 0.15, POSITION_CORRECTION_PERCENT = 0.9, FIXED_DT = PREFERS_REDUCED_MOTION ? 1 / 45 : IS_POST_PAGE ? 1 / 72 : 1 / 96, MAX_SUBSTEPS = IS_POST_PAGE ? 4 : 5;
 let viewportWidth = window.innerWidth, viewportHeight = window.innerHeight, bodies = [], lastTs = performance.now(), accumulator = 0, shapeCount = 0, dragState = null, pendingImpactPulses = [], hoveringBall = false, gravityX = 0, gravityY = GRAVITY, gravityTargetX = 0, gravityTargetY = GRAVITY, gyroPermissionAttempted = false, hasUserInteracted = sessionStorage.getItem(CLUE_CONSUMED_KEY) === "1", clueActivatedByFooter = false, clueBall = null, clueAnchorX = 0, clueHopClock = 0, clueNextHopAt = 0;
 const HAS_BOOTED_KEY = "ballslingBooted";
 let footerResizeObserver = null, documentResizeObserver = null, anchorUpdateScheduled = false;
@@ -336,11 +336,11 @@ function resolveBodyCollisions(dt) {
       if (vaN > 0) continue;
       const airtimeMix = Math.min(1, (a.airTime + b.airTime) / (2 * AIRTIME_FOR_MAX_BOUNCE)), impulse = -(1 + BODY_BOUNCE + BODY_AIRTIME_BONUS * airtimeMix) * vaN / invSum, ix = impulse * nx, iy = impulse * ny;
       a.vx -= ix * a.invMass, a.vy -= iy * a.invMass, b.vx += ix * b.invMass, b.vy += iy * b.invMass;
-      const tx = -ny, ty = nx, vaT = rvx * tx + rvy * ty, fi = clamp(-vaT / invSum, -impulse * 0.24, impulse * 0.24);
+      const tx = -ny, ty = nx, vaT = rvx * tx + rvy * ty, fi = clamp(-vaT / invSum, -impulse * 0.16, impulse * 0.16);
       a.vx -= fi * tx * a.invMass, a.vy -= fi * ty * a.invMass, b.vx += fi * tx * b.invMass, b.vy += fi * ty * b.invMass;
       const spinKick = (rvx * -ny + rvy * nx) * 22e-5;
       a.av -= spinKick * a.invInertia, b.av += spinKick * b.invInertia;
-      const damp = Math.max(0, 1 - 0.28 * dt);
+      const damp = Math.max(0, 1 - 0.12 * dt);
       a.vx *= damp, b.vx *= damp;
     }
 }
@@ -382,16 +382,17 @@ function step(dt) {
     b.noiseAngle > Math.PI && (b.noiseAngle -= Math.PI * 2);
     b.noiseAngle < -Math.PI && (b.noiseAngle += Math.PI * 2);
     if (spd > MAX_LINEAR_SPEED && (b.vx *= MAX_LINEAR_SPEED / spd, b.vy *= MAX_LINEAR_SPEED / spd), b.av = clamp(b.av, -MAX_ANGULAR_SPEED, MAX_ANGULAR_SPEED), clampInsideViewport(b), b.touchingFloor) {
+      b.touchingBody && (b.settlingRoll = false);
       const mix = clamp(Math.abs(b.vx) / ROLL_SPEED_FOR_MAX_GLIDE, 0, 1);
       b.vx *= Math.pow(ROLL_FRICTION_SLOW + (ROLL_FRICTION_FAST - ROLL_FRICTION_SLOW) * mix, d * 60), b.av *= Math.pow(0.9 + 0.09 * mix, d * 60);
       const pfs = Math.abs(b.vx);
-      pfs > ROLL_BACK_TRIGGER * 1.8 && (b.settlingRoll = false), pfs < ROLL_BACK_TRIGGER && pfs > ROLL_STOP_SPEED && !b.settlingRoll && (b.settlingRoll = true, b.settleAnchorX = b.x + b.vx * ROLL_SETTLE_LOOKAHEAD);
+      pfs > ROLL_BACK_TRIGGER * 1.8 && (b.settlingRoll = false), pfs < ROLL_BACK_TRIGGER && pfs > ROLL_STOP_SPEED && !b.settlingRoll && !b.touchingBody && (b.settlingRoll = true, b.settleAnchorX = b.x + b.vx * ROLL_SETTLE_LOOKAHEAD);
       if (b.settlingRoll) {
         const anchorError = b.x - b.settleAnchorX;
         b.vx += (-ROLL_SETTLE_SPRING * anchorError - ROLL_SETTLE_DAMPING * b.vx) * d;
-        Math.abs(anchorError) < 0.18 && (b.vx *= Math.pow(0.985, d * 60));
-        Math.abs(anchorError) < 0.06 && Math.abs(b.vx) < 0.008 && (b.x = b.settleAnchorX, b.vx = 0, b.settlingRoll = false);
-      } else Math.abs(b.vx) < ROLL_STOP_SPEED && (b.vx *= 0.96 + 0.04 * clamp(Math.abs(b.vx) / ROLL_STOP_SPEED, 0, 1), Math.abs(b.vx) < 0.012 && (b.vx = 0));
+        Math.abs(anchorError) < 0.18 && (b.vx *= Math.pow(0.992, d * 60));
+        Math.abs(anchorError) < 0.05 && Math.abs(b.vx) < 0.003 && (b.x = b.settleAnchorX, b.vx = 0, b.settlingRoll = false);
+      } else Math.abs(b.vx) < ROLL_STOP_SPEED && (b.vx *= 0.975 + 0.025 * clamp(Math.abs(b.vx) / ROLL_STOP_SPEED, 0, 1), Math.abs(b.vx) < 0.004 && (b.vx = 0));
     }
   }
   resolveBodyCollisions(d);
