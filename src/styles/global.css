@@ -174,6 +174,20 @@
   abbr {
     @apply cursor-pointer;
   }
+
+  :where(
+    a,
+    button,
+    input,
+    textarea,
+    select,
+    summary,
+    [role="button"],
+    [tabindex]:not([tabindex="-1"])
+  ):focus-visible {
+    outline: 2px dashed rgba(12, 10, 42, 1);
+    outline-offset: 4px;
+  }
 }
 
 a:not(.rounded-full):not(.logo-link):not(.nav-link) {
@@ -192,8 +206,7 @@ a.nav-link:visited {
   text-decoration: none;
 }
 
-a.nav-link:hover,
-a.nav-link:focus-visible {
+a.nav-link:hover {
   text-decoration-line: underline;
   text-decoration-style: solid;
   text-decoration-color: currentColor;
@@ -208,8 +221,7 @@ a.nav-link:focus-visible {
   @apply border border-base-900/40 bg-transparent px-3 py-2 text-base-900 sm:px-4;
 }
 
-.button-secondary:hover,
-.button-secondary:focus-visible {
+.button-secondary:hover {
   @apply border-base-900 bg-base-900 text-base-50;
 }
 
