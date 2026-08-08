@@ -34,7 +34,7 @@ const allPosts = await getCollection("posts");
 const visiblePosts = import.meta.env.DEV
   ? allPosts
   : allPosts.filter((post) => post.data.published);
-const tagAccentColors = ["#ff5fa2", "#ffc800", "#5f71ff", "#39edae"] as const;
+const tagAccentColors = ["#ff6644", "#ffc504", "#3bb4e8", "#2ee87c"] as const;
 const getTagAccentColor = (index: number) =>
   tagAccentColors[index % tagAccentColors.length];
 

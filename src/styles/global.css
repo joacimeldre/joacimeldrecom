@@ -21,7 +21,7 @@
   --color-base-800: oklch(35.42% 0.009 285.95);
   --color-base-900: oklch(23.48% 0.004 264.49);
   --color-base-950: oklch(16.89% 0.002 286.18);
-  --color-accent: #ffcc00;
+  --color-accent: #ffc504;
 }
 
 @font-face {
@@ -233,58 +233,58 @@ a.logo-link {
 
 /* Sibling links (tag lists, inline links) */
 a:not(.rounded-full):not(.logo-link):not(.nav-link):nth-of-type(4n + 1) {
-  --lc: #ff5fa2;
-  text-decoration-color: #ff5fa2 !important;
+  --lc: #ff6644;
+  text-decoration-color: #ff6644 !important;
   text-decoration-style: solid !important;
   text-decoration-thickness: 2px !important;
 }
 
 a:not(.rounded-full):not(.logo-link):not(.nav-link):nth-of-type(4n + 2) {
-  --lc: #ffc800;
-  text-decoration-color: #ffc800 !important;
+  --lc: #ffc504;
+  text-decoration-color: #ffc504 !important;
   text-decoration-style: solid !important;
   text-decoration-thickness: 2px !important;
 }
 
 a:not(.rounded-full):not(.logo-link):not(.nav-link):nth-of-type(4n + 3) {
-  --lc: #5f71ff;
-  text-decoration-color: #5f71ff !important;
+  --lc: #3bb4e8;
+  text-decoration-color: #3bb4e8 !important;
   text-decoration-style: solid !important;
   text-decoration-thickness: 2px !important;
 }
 
 a:not(.rounded-full):not(.logo-link):not(.nav-link):nth-of-type(4n + 4) {
-  --lc: #39edae;
-  text-decoration-color: #39edae !important;
+  --lc: #2ee87c;
+  text-decoration-color: #2ee87c !important;
   text-decoration-style: solid !important;
   text-decoration-thickness: 2px !important;
 }
 
 /* List item links — rotate by li position since each link is its own parent */
 li:nth-child(4n + 1) a:not(.rounded-full):not(.logo-link):not(.nav-link) {
-  --lc: #ff5fa2;
-  text-decoration-color: #ff5fa2 !important;
+  --lc: #ff6644;
+  text-decoration-color: #ff6644 !important;
   text-decoration-style: solid !important;
   text-decoration-thickness: 2px !important;
 }
 
 li:nth-child(4n + 2) a:not(.rounded-full):not(.logo-link):not(.nav-link) {
-  --lc: #ffc800;
-  text-decoration-color: #ffc800 !important;
+  --lc: #ffc504;
+  text-decoration-color: #ffc504 !important;
   text-decoration-style: solid !important;
   text-decoration-thickness: 2px !important;
 }
 
 li:nth-child(4n + 3) a:not(.rounded-full):not(.logo-link):not(.nav-link) {
-  --lc: #5f71ff;
-  text-decoration-color: #5f71ff !important;
+  --lc: #3bb4e8;
+  text-decoration-color: #3bb4e8 !important;
   text-decoration-style: solid !important;
   text-decoration-thickness: 2px !important;
 }
 
 li:nth-child(4n + 4) a:not(.rounded-full):not(.logo-link):not(.nav-link) {
-  --lc: #39edae;
-  text-decoration-color: #39edae !important;
+  --lc: #2ee87c;
+  text-decoration-color: #2ee87c !important;
   text-decoration-style: solid !important;
   text-decoration-thickness: 2px !important;
 }
@@ -293,8 +293,8 @@ li:nth-child(4n + 4) a:not(.rounded-full):not(.logo-link):not(.nav-link) {
 :is(.prose, .typo-prose)
   li:nth-of-type(4n + 1)
   a:not(.rounded-full):not(.logo-link):not(.nav-link) {
-  --lc: #ff5fa2;
-  text-decoration-color: #ff5fa2 !important;
+  --lc: #ff6644;
+  text-decoration-color: #ff6644 !important;
   text-decoration-style: solid !important;
   text-decoration-thickness: 2px !important;
 }
@@ -302,8 +302,8 @@ li:nth-child(4n + 4) a:not(.rounded-full):not(.logo-link):not(.nav-link) {
 :is(.prose, .typo-prose)
   li:nth-of-type(4n + 2)
   a:not(.rounded-full):not(.logo-link):not(.nav-link) {
-  --lc: #ffc800;
-  text-decoration-color: #ffc800 !important;
+  --lc: #ffc504;
+  text-decoration-color: #ffc504 !important;
   text-decoration-style: solid !important;
   text-decoration-thickness: 2px !important;
 }
@@ -311,8 +311,8 @@ li:nth-child(4n + 4) a:not(.rounded-full):not(.logo-link):not(.nav-link) {
 :is(.prose, .typo-prose)
   li:nth-of-type(4n + 3)
   a:not(.rounded-full):not(.logo-link):not(.nav-link) {
-  --lc: #5f71ff;
-  text-decoration-color: #5f71ff !important;
+  --lc: #3bb4e8;
+  text-decoration-color: #3bb4e8 !important;
   text-decoration-style: solid !important;
   text-decoration-thickness: 2px !important;
 }
@@ -320,31 +320,31 @@ li:nth-child(4n + 4) a:not(.rounded-full):not(.logo-link):not(.nav-link) {
 :is(.prose, .typo-prose)
   li:nth-of-type(4n + 4)
   a:not(.rounded-full):not(.logo-link):not(.nav-link) {
-  --lc: #39edae;
-  text-decoration-color: #39edae !important;
+  --lc: #2ee87c;
+  text-decoration-color: #2ee87c !important;
   text-decoration-style: solid !important;
   text-decoration-thickness: 2px !important;
 }
 
 /* Randomized link colors assigned at runtime via data-lc token. */
 a:not(.rounded-full):not(.logo-link):not(.nav-link)[data-lc="1"] {
-  --lc: #ff5fa2;
-  text-decoration-color: #ff5fa2 !important;
+  --lc: #ff6644;
+  text-decoration-color: #ff6644 !important;
 }
 
 a:not(.rounded-full):not(.logo-link):not(.nav-link)[data-lc="2"] {
-  --lc: #ffc800;
-  text-decoration-color: #ffc800 !important;
+  --lc: #ffc504;
+  text-decoration-color: #ffc504 !important;
 }
 
 a:not(.rounded-full):not(.logo-link):not(.nav-link)[data-lc="3"] {
-  --lc: #5f71ff;
-  text-decoration-color: #5f71ff !important;
+  --lc: #3bb4e8;
+  text-decoration-color: #3bb4e8 !important;
 }
 
 a:not(.rounded-full):not(.logo-link):not(.nav-link)[data-lc="4"] {
-  --lc: #39edae;
-  text-decoration-color: #39edae !important;
+  --lc: #2ee87c;
+  text-decoration-color: #2ee87c !important;
 }
 
 /* Markdown blockquotes: rotate through the same accent palette as links. */
@@ -412,13 +412,13 @@ li a:not(.rounded-full):not(.logo-link):not(.nav-link):hover::after {
 /* First wavy line */
 a:not(.rounded-full):not(.logo-link):not(.nav-link):hover::before,
 li a:not(.rounded-full):not(.logo-link):not(.nav-link):hover::before {
-  bottom: 2px;
+  bottom: 3px;
 }
 
 /* Second wavy line, 1px below — no gap */
 a:not(.rounded-full):not(.logo-link):not(.nav-link):hover::after,
 li a:not(.rounded-full):not(.logo-link):not(.nav-link):hover::after {
-  bottom: 1px;
+  bottom: 2px;
 }
 
 @layer utilities {
