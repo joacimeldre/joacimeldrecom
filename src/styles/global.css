@@ -22,6 +22,9 @@
   --color-base-900: oklch(23.48% 0.004 264.49);
   --color-base-950: oklch(16.89% 0.002 286.18);
   --color-accent: #ffc504;
+  --color-green: #2ee87c;
+  --color-accent-50: color-mix(in oklab, var(--color-accent) 50%, white);
+  --color-green-50: color-mix(in oklab, var(--color-green) 50%, white);
 }
 
 @font-face {
@@ -131,11 +134,11 @@
 
 @layer base {
   ::-moz-selection {
-    @apply bg-amber-200;
+    @apply bg-accent;
   }
 
   ::selection {
-    @apply bg-amber-200;
+    @apply bg-accent;
   }
 
   h1,
@@ -679,7 +682,11 @@ li a:not(.rounded-full):not(.logo-link):not(.nav-link):hover::after {
     color: inherit;
   }
 
+  .inline-highlight-chip {
+    @apply px-1 rounded;
+  }
+
   .prose mark {
-    @apply bg-amber-200 px-1 rounded;
+    @apply bg-accent px-1 rounded;
   }
 }
