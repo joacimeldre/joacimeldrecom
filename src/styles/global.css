@@ -134,11 +134,11 @@
 
 @layer base {
   ::-moz-selection {
-    @apply bg-accent;
+    @apply bg-accent-50;
   }
 
   ::selection {
-    @apply bg-accent;
+    @apply bg-accent-50;
   }
 
   h1,
