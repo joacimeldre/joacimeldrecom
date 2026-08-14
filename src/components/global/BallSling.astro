@@ -15,7 +15,7 @@ const PREFERS_REDUCED_MOTION = window.matchMedia("(prefers-reduced-motion: reduc
 const GRAVITY = 2e3, GYRO_GRAVITY_FACTOR = 0.95, AIR_DRAG = 0.997, FLOOR_BOUNCE = 0.62, FLOOR_AIRTIME_BONUS = 0.42, AIRTIME_FOR_MAX_BOUNCE = 0.95, WALL_BOUNCE = 0.84, FLOOR_FRICTION = 0.96, BODY_BOUNCE = 0.72, BODY_AIRTIME_BONUS = 0.24, ANGULAR_DRAG = 0.991, COM_RESTORE = 4.2, MAX_LINEAR_SPEED = 2600, MAX_ANGULAR_SPEED = 3.2, GROUND_IMPACT_MIN_SPEED = 210, GROUND_IMPACT_STRENGTH = 0.6, GROUND_IMPACT_RADIUS = 380, IMPACT_SQUASH_MAX = 0.1, ANTICIPATION_HEIGHT = 90, ANTICIPATION_SPEED = 240, GEL_LOW_IMPACT_SPEED = 170, RESTING_SQUASH = 0.022, ROLL_SPEED_FOR_MAX_GLIDE = 320, ROLL_FRICTION_FAST = 0.99935, ROLL_FRICTION_SLOW = 0.982, ROLL_STOP_SPEED = 0.024, ROLL_BACK_TRIGGER = 0.11, ROLL_SETTLE_SPRING = 12, ROLL_SETTLE_DAMPING = 4.8, ROLL_SETTLE_LOOKAHEAD = 0.16, FLING_SAMPLE_WINDOW_MS = 72, FLING_GAIN = 1.22, COLLISION_ITERATIONS = IS_POST_PAGE ? 5 : 7, PENETRATION_SLOP = 0.15, POSITION_CORRECTION_PERCENT = 0.9, FIXED_DT = PREFERS_REDUCED_MOTION ? 1 / 45 : IS_POST_PAGE ? 1 / 72 : 1 / 96, MAX_SUBSTEPS = IS_POST_PAGE ? 4 : 5;
 let viewportWidth = window.innerWidth, viewportHeight = window.innerHeight, bodies = [], lastTs = performance.now(), accumulator = 0, shapeCount = 0, dragState = null, pendingImpactPulses = [], hoveringBall = false, gravityX = 0, gravityY = GRAVITY, gravityTargetX = 0, gravityTargetY = GRAVITY, gyroPermissionAttempted = false, hasUserInteracted = sessionStorage.getItem(CLUE_CONSUMED_KEY) === "1", clueActivatedByFooter = false, clueBall = null, clueAnchorX = 0, clueHopClock = 0, clueNextHopAt = 0;
 const HAS_BOOTED_KEY = "ballslingBooted";
-let footerResizeObserver = null, documentResizeObserver = null, anchorUpdateScheduled = false;
+let footerResizeObserver = null, anchorUpdateScheduled = false;
 const SLING_BURST_MIN_SPEED = 230;
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 function scheduleAnchorUpdate() {
@@ -130,12 +130,6 @@ function observeAnchorChanges() {
   if (footerEl && !footerResizeObserver) {
     footerResizeObserver = new ResizeObserver(() => scheduleAnchorUpdate());
     footerResizeObserver.observe(footerEl);
-  }
-
-  if (!documentResizeObserver) {
-    documentResizeObserver = new ResizeObserver(() => scheduleAnchorUpdate());
-    documentResizeObserver.observe(document.documentElement);
-    documentResizeObserver.observe(document.body);
   }
 }
 const toLocalPoint = (cx, cy) => {
@@ -519,8 +513,22 @@ function bootSimulation(restoreState = loadBodyState()) {
 }
 
 window.addEventListener("resize", () => {
-  const restoreState = bodies.length ? snapshotBodyState() : loadBodyState();
-  initializeBodies(restoreState);
+  const prevWidth = viewportWidth;
+  const prevTargetCount = getTargetShapeCount(prevWidth);
+
+  updateViewportSize();
+
+  const widthDelta = Math.abs(viewportWidth - prevWidth);
+  const nextTargetCount = getTargetShapeCount(viewportWidth);
+  const shouldRebuild = nextTargetCount !== prevTargetCount || widthDelta >= 40;
+
+  if (shouldRebuild) {
+    const restoreState = bodies.length ? snapshotBodyState() : loadBodyState();
+    initializeBodies(restoreState);
+  } else {
+    for (const b of bodies) clampInsideViewport(b);
+  }
+
   updateBottomAnchor();
 }), window.visualViewport?.addEventListener("resize", () => {
   updateViewportSize();
@@ -545,7 +553,6 @@ window.addEventListener("resize", () => {
   saveBodyState();
 }), window.addEventListener("beforeunload", () => {
   footerResizeObserver?.disconnect();
-  documentResizeObserver?.disconnect();
   saveBodyState(), stopIdleClue();
 });
 
