@@ -2,14 +2,14 @@
 // Client-side TableOfContents that extracts headings from the DOM
 ---
 
-<div class="not-prose" id="table-of-contents" data-open="true">
+<div class="not-prose" id="table-of-contents" data-open="false">
   <h1 class="m-0" style="display:contents">
-    <button class="toc-toggle" aria-expanded="true" aria-controls="toc-panel">
+    <button class="toc-toggle" aria-expanded="false" aria-controls="toc-panel">
       <span class="typo-display-lg leading-none text-base-950">Table of contents</span>
       <span aria-hidden="true" class="toc-toggle-glyph"></span>
     </button>
   </h1>
-  <div class="toc-panel" id="toc-panel" aria-hidden="false">
+  <div class="toc-panel" id="toc-panel" aria-hidden="true">
     <nav aria-label="Table of contents" class="px-6 pb-5 pt-1">
       <ul id="toc-list">
         <!-- Populated by JavaScript -->
