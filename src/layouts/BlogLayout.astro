@@ -240,6 +240,45 @@ const formattedDate = (() => {
       });
     }
 
+    // Add anchor links to headings
+    document.querySelectorAll('.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6').forEach((heading) => {
+      if (heading.closest('#table-of-contents')) return;
+      const headingEl = heading as HTMLElement;
+      
+      // Skip if already has an anchor
+      if (!headingEl.querySelector('a.heading-link')) {
+        // Generate ID if not present
+        if (!headingEl.id) {
+          const text = headingEl.textContent || '';
+          const slug = text.toLowerCase().replace(/[^\w\s-]/g, '').replace(/[\s_]+/g, '-').replace(/^-+|-+$/g, '');
+          if (slug) {
+            headingEl.id = slug;
+          }
+        }
+        
+        if (headingEl.id) {
+          const link = document.createElement('a');
+          link.href = `#${headingEl.id}`;
+          link.className = 'heading-link';
+
+          // Move all heading children into the link
+          while (headingEl.firstChild) {
+            link.appendChild(headingEl.firstChild);
+          }
+
+          link.appendChild(document.createTextNode('\u00A0'));
+          const glyph = document.createElement('span');
+          glyph.setAttribute('aria-hidden', 'true');
+          glyph.className = 'heading-link-glyph';
+          glyph.textContent = '#';
+          link.appendChild(glyph);
+
+          headingEl.appendChild(link);
+          headingEl.classList.add('has-anchor');
+        }
+      }
+    });
+
     document
       .querySelectorAll('.prose input[type="checkbox"]')
       .forEach((checkbox) => {

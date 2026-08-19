@@ -489,6 +489,106 @@ li a:not(.rounded-full):not(.logo-link):not(.nav-link):hover::after {
     @apply prose text-xl text-base-900 leading-[1.55] tracking-[0.002em];
   }
 
+  /* Heading anchor links */
+  .heading-link {
+    @apply no-underline text-inherit;
+    text-decoration: none !important;
+    font-style: normal !important;
+    position: static;
+    width: auto;
+  }
+
+  /* Table of contents */
+  #table-of-contents {
+    @apply mt-8 mb-12 relative w-full bg-white;
+    border-radius: 1rem;
+    box-shadow:
+      0 18px 50px rgba(12, 10, 42, 0.08),
+      0 0 0 1px rgba(12, 10, 42, 0.06);
+    isolation: isolate;
+  }
+
+  #table-of-contents > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .toc-toggle {
+    @apply flex w-full items-center justify-between gap-4 px-6 py-5 text-left cursor-pointer;
+  }
+
+  .toc-toggle-glyph {
+    display: inline-flex;
+    width: 3.5rem;
+    height: 1.75rem;
+    align-items: center;
+    justify-content: center;
+    @apply text-base-900/40 text-base leading-none;
+    transition: color 200ms ease;
+  }
+
+  .toc-toggle-glyph::before {
+    content: "−";
+  }
+
+  #table-of-contents[data-open="false"] .toc-toggle-glyph::before {
+    content: "+";
+  }
+
+  #table-of-contents .toc-toggle:hover .toc-toggle-glyph {
+    @apply text-base-900/70;
+  }
+
+  .toc-panel {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      max-height 400ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 200ms ease;
+  }
+
+  #table-of-contents[data-open="true"] .toc-panel {
+    max-height: 60rem;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  #table-of-contents ul {
+    @apply space-y-3 list-none m-0 p-0;
+  }
+
+  #table-of-contents .heading-link-glyph {
+    font-size: 1em;
+    vertical-align: baseline;
+  }
+
+  #table-of-contents a.heading-link {
+    @apply text-base-900;
+  }
+
+  .heading-link:hover {
+    font-style: normal !important;
+  }
+
+  .heading-link::before,
+  .heading-link::after,
+  .heading-link:hover::before,
+  .heading-link:hover::after {
+    content: none !important;
+  }
+
+  .heading-link-glyph {
+    @apply text-base-900/30 transition-colors;
+    font-size: 0.6em;
+    vertical-align: 0.15em;
+  }
+
+  .heading-link:hover .heading-link-glyph {
+    @apply text-base-900/60;
+  }
+
   @media (max-width: 640px) {
     html {
       font-size: 1rem;
@@ -600,21 +700,21 @@ li a:not(.rounded-full):not(.logo-link):not(.nav-link):hover::after {
 
   .typo-prose.prose h1 {
     margin-top: 1.25em !important;
-    margin-bottom: 0.3em !important;
+    margin-bottom: 0.55em !important;
     font-size: clamp(1.6rem, 1.5rem + 0.5vw, 1.9rem) !important;
     line-height: 1.16 !important;
   }
 
   .typo-prose.prose h2 {
     margin-top: 1.1em !important;
-    margin-bottom: 0.26em !important;
+    margin-bottom: 0.45em !important;
     font-size: clamp(1.4rem, 1.32rem + 0.32vw, 1.56rem) !important;
     line-height: 1.2 !important;
   }
 
   .typo-prose.prose h3 {
     margin-top: 1em !important;
-    margin-bottom: 0.24em !important;
+    margin-bottom: 0.38em !important;
     font-size: clamp(1.24rem, 1.18rem + 0.2vw, 1.34rem) !important;
     line-height: 1.22 !important;
   }

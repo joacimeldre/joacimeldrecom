@@ -1,0 +1,88 @@
+---
+// Client-side TableOfContents that extracts headings from the DOM
+---
+
+<div class="not-prose" id="table-of-contents" data-open="true">
+  <h1 class="m-0" style="display:contents">
+    <button class="toc-toggle" aria-expanded="true" aria-controls="toc-panel">
+      <span class="typo-display-lg leading-none text-base-950">Table of contents</span>
+      <span aria-hidden="true" class="toc-toggle-glyph"></span>
+    </button>
+  </h1>
+  <div class="toc-panel" id="toc-panel" aria-hidden="false">
+    <nav aria-label="Table of contents" class="px-6 pb-5 pt-1">
+      <ul id="toc-list">
+        <!-- Populated by JavaScript -->
+      </ul>
+    </nav>
+  </div>
+</div>
+
+<script is:inline>
+  function initTOC() {
+    const prose = document.querySelector('.prose');
+    const tocList = document.getElementById('toc-list');
+
+    if (!prose || !tocList) return;
+
+    // Clear any existing items (re-init after view transitions)
+    tocList.innerHTML = '';
+
+    const headings = prose.querySelectorAll('h1, h2, h3');
+
+    const indentClass = { 1: '', 2: 'ml-4', 3: 'ml-8' };
+
+    headings.forEach(function(heading) {
+      if (heading.closest('#table-of-contents')) return;
+
+      const depth = parseInt(heading.tagName.substring(1));
+      if (depth < 1 || depth > 3) return;
+
+      // Strip only the glyph span; the whole heading may be wrapped in .heading-link
+      const clone = heading.cloneNode(true);
+      clone.querySelectorAll('.heading-link-glyph').forEach(function(el) { el.remove(); });
+      const text = (clone.textContent || '').trim();
+      if (!text) return;
+
+      if (!heading.id) {
+        const slug = text.toLowerCase().replace(/[^\w\s-]/g, '').replace(/[\s_]+/g, '-').replace(/^-+|-+$/g, '');
+        if (slug) heading.id = slug;
+      }
+
+      if (!heading.id) return;
+
+      const li = document.createElement('li');
+      li.className = 'typo-nav ' + (indentClass[depth] || '');
+
+      const a = document.createElement('a');
+      a.href = '#' + heading.id;
+      a.className = 'heading-link';
+      a.innerHTML = text + ' <span aria-hidden="true" class="heading-link-glyph">#</span>';
+
+      li.appendChild(a);
+      tocList.appendChild(li);
+    });
+  }
+
+  // Defer so BlogLayout's heading-anchor script runs first
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() { setTimeout(initTOC, 0); });
+  } else {
+    setTimeout(initTOC, 0);
+  }
+
+  // Re-init after view transitions
+  document.addEventListener('astro:after-swap', function() { setTimeout(initTOC, 0); });
+
+  // Accordion toggle
+  document.addEventListener('click', function(e) {
+    var btn = e.target.closest('.toc-toggle');
+    if (!btn) return;
+    var toc = btn.closest('#table-of-contents');
+    var panel = document.getElementById('toc-panel');
+    var isOpen = toc.dataset.open !== 'false';
+    toc.dataset.open = isOpen ? 'false' : 'true';
+    btn.setAttribute('aria-expanded', String(!isOpen));
+    panel.setAttribute('aria-hidden', String(isOpen));
+  });
+</script>
