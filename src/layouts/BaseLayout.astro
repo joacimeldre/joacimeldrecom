@@ -46,7 +46,7 @@ const { title, description, image, type, publishedTime, showBallSling = true } =
         const iframes = document.querySelectorAll("main iframe");
 
         iframes.forEach((iframe) => {
-          if (iframe.closest(".responsive-iframe")) return;
+          if (iframe.closest(".responsive-iframe") || iframe.hasAttribute("data-no-responsive-wrapper")) return;
 
           const width = Number.parseFloat(iframe.getAttribute("width") || "");
           const height = Number.parseFloat(iframe.getAttribute("height") || "");

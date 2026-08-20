@@ -437,6 +437,16 @@ li a:not(.rounded-full):not(.logo-link):not(.nav-link):hover::after {
     display: block;
   }
 
+  .bloob-embed {
+    display: block;
+    width: 100%;
+    max-width: 600px;
+    aspect-ratio: 1;
+    height: auto;
+    margin: 1.1em auto;
+    border: 0;
+  }
+
   /* Type scale tokens: use these semantic classes across pages/components. */
   /* Display: page and section headings */
   .clap-burst {
