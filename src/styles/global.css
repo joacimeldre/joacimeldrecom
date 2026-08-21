@@ -196,6 +196,7 @@
 a:not(.rounded-full):not(.logo-link):not(.nav-link) {
   position: relative;
   width: fit-content;
+  isolation: isolate;
   text-decoration-line: underline;
 }
 
@@ -350,6 +351,14 @@ a:not(.rounded-full):not(.logo-link):not(.nav-link)[data-lc="4"] {
   text-decoration-color: #2ee87c !important;
 }
 
+/* Keep resting links neutral; --lc still controls the hover wave. */
+a:not(.rounded-full):not(.logo-link):not(.nav-link):not(.heading-link):not(
+    :hover
+  ) {
+  color: inherit !important;
+  text-decoration-color: currentColor !important;
+}
+
 /* Markdown blockquotes: rotate through the same accent palette as links. */
 :is(.prose, .typo-prose) blockquote {
   --quote-accent: currentColor;
@@ -387,10 +396,11 @@ a:not(.rounded-full):not(.logo-link):not(.nav-link)[data-lc="4"] {
 }
 
 /* On hover: fade out the solid underline, replace with two wavy pseudo-elements */
-a:not(.rounded-full):not(.logo-link):not(.nav-link):hover,
-li a:not(.rounded-full):not(.logo-link):not(.nav-link):hover {
+a:not(.rounded-full):not(.logo-link):not(.nav-link):not(.heading-link):hover,
+li
+  a:not(.rounded-full):not(.logo-link):not(.nav-link):not(.heading-link):hover {
+  color: inherit !important;
   text-decoration-color: transparent !important;
-  font-style: oblique 8deg;
 }
 
 a:not(.rounded-full):not(.logo-link):not(.nav-link):hover::before,
@@ -410,6 +420,7 @@ li a:not(.rounded-full):not(.logo-link):not(.nav-link):hover::after {
   mask-repeat: repeat-x;
   mask-size: 8px 4px;
   pointer-events: none;
+  z-index: -1;
 }
 
 /* First wavy line */
@@ -750,8 +761,9 @@ li a:not(.rounded-full):not(.logo-link):not(.nav-link):hover::after {
     margin-bottom: 1.15em;
   }
 
-  .prose a {
+  .prose a:not(.heading-link) {
     @apply underline hover:decoration-wavy;
+    font-weight: inherit !important;
   }
 
   /* marker is bullet point */
