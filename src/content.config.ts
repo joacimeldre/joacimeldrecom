@@ -30,7 +30,6 @@ const postsCollection = defineCollection({
         (value) => (value == null ? undefined : value),
         image().optional(),
       ),
-      cursorEffect: z.enum(["shapedrifter"]).optional(),
       tags: z.array(z.string()),
     }),
 });
