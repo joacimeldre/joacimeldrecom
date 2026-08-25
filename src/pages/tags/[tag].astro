@@ -34,9 +34,6 @@ const allPosts = await getCollection("posts");
 const visiblePosts = import.meta.env.DEV
   ? allPosts
   : allPosts.filter((post) => post.data.published);
-const tagAccentColors = ["#ff6644", "#ffc504", "#3bb4e8", "#2ee87c"] as const;
-const getTagAccentColor = (index: number) =>
-  tagAccentColors[index % tagAccentColors.length];
 
 // Sort tags by name in alphabetical order, ignoring case sensitivity
 const tags = [...new Set(visiblePosts.map((post) => post.data.tags).flat())].sort(
@@ -45,10 +42,6 @@ const tags = [...new Set(visiblePosts.map((post) => post.data.tags).flat())].sor
 
 const { tag } = Astro.params;
 const { posts } = Astro.props as { posts: CollectionEntry<"posts">[] };
-const activeTagIndex = tags.findIndex((currentTag) => currentTag === tag);
-const activeTagAccentColor = getTagAccentColor(
-  activeTagIndex === -1 ? 0 : activeTagIndex,
-);
 ---
 
 <BaseLayout title={`${tag} posts - Joacim Eldre`}>
@@ -78,7 +71,7 @@ const activeTagAccentColor = getTagAccentColor(
       <h2
         class="typo-display-xl max-w-xl mt-8"
       >
-        ö <span class="px-2 rounded" style={`background-color: ${activeTagAccentColor}`}>{tag}</span>
+        ö {tag}
       </h2>
       <ul class="mt-4">
         {

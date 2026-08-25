@@ -198,6 +198,18 @@ a:not(.rounded-full):not(.logo-link):not(.nav-link) {
   width: fit-content;
   isolation: isolate;
   text-decoration-line: underline;
+  text-decoration-style: solid;
+  text-decoration-color: currentColor;
+  text-decoration-thickness: 2px;
+}
+
+a:not(.rounded-full):not(.logo-link):not(.nav-link):hover,
+a:not(.rounded-full):not(.logo-link):not(.nav-link):active,
+a:not(.rounded-full):not(.logo-link):not(.nav-link):focus-visible {
+  color: inherit !important;
+  text-decoration-color: currentColor !important;
+  text-decoration-thickness: 4px !important;
+  font-style: italic;
 }
 
 a.nav-link {
@@ -219,144 +231,27 @@ a.nav-link:hover {
 
 .button-link {
   border-radius: 1rem !important;
+  box-shadow: 0 2px 5px 0
+    color-mix(in srgb, var(--color-base-950) 15%, transparent);
+}
+
+.button-link:active {
+  transform: translateY(3px);
+  box-shadow: 0 0 0 0 transparent;
 }
 
 .button-secondary {
-  @apply border border-base-900/40 bg-transparent px-3 py-2 text-base-900 sm:px-4;
+  @apply border border-base-900/80 bg-transparent px-3 py-2 text-base-900 sm:px-4;
 }
 
 .button-secondary:hover {
-  @apply border-base-900 bg-base-900 text-base-50;
+  @apply border-base-900/80 bg-base-900 text-base-50;
 }
 
 a.logo-link {
   position: relative;
   width: fit-content;
   text-decoration: none;
-}
-
-/* Sibling links (tag lists, inline links) */
-a:not(.rounded-full):not(.logo-link):not(.nav-link):nth-of-type(4n + 1) {
-  --lc: #ff6644;
-  text-decoration-color: #ff6644 !important;
-  text-decoration-style: solid !important;
-  text-decoration-thickness: 2px !important;
-}
-
-a:not(.rounded-full):not(.logo-link):not(.nav-link):nth-of-type(4n + 2) {
-  --lc: #ffc504;
-  text-decoration-color: #ffc504 !important;
-  text-decoration-style: solid !important;
-  text-decoration-thickness: 2px !important;
-}
-
-a:not(.rounded-full):not(.logo-link):not(.nav-link):nth-of-type(4n + 3) {
-  --lc: #3bb4e8;
-  text-decoration-color: #3bb4e8 !important;
-  text-decoration-style: solid !important;
-  text-decoration-thickness: 2px !important;
-}
-
-a:not(.rounded-full):not(.logo-link):not(.nav-link):nth-of-type(4n + 4) {
-  --lc: #2ee87c;
-  text-decoration-color: #2ee87c !important;
-  text-decoration-style: solid !important;
-  text-decoration-thickness: 2px !important;
-}
-
-/* List item links — rotate by li position since each link is its own parent */
-li:nth-child(4n + 1) a:not(.rounded-full):not(.logo-link):not(.nav-link) {
-  --lc: #ff6644;
-  text-decoration-color: #ff6644 !important;
-  text-decoration-style: solid !important;
-  text-decoration-thickness: 2px !important;
-}
-
-li:nth-child(4n + 2) a:not(.rounded-full):not(.logo-link):not(.nav-link) {
-  --lc: #ffc504;
-  text-decoration-color: #ffc504 !important;
-  text-decoration-style: solid !important;
-  text-decoration-thickness: 2px !important;
-}
-
-li:nth-child(4n + 3) a:not(.rounded-full):not(.logo-link):not(.nav-link) {
-  --lc: #3bb4e8;
-  text-decoration-color: #3bb4e8 !important;
-  text-decoration-style: solid !important;
-  text-decoration-thickness: 2px !important;
-}
-
-li:nth-child(4n + 4) a:not(.rounded-full):not(.logo-link):not(.nav-link) {
-  --lc: #2ee87c;
-  text-decoration-color: #2ee87c !important;
-  text-decoration-style: solid !important;
-  text-decoration-thickness: 2px !important;
-}
-
-/* Prose list links — keep list-item rotation in long-form content. */
-:is(.prose, .typo-prose)
-  li:nth-of-type(4n + 1)
-  a:not(.rounded-full):not(.logo-link):not(.nav-link) {
-  --lc: #ff6644;
-  text-decoration-color: #ff6644 !important;
-  text-decoration-style: solid !important;
-  text-decoration-thickness: 2px !important;
-}
-
-:is(.prose, .typo-prose)
-  li:nth-of-type(4n + 2)
-  a:not(.rounded-full):not(.logo-link):not(.nav-link) {
-  --lc: #ffc504;
-  text-decoration-color: #ffc504 !important;
-  text-decoration-style: solid !important;
-  text-decoration-thickness: 2px !important;
-}
-
-:is(.prose, .typo-prose)
-  li:nth-of-type(4n + 3)
-  a:not(.rounded-full):not(.logo-link):not(.nav-link) {
-  --lc: #3bb4e8;
-  text-decoration-color: #3bb4e8 !important;
-  text-decoration-style: solid !important;
-  text-decoration-thickness: 2px !important;
-}
-
-:is(.prose, .typo-prose)
-  li:nth-of-type(4n + 4)
-  a:not(.rounded-full):not(.logo-link):not(.nav-link) {
-  --lc: #2ee87c;
-  text-decoration-color: #2ee87c !important;
-  text-decoration-style: solid !important;
-  text-decoration-thickness: 2px !important;
-}
-
-/* Randomized link colors assigned at runtime via data-lc token. */
-a:not(.rounded-full):not(.logo-link):not(.nav-link)[data-lc="1"] {
-  --lc: #ff6644;
-  text-decoration-color: #ff6644 !important;
-}
-
-a:not(.rounded-full):not(.logo-link):not(.nav-link)[data-lc="2"] {
-  --lc: #ffc504;
-  text-decoration-color: #ffc504 !important;
-}
-
-a:not(.rounded-full):not(.logo-link):not(.nav-link)[data-lc="3"] {
-  --lc: #3bb4e8;
-  text-decoration-color: #3bb4e8 !important;
-}
-
-a:not(.rounded-full):not(.logo-link):not(.nav-link)[data-lc="4"] {
-  --lc: #2ee87c;
-  text-decoration-color: #2ee87c !important;
-}
-
-/* Keep resting links neutral; --lc still controls the hover wave. */
-a:not(.rounded-full):not(.logo-link):not(.nav-link):not(.heading-link):not(
-    :hover
-  ) {
-  color: inherit !important;
-  text-decoration-color: currentColor !important;
 }
 
 /* Markdown blockquotes: rotate through the same accent palette as links. */
@@ -393,46 +288,6 @@ a:not(.rounded-full):not(.logo-link):not(.nav-link):not(.heading-link):not(
 :is(.prose, .typo-prose) blockquote p:first-of-type::before,
 :is(.prose, .typo-prose) blockquote p:last-of-type::after {
   content: none;
-}
-
-/* On hover: fade out the solid underline, replace with two wavy pseudo-elements */
-a:not(.rounded-full):not(.logo-link):not(.nav-link):not(.heading-link):hover,
-li
-  a:not(.rounded-full):not(.logo-link):not(.nav-link):not(.heading-link):hover {
-  color: inherit !important;
-  text-decoration-color: transparent !important;
-}
-
-a:not(.rounded-full):not(.logo-link):not(.nav-link):hover::before,
-a:not(.rounded-full):not(.logo-link):not(.nav-link):hover::after,
-li a:not(.rounded-full):not(.logo-link):not(.nav-link):hover::before,
-li a:not(.rounded-full):not(.logo-link):not(.nav-link):hover::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background-color: var(--lc, currentColor);
-  -webkit-mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='4'><path d='M0 2 Q2 0 4 2 Q6 4 8 2' fill='none' stroke='white' stroke-width='1.5'/></svg>");
-  -webkit-mask-repeat: repeat-x;
-  -webkit-mask-size: 8px 4px;
-  mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='4'><path d='M0 2 Q2 0 4 2 Q6 4 8 2' fill='none' stroke='white' stroke-width='1.5'/></svg>");
-  mask-repeat: repeat-x;
-  mask-size: 8px 4px;
-  pointer-events: none;
-  z-index: -1;
-}
-
-/* First wavy line */
-a:not(.rounded-full):not(.logo-link):not(.nav-link):hover::before,
-li a:not(.rounded-full):not(.logo-link):not(.nav-link):hover::before {
-  bottom: 3px;
-}
-
-/* Second wavy line, 1px below — no gap */
-a:not(.rounded-full):not(.logo-link):not(.nav-link):hover::after,
-li a:not(.rounded-full):not(.logo-link):not(.nav-link):hover::after {
-  bottom: 2px;
 }
 
 @layer utilities {
@@ -524,8 +379,8 @@ li a:not(.rounded-full):not(.logo-link):not(.nav-link):hover::after {
     @apply mt-8 mb-12 relative w-full bg-white;
     border-radius: 1rem;
     box-shadow:
-      0 18px 50px rgba(12, 10, 42, 0.08),
-      0 0 0 1px rgba(12, 10, 42, 0.06);
+      0 2px 5px 0 color-mix(in srgb, var(--color-base-950) 15%, transparent),
+      0 0 0 1px color-mix(in srgb, var(--color-base-950) 6%, transparent);
     isolation: isolate;
   }
 
@@ -762,7 +617,7 @@ li a:not(.rounded-full):not(.logo-link):not(.nav-link):hover::after {
   }
 
   .prose a:not(.heading-link) {
-    @apply underline hover:decoration-wavy;
+    @apply underline;
     font-weight: inherit !important;
   }
 

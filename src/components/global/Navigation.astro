@@ -1,9 +1,13 @@
 ---
 import Logo from "@/components/global/Logo.astro";
-import { buildContactMailtoHref } from "@/utils/contact";
 
-const isAboutActive = Astro.url.pathname === "/about" || Astro.url.pathname === "/about/";
-const contactHref = buildContactMailtoHref();
+const navItems = [
+  { href: "/about", label: "About" },
+  { href: "/contact", label: "Hello" },
+];
+
+const isActive = (href: string) =>
+  Astro.url.pathname === href || Astro.url.pathname === `${href}/`;
 ---
 
 <div
@@ -19,17 +23,19 @@ const contactHref = buildContactMailtoHref();
     </a>
   </div>
   <nav class="flex ml-auto items-center gap-5 sm:gap-6">
-    <a
-      href="/about"
-      class:list={["typo-nav nav-link transition duration-200", { "font-bold": isAboutActive }]}
-      aria-current={isAboutActive ? "page" : undefined}
-    >
-      About
-    </a>
-    <a
-      href={contactHref}
-      class="button-link bg-accent text-base-900 typo-nav py-2 px-3 sm:px-4 rounded-full transition duration-200 hover:bg-base-900 hover:text-base-50"
-      >Hello <span aria-hidden="true">:)</span></a
-    >
+    {
+      navItems.map((item) => {
+        const active = isActive(item.href);
+        return (
+          <a
+            href={item.href}
+            class:list={["typo-nav nav-link transition duration-200", { "font-bold": active }]}
+            aria-current={active ? "page" : undefined}
+          >
+            {item.label}
+          </a>
+        );
+      })
+    }
   </nav>
 </div>
