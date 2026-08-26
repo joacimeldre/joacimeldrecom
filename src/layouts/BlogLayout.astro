@@ -1,6 +1,7 @@
 ---
 import { Image, getImage } from "astro:assets";
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import { tagToSlug } from "@/utils/tagSlug";
 const { frontmatter, readingStats } = Astro.props;
 const normalizedTags = (frontmatter.tags ?? [])
   .map((tag: string) => tag.trim())
@@ -95,7 +96,7 @@ const formattedDate = (() => {
                 normalizedTags.map((tag: string, index: number) => (
                   <>
                     {index > 0 && " & "}
-                    <a href={`/tags/${encodeURIComponent(tag)}`} class="typo-nav">{tag}</a>
+                    <a href={`/tags/${encodeURIComponent(tagToSlug(tag))}`} class="typo-nav">{tag}</a>
                   </>
                 ))
               }

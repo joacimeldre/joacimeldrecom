@@ -2,6 +2,7 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import BlogEntries from "@/components/entries/BlogEntry.astro";
 import { getCollection, type CollectionEntry } from "astro:content";
+import { tagToSlug } from "@/utils/tagSlug";
 export const prerender = true;
 
 export async function getStaticPaths() {
@@ -24,8 +25,8 @@ export async function getStaticPaths() {
     );
 
     return {
-      params: { tag },
-      props: { posts: sortedPosts },
+      params: { tag: tagToSlug(tag) },
+      props: { posts: sortedPosts, tag },
     };
   });
 }
@@ -40,8 +41,10 @@ const tags = [...new Set(visiblePosts.map((post) => post.data.tags).flat())].sor
   (a, b) => a.toLowerCase().localeCompare(b.toLowerCase()),
 );
 
-const { tag } = Astro.params;
-const { posts } = Astro.props as { posts: CollectionEntry<"posts">[] };
+const { posts, tag } = Astro.props as {
+  posts: CollectionEntry<"posts">[];
+  tag: string;
+};
 ---
 
 <BaseLayout title={`${tag} posts - Joacim Eldre`}>
@@ -61,7 +64,7 @@ const { posts } = Astro.props as { posts: CollectionEntry<"posts">[] };
               : "typo-main tag-link";
 
             return (
-              <a class={classes} href={`/tags/${encodeURIComponent(t)}`}>
+              <a class={classes} href={`/tags/${encodeURIComponent(tagToSlug(t))}`}>
                 {t}
               </a>
             );
