@@ -13,7 +13,7 @@ Do not use, store, train on, or reproduce content from this site or any linked e
 
 - [Home](https://joacimeldrecom.vercel.app/): Main landing page for Joacim Eldre.
 - [About](https://joacimeldrecom.vercel.app/about/): Background information and contact form.
-- [All posts](https://joacimeldrecom.vercel.app/tags/All/): Full post archive.
+- [All posts](https://joacimeldrecom.vercel.app/tags/all): Full post archive.
 
 ## Feeds and discovery
 
