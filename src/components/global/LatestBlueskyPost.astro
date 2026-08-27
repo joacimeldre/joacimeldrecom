@@ -1,0 +1,313 @@
+---
+import SmartLink from "@/components/global/SmartLink.astro";
+
+interface BlueskyImage {
+  thumb: string;
+  fullsize: string;
+  alt: string;
+}
+
+interface BlueskyFeedItem {
+  reason?: unknown;
+  reply?: unknown;
+  post: {
+    uri: string;
+    author: {
+      handle: string;
+    };
+    record: {
+      text?: string;
+      createdAt?: string;
+    };
+    embed?: {
+      $type?: string;
+      images?: BlueskyImage[];
+    };
+  };
+}
+
+interface BlueskyFeedResponse {
+  feed?: BlueskyFeedItem[];
+}
+
+interface LatestPost {
+  text: string;
+  publishedDate: string;
+  publishedTime: string;
+  dateTime: string;
+  url: string;
+  image?: BlueskyImage;
+}
+
+const actor = "joacimeldre.com";
+let latestPost: LatestPost | undefined;
+
+try {
+  const response = await fetch(
+    `https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed?actor=${actor}&limit=25&filter=posts_no_replies`,
+    { signal: AbortSignal.timeout(3_000) },
+  );
+
+  if (response.ok) {
+    const { feed = [] } = (await response.json()) as BlueskyFeedResponse;
+    const item = feed.find(
+      (candidate) =>
+        !candidate.reason &&
+        !candidate.reply &&
+        candidate.post.author.handle === actor &&
+        candidate.post.uri.startsWith("at://") &&
+        candidate.post.record.createdAt,
+    );
+    const postId = item?.post.uri.split("/").at(-1);
+
+    if (item && postId) {
+      const embed = item.post.embed;
+      latestPost = {
+        text: item.post.record.text?.trim() || "View this post on Bluesky.",
+        dateTime: item.post.record.createdAt!,
+        publishedDate: new Intl.DateTimeFormat("en-GB", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+          timeZone: "Europe/Oslo",
+        }).format(new Date(item.post.record.createdAt!)),
+        publishedTime: new Intl.DateTimeFormat("en-GB", {
+          hour: "2-digit",
+          minute: "2-digit",
+          timeZone: "Europe/Oslo",
+        }).format(new Date(item.post.record.createdAt!)),
+        url: `https://bsky.app/profile/${actor}/post/${postId}`,
+        image:
+          embed?.$type === "app.bsky.embed.images#view"
+            ? embed.images?.[0]
+            : undefined,
+      };
+    }
+  }
+} catch {
+}
+---
+
+{
+  latestPost && (
+    <section class="mt-8" aria-label="Latest post on Bluesky">
+      <article class="bluesky-post">
+        <p class="text-sm text-base-700">
+          <SmartLink href={latestPost.url} class="bluesky-post__source-link" aria-label="Open on Bluesky"><span aria-hidden="true">ʚiɞ</span> <time datetime={latestPost.dateTime}>{latestPost.publishedDate}, {latestPost.publishedTime}</time></SmartLink>
+        </p>
+        <div class="bluesky-post__line">
+          {
+            latestPost.image && (
+              <div class="bluesky-image">
+                <details>
+                  <summary aria-label="Show larger image preview">
+                    <img
+                      src={latestPost.image.thumb}
+                      alt={latestPost.image.alt}
+                      width="32"
+                      height="32"
+                      loading="lazy"
+                    />
+                  </summary>
+                  <img
+                    class="bluesky-image__large"
+                    src={latestPost.image.fullsize}
+                    alt=""
+                    loading="lazy"
+                  />
+                  <button
+                    class="bluesky-image__close bluesky-image__dismiss"
+                    type="button"
+                    aria-label="Close image preview"
+                  >&times;</button>
+                </details>
+                <img
+                  class="bluesky-image__hover-preview"
+                  src={latestPost.image.fullsize}
+                  alt=""
+                  loading="eager"
+                />
+              </div>
+            )
+          }
+          <p>{latestPost.text}</p>
+        </div>
+      </article>
+    </section>
+  )
+}
+
+<style>
+  .bluesky-post {
+    margin-top: 0.75rem;
+    container-type: inline-size;
+  }
+
+  .bluesky-post__line {
+    margin-top: 0.4rem;
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .bluesky-post__line > p {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .bluesky-post__source-link,
+  .bluesky-post__source-link:hover,
+  .bluesky-post__source-link:active,
+  .bluesky-post__source-link:focus-visible {
+    color: inherit !important;
+    font-style: normal !important;
+    text-decoration: none !important;
+  }
+
+  .bluesky-image {
+    position: relative;
+    flex: 0 0 auto;
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .bluesky-image details {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .bluesky-image summary {
+    width: 100%;
+    height: 100%;
+    cursor: zoom-in;
+    list-style: none;
+    border-radius: 0.25rem;
+    box-shadow: 0 2px 5px 0 color-mix(in srgb, var(--color-base-950) 15%, transparent);
+  }
+
+  .bluesky-image summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .bluesky-image summary img {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    border-radius: 0.25rem;
+    object-fit: cover;
+  }
+
+  .bluesky-image__large,
+  .bluesky-image__hover-preview {
+    position: fixed;
+    z-index: 1;
+    top: var(--preview-top, auto);
+    right: auto;
+    bottom: var(--preview-bottom, auto);
+    display: block;
+    left: var(--preview-left, 1rem);
+    width: var(--preview-width, min(26.5rem, calc((100vw - 4rem) * 0.6)));
+    max-width: calc(100vw - 4rem);
+    max-height: var(--preview-max-height, min(28rem, calc(100vh - 2rem)));
+    margin: 0;
+    transform-origin: bottom right;
+  }
+
+  .bluesky-image__large {
+    z-index: 2;
+  }
+
+  .bluesky-image details[open] .bluesky-image__close {
+    position: absolute;
+    z-index: 3;
+    inset: 0;
+    display: grid;
+    padding: 0;
+    color: var(--color-base-50);
+    font-size: 1.8rem;
+    line-height: 1;
+    place-items: center;
+    background: rgb(0 0 0 / 45%);
+    border: 0;
+    border-radius: 0.25rem;
+    cursor: zoom-out;
+  }
+
+  .bluesky-image__hover-preview {
+    pointer-events: none;
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 160ms ease, transform 160ms ease;
+  }
+
+  .bluesky-image details:hover ~ .bluesky-image__hover-preview,
+  .bluesky-image details:focus-within ~ .bluesky-image__hover-preview {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .bluesky-image details[open] ~ .bluesky-image__hover-preview {
+    display: none;
+  }
+
+</style>
+
+<script>
+  const previewGap = 12;
+  const previewPadding = 16;
+
+  const positionPreviews = () => {
+    document.querySelectorAll<HTMLElement>(".bluesky-image").forEach((image) => {
+      const thumbnail = image.querySelector<HTMLElement>("summary");
+      const preview = image.querySelector<HTMLImageElement>(".bluesky-image__hover-preview");
+
+      if (!thumbnail || !preview) return;
+
+      const thumbnailBounds = thumbnail.getBoundingClientRect();
+      const availableWidth = window.innerWidth - thumbnailBounds.right - previewGap - previewPadding;
+      const preferredWidth = Math.min(424, (window.innerWidth - 64) * 0.6);
+      const previewWidth = Math.max(0, Math.min(preferredWidth, availableWidth));
+      const spaceAbove = thumbnailBounds.top - previewGap - previewPadding;
+      const spaceBelow = window.innerHeight - thumbnailBounds.bottom - previewGap - previewPadding;
+      const showAbove = spaceAbove >= spaceBelow;
+      const availableHeight = Math.max(0, showAbove ? spaceAbove : spaceBelow);
+
+      image.style.setProperty("--preview-left", `${thumbnailBounds.right + previewGap}px`);
+      image.style.setProperty("--preview-top", showAbove ? "auto" : `${thumbnailBounds.bottom + previewGap}px`);
+      image.style.setProperty("--preview-bottom", showAbove ? `${window.innerHeight - thumbnailBounds.top + previewGap}px` : "auto");
+      image.style.setProperty("--preview-width", `${previewWidth}px`);
+      image.style.setProperty("--preview-max-height", `${availableHeight}px`);
+    });
+  };
+
+  document.querySelectorAll<HTMLElement>(".bluesky-image").forEach((image) => {
+    const thumbnail = image.querySelector("summary");
+    const details = image.querySelector("details");
+    const preview = image.querySelector(".bluesky-image__hover-preview");
+
+    thumbnail?.addEventListener("pointerenter", positionPreviews);
+    thumbnail?.addEventListener("focus", positionPreviews);
+    details?.addEventListener("toggle", positionPreviews);
+    preview?.addEventListener("load", positionPreviews);
+  });
+
+  window.addEventListener("resize", positionPreviews);
+  window.addEventListener("scroll", positionPreviews, { passive: true });
+
+  document.addEventListener("click", (event) => {
+    const target = event.target;
+
+    if (target instanceof Element && target.closest(".bluesky-image__dismiss")) {
+      target.closest("details")?.removeAttribute("open");
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      document
+        .querySelectorAll<HTMLDetailsElement>(".bluesky-image details[open]")
+        .forEach((details) => details.removeAttribute("open"));
+    }
+  });
+</script>

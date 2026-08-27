@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import BlogEntries from "@/components/entries/BlogEntry.astro";
+import LatestBlueskyPost from "@/components/global/LatestBlueskyPost.astro";
 import { getCollection } from "astro:content";
 const allPosts = await getCollection("posts");
 const visiblePosts = import.meta.env.DEV
@@ -35,6 +36,7 @@ const sortedPosts = visiblePosts.sort(
         <li>reading <i>Dungeon Crawler Carl</i>. Go Donut! 🐈</li>
         <li>noodling ideas of <i>worms</i> & <i>bombs</i> for tiny video games. 🐛💣</li>
       </ul>
+      <LatestBlueskyPost />
       <h2 class="mt-8 typo-display-lg">
         Recent writings
       </h2>
