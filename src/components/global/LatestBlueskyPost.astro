@@ -93,7 +93,7 @@ try {
     <section class="mt-8" aria-label="Latest post on Bluesky">
       <article class="bluesky-post">
         <p class="text-sm text-base-700">
-          <SmartLink href={latestPost.url} class="bluesky-post__source-link" aria-label="Open on Bluesky"><span aria-hidden="true">ʚiɞ</span> <time datetime={latestPost.dateTime}>{latestPost.publishedDate}, {latestPost.publishedTime}</time></SmartLink>
+          <SmartLink href={latestPost.url} class="bluesky-post__source-link" aria-label="Open on Bluesky"><span aria-hidden="true">ʚÏɞ</span> <time datetime={latestPost.dateTime}>{latestPost.publishedDate}, {latestPost.publishedTime}</time></SmartLink>
         </p>
         <div class="bluesky-post__line">
           {
@@ -298,9 +298,18 @@ try {
   document.addEventListener("click", (event) => {
     const target = event.target;
 
-    if (target instanceof Element && target.closest(".bluesky-image__dismiss")) {
+    if (!(target instanceof Element)) return;
+
+    if (target.closest(".bluesky-image__dismiss")) {
       target.closest("details")?.removeAttribute("open");
+      return;
     }
+
+    document
+      .querySelectorAll<HTMLDetailsElement>(".bluesky-image details[open]")
+      .forEach((details) => {
+        if (!details.contains(target)) details.removeAttribute("open");
+      });
   });
 
   document.addEventListener("keydown", (event) => {
