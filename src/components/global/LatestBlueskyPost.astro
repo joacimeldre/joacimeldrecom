@@ -93,7 +93,7 @@ try {
     <section class="mt-8" aria-label="Latest post on Bluesky">
       <article class="bluesky-post">
         <p class="text-sm text-base-700">
-          <SmartLink href={latestPost.url} class="bluesky-post__source-link" aria-label="Open on Bluesky"><span aria-hidden="true">ʚÏɞ</span> <time datetime={latestPost.dateTime}>{latestPost.publishedDate}, {latestPost.publishedTime}</time></SmartLink>
+          <SmartLink href={latestPost.url} class="bluesky-post__source-link" aria-label="Open on Bluesky"><span aria-hidden="true">εїз</span> <time datetime={latestPost.dateTime}>{latestPost.publishedDate}, {latestPost.publishedTime}</time></SmartLink>
         </p>
         <div class="bluesky-post__line">
           {
@@ -104,8 +104,8 @@ try {
                     <img
                       src={latestPost.image.thumb}
                       alt={latestPost.image.alt}
-                      width="32"
-                      height="32"
+                      width="40"
+                      height="40"
                       loading="lazy"
                     />
                   </summary>
@@ -117,11 +117,7 @@ try {
                       loading="lazy"
                     />
                   </div>
-                  <button
-                    class="bluesky-image__close bluesky-image__dismiss"
-                    type="button"
-                    aria-label="Close image preview"
-                  >&times;</button>
+                  <span class="bluesky-image__close" aria-hidden="true">&times;</span>
                 </details>
                 <img
                   class="bluesky-image__hover-preview"
@@ -169,8 +165,8 @@ try {
   .bluesky-image {
     position: relative;
     flex: 0 0 auto;
-    width: 2rem;
-    height: 2rem;
+    width: 2.5rem;
+    height: 2.5rem;
   }
 
   .bluesky-image details {
@@ -234,19 +230,22 @@ try {
     z-index: 3;
     inset: 0;
     display: none;
+    pointer-events: none;
     padding: 0;
     color: var(--color-base-50);
     font-size: 1.8rem;
     line-height: 1;
     place-items: center;
     background: rgb(0 0 0 / 45%);
-    border: 0;
     border-radius: 0.25rem;
-    cursor: zoom-out;
   }
 
   .bluesky-image details[open] .bluesky-image__close {
     display: grid;
+  }
+
+  .bluesky-image details[open] summary {
+    cursor: zoom-out;
   }
 
   .bluesky-image__hover-preview {
@@ -323,11 +322,6 @@ try {
     const target = event.target;
 
     if (!(target instanceof Element)) return;
-
-    if (target.closest(".bluesky-image__dismiss")) {
-      target.closest("details")?.removeAttribute("open");
-      return;
-    }
 
     document
       .querySelectorAll<HTMLDetailsElement>(".bluesky-image details[open]")
