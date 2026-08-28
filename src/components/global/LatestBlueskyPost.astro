@@ -260,8 +260,8 @@ try {
     transition: opacity 160ms ease, transform 160ms ease;
   }
 
-  .bluesky-image:hover .bluesky-image__hover-preview,
-  .bluesky-image:focus-within .bluesky-image__hover-preview {
+  .bluesky-image:not(.is-preview-dismissed):hover .bluesky-image__hover-preview,
+  .bluesky-image:not(.is-preview-dismissed):focus-within .bluesky-image__hover-preview {
     opacity: 1;
     transform: scale(1);
   }
@@ -302,6 +302,7 @@ try {
 
   const closeImage = (image: HTMLElement) => {
     image.classList.remove("is-open");
+    image.classList.add("is-preview-dismissed");
     image.querySelector(".bluesky-image__trigger")?.setAttribute("aria-expanded", "false");
   };
 
@@ -310,13 +311,21 @@ try {
     const preview = image.querySelector(".bluesky-image__hover-preview");
 
     trigger?.addEventListener("pointerenter", positionPreviews);
+    image.addEventListener("pointerleave", () => {
+      image.classList.remove("is-preview-dismissed");
+    });
     trigger?.addEventListener("focus", positionPreviews);
     preview?.addEventListener("load", positionPreviews);
 
     trigger?.addEventListener("click", () => {
       const isOpen = image.classList.toggle("is-open");
       trigger.setAttribute("aria-expanded", String(isOpen));
-      if (isOpen) positionPreviews();
+      if (isOpen) {
+        image.classList.remove("is-preview-dismissed");
+        positionPreviews();
+      } else {
+        image.classList.add("is-preview-dismissed");
+      }
     });
   });
 
