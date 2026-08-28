@@ -116,12 +116,12 @@ try {
                       alt=""
                       loading="lazy"
                     />
-                    <button
-                      class="bluesky-image__close bluesky-image__dismiss"
-                      type="button"
-                      aria-label="Close image preview"
-                    >&times;</button>
                   </div>
+                  <button
+                    class="bluesky-image__close bluesky-image__dismiss"
+                    type="button"
+                    aria-label="Close image preview"
+                  >&times;</button>
                 </details>
                 <img
                   class="bluesky-image__hover-preview"
@@ -231,25 +231,26 @@ try {
 
   .bluesky-image__close {
     position: absolute;
-    top: -0.7rem;
-    right: -0.7rem;
     z-index: 3;
-    display: grid;
-    width: 2.25rem;
-    height: 2.25rem;
+    inset: 0;
+    display: none;
     padding: 0;
     color: var(--color-base-50);
-    font-size: 1.4rem;
+    font-size: 1.8rem;
     line-height: 1;
     place-items: center;
-    background: var(--color-base-950);
+    background: rgb(0 0 0 / 45%);
     border: 0;
-    border-radius: 50%;
-    box-shadow: 0 2px 6px 0 color-mix(in srgb, var(--color-base-950) 35%, transparent);
+    border-radius: 0.25rem;
     cursor: zoom-out;
   }
 
+  .bluesky-image details[open] .bluesky-image__close {
+    display: grid;
+  }
+
   .bluesky-image__hover-preview {
+    border-radius: 0.25rem;
     pointer-events: none;
     opacity: 0;
     transform: scale(0.9);
@@ -308,7 +309,15 @@ try {
   });
 
   window.addEventListener("resize", positionPreviews);
-  window.addEventListener("scroll", positionPreviews, { passive: true });
+  window.addEventListener(
+    "scroll",
+    () => {
+      // Don't reposition an open preview mid-scroll — it can shift the close button out from under a tap.
+      if (document.querySelector(".bluesky-image details[open]")) return;
+      positionPreviews();
+    },
+    { passive: true },
+  );
 
   document.addEventListener("click", (event) => {
     const target = event.target;
