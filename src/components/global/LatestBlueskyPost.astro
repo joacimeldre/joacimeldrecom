@@ -183,6 +183,8 @@ try {
     border: 0;
     border-radius: 0.25rem;
     box-shadow: 0 2px 5px 0 color-mix(in srgb, var(--color-base-950) 15%, transparent);
+    touch-action: manipulation;
+    -webkit-touch-callout: none;
   }
 
   .bluesky-image.is-open .bluesky-image__trigger {
@@ -335,7 +337,9 @@ try {
     if (!(target instanceof Element)) return;
 
     document.querySelectorAll<HTMLElement>(".bluesky-image.is-open").forEach((image) => {
-      if (!image.contains(target)) closeImage(image);
+      const trigger = image.querySelector(".bluesky-image__trigger");
+      // Close on any tap that isn't the trigger itself — including taps on the enlarged preview.
+      if (!trigger?.contains(target)) closeImage(image);
     });
   });
 
