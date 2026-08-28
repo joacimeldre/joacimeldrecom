@@ -109,17 +109,19 @@ try {
                       loading="lazy"
                     />
                   </summary>
-                  <img
-                    class="bluesky-image__large"
-                    src={latestPost.image.fullsize}
-                    alt=""
-                    loading="lazy"
-                  />
-                  <button
-                    class="bluesky-image__close bluesky-image__dismiss"
-                    type="button"
-                    aria-label="Close image preview"
-                  >&times;</button>
+                  <div class="bluesky-image__panel">
+                    <img
+                      class="bluesky-image__large"
+                      src={latestPost.image.fullsize}
+                      alt=""
+                      loading="lazy"
+                    />
+                    <button
+                      class="bluesky-image__close bluesky-image__dismiss"
+                      type="button"
+                      aria-label="Close image preview"
+                    >&times;</button>
+                  </div>
                 </details>
                 <img
                   class="bluesky-image__hover-preview"
@@ -198,7 +200,7 @@ try {
     object-fit: cover;
   }
 
-  .bluesky-image__large,
+  .bluesky-image__panel,
   .bluesky-image__hover-preview {
     position: fixed;
     z-index: 1;
@@ -214,23 +216,36 @@ try {
     transform-origin: bottom right;
   }
 
-  .bluesky-image__large {
+  .bluesky-image__panel {
     z-index: 2;
   }
 
-  .bluesky-image details[open] .bluesky-image__close {
+  .bluesky-image__large {
+    display: block;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    object-fit: cover;
+    border-radius: 0.25rem;
+  }
+
+  .bluesky-image__close {
     position: absolute;
+    top: -0.7rem;
+    right: -0.7rem;
     z-index: 3;
-    inset: 0;
     display: grid;
+    width: 2.25rem;
+    height: 2.25rem;
     padding: 0;
     color: var(--color-base-50);
-    font-size: 1.8rem;
+    font-size: 1.4rem;
     line-height: 1;
     place-items: center;
-    background: rgb(0 0 0 / 45%);
+    background: var(--color-base-950);
     border: 0;
-    border-radius: 0.25rem;
+    border-radius: 50%;
+    box-shadow: 0 2px 6px 0 color-mix(in srgb, var(--color-base-950) 35%, transparent);
     cursor: zoom-out;
   }
 
