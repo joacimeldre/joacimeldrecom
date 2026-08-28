@@ -18,6 +18,7 @@ const HAS_BOOTED_KEY = "ballslingBooted";
 let footerResizeObserver = null, anchorUpdateScheduled = false;
 const SLING_BURST_MIN_SPEED = 230;
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+const pageLighting = getLightingFromLocalTime();
 function scheduleAnchorUpdate() {
   if (anchorUpdateScheduled) return;
   anchorUpdateScheduled = true;
@@ -66,9 +67,9 @@ function getLightingFromLocalTime(now = new Date()) {
     shadeB: shadeB.toString()
   };
 }
-function applyTimeOfDayLighting(now = new Date()) {
+function applyTimeOfDayLighting(lighting) {
   if (!elements.length) return;
-  const l = getLightingFromLocalTime(now);
+  const l = lighting;
   for (const el of elements) {
     const fill = el.querySelector(".ball-fill-gradient");
     const hi = el.querySelector(".ball-highlight-gradient");
@@ -250,7 +251,7 @@ function initializeBodies(restoreState) {
     return b;
   });
   !hasUserInteracted && clueActivatedByFooter && setClueBall(pickClueBall());
-  applyTimeOfDayLighting(new Date());
+  applyTimeOfDayLighting(pageLighting);
 }
 function applyGroundImpactImpulseAt(srcX, srcY, srcMass, speed, src) {
   if (speed < GROUND_IMPACT_MIN_SPEED) return;
