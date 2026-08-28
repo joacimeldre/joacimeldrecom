@@ -99,26 +99,29 @@ try {
           {
             latestPost.image && (
               <div class="bluesky-image">
-                <details>
-                  <summary aria-label="Show larger image preview">
-                    <img
-                      src={latestPost.image.thumb}
-                      alt={latestPost.image.alt}
-                      width="40"
-                      height="40"
-                      loading="lazy"
-                    />
-                  </summary>
-                  <div class="bluesky-image__panel">
-                    <img
-                      class="bluesky-image__large"
-                      src={latestPost.image.fullsize}
-                      alt=""
-                      loading="lazy"
-                    />
-                  </div>
+                <button
+                  type="button"
+                  class="bluesky-image__trigger"
+                  aria-label="Show larger image preview"
+                  aria-expanded="false"
+                >
+                  <img
+                    src={latestPost.image.thumb}
+                    alt={latestPost.image.alt}
+                    width="40"
+                    height="40"
+                    loading="lazy"
+                  />
                   <span class="bluesky-image__close" aria-hidden="true">&times;</span>
-                </details>
+                </button>
+                <div class="bluesky-image__panel">
+                  <img
+                    class="bluesky-image__large"
+                    src={latestPost.image.fullsize}
+                    alt=""
+                    loading="lazy"
+                  />
+                </div>
                 <img
                   class="bluesky-image__hover-preview"
                   src={latestPost.image.fullsize}
@@ -169,26 +172,24 @@ try {
     height: 2.5rem;
   }
 
-  .bluesky-image details {
+  .bluesky-image__trigger {
+    display: block;
+    width: 100%;
+    height: 100%;
     position: relative;
-    width: 100%;
-    height: 100%;
-  }
-
-  .bluesky-image summary {
-    width: 100%;
-    height: 100%;
+    padding: 0;
     cursor: zoom-in;
-    list-style: none;
+    background: none;
+    border: 0;
     border-radius: 0.25rem;
     box-shadow: 0 2px 5px 0 color-mix(in srgb, var(--color-base-950) 15%, transparent);
   }
 
-  .bluesky-image summary::-webkit-details-marker {
-    display: none;
+  .bluesky-image.is-open .bluesky-image__trigger {
+    cursor: zoom-out;
   }
 
-  .bluesky-image summary img {
+  .bluesky-image__trigger img {
     width: 100%;
     height: 100%;
     margin: 0;
@@ -214,6 +215,11 @@ try {
 
   .bluesky-image__panel {
     z-index: 2;
+    display: none;
+  }
+
+  .bluesky-image.is-open .bluesky-image__panel {
+    display: block;
   }
 
   .bluesky-image__large {
@@ -240,12 +246,8 @@ try {
     border-radius: 0.25rem;
   }
 
-  .bluesky-image details[open] .bluesky-image__close {
+  .bluesky-image.is-open .bluesky-image__close {
     display: grid;
-  }
-
-  .bluesky-image details[open] summary {
-    cursor: zoom-out;
   }
 
   .bluesky-image__hover-preview {
@@ -256,13 +258,13 @@ try {
     transition: opacity 160ms ease, transform 160ms ease;
   }
 
-  .bluesky-image details:hover ~ .bluesky-image__hover-preview,
-  .bluesky-image details:focus-within ~ .bluesky-image__hover-preview {
+  .bluesky-image:hover .bluesky-image__hover-preview,
+  .bluesky-image:focus-within .bluesky-image__hover-preview {
     opacity: 1;
     transform: scale(1);
   }
 
-  .bluesky-image details[open] ~ .bluesky-image__hover-preview {
+  .bluesky-image.is-open .bluesky-image__hover-preview {
     display: none;
   }
 
@@ -274,7 +276,7 @@ try {
 
   const positionPreviews = () => {
     document.querySelectorAll<HTMLElement>(".bluesky-image").forEach((image) => {
-      const thumbnail = image.querySelector<HTMLElement>("summary");
+      const thumbnail = image.querySelector<HTMLElement>(".bluesky-image__trigger");
       const preview = image.querySelector<HTMLImageElement>(".bluesky-image__hover-preview");
 
       if (!thumbnail || !preview) return;
@@ -296,15 +298,24 @@ try {
     });
   };
 
+  const closeImage = (image: HTMLElement) => {
+    image.classList.remove("is-open");
+    image.querySelector(".bluesky-image__trigger")?.setAttribute("aria-expanded", "false");
+  };
+
   document.querySelectorAll<HTMLElement>(".bluesky-image").forEach((image) => {
-    const thumbnail = image.querySelector("summary");
-    const details = image.querySelector("details");
+    const trigger = image.querySelector<HTMLElement>(".bluesky-image__trigger");
     const preview = image.querySelector(".bluesky-image__hover-preview");
 
-    thumbnail?.addEventListener("pointerenter", positionPreviews);
-    thumbnail?.addEventListener("focus", positionPreviews);
-    details?.addEventListener("toggle", positionPreviews);
+    trigger?.addEventListener("pointerenter", positionPreviews);
+    trigger?.addEventListener("focus", positionPreviews);
     preview?.addEventListener("load", positionPreviews);
+
+    trigger?.addEventListener("click", () => {
+      const isOpen = image.classList.toggle("is-open");
+      trigger.setAttribute("aria-expanded", String(isOpen));
+      if (isOpen) positionPreviews();
+    });
   });
 
   window.addEventListener("resize", positionPreviews);
@@ -312,7 +323,7 @@ try {
     "scroll",
     () => {
       // Don't reposition an open preview mid-scroll — it can shift the close button out from under a tap.
-      if (document.querySelector(".bluesky-image details[open]")) return;
+      if (document.querySelector(".bluesky-image.is-open")) return;
       positionPreviews();
     },
     { passive: true },
@@ -323,18 +334,14 @@ try {
 
     if (!(target instanceof Element)) return;
 
-    document
-      .querySelectorAll<HTMLDetailsElement>(".bluesky-image details[open]")
-      .forEach((details) => {
-        if (!details.contains(target)) details.removeAttribute("open");
-      });
+    document.querySelectorAll<HTMLElement>(".bluesky-image.is-open").forEach((image) => {
+      if (!image.contains(target)) closeImage(image);
+    });
   });
 
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
-      document
-        .querySelectorAll<HTMLDetailsElement>(".bluesky-image details[open]")
-        .forEach((details) => details.removeAttribute("open"));
+      document.querySelectorAll<HTMLElement>(".bluesky-image.is-open").forEach(closeImage);
     }
   });
 </script>
