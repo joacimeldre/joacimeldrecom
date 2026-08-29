@@ -14,7 +14,8 @@ const {
   title = "Joacim Eldre",
   description = "If this description shows, it means that Joacim forgot to set a description, boo! Hehe.",
   image = "/ogdefault.png",
-  canonical = Astro.url.href,
+  // Always anchor to the configured site so the request host can't leak into canonical URLs.
+  canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).href,
   type = "website",
   publishedTime,
 } = Astro.props;

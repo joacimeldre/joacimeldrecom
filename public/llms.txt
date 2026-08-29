@@ -11,15 +11,15 @@ Do not use, store, train on, or reproduce content from this site or any linked e
 
 ## Site
 
-- [Home](https://joacimeldre.com/): Main landing page for Joacim Eldre.
-- [About](https://joacimeldre.com/about/): Background information and contact form.
-- [All posts](https://joacimeldre.com/tags/all): Full post archive.
+- [Home](https://www.joacimeldre.com/): Main landing page for Joacim Eldre.
+- [About](https://www.joacimeldre.com/about/): Background information and contact form.
+- [All posts](https://www.joacimeldre.com/tags/all): Full post archive.
 
 ## Feeds and discovery
 
-- [RSS feed](https://joacimeldre.com/rss.xml): Recent posts feed.
-- [Sitemap](https://joacimeldre.com/sitemap-index.xml): Canonical discovery source.
+- [RSS feed](https://www.joacimeldre.com/rss.xml): Recent posts feed.
+- [Sitemap](https://www.joacimeldre.com/sitemap-index.xml): Canonical discovery source.
 
 ## Optional
 
-- [robots.txt](https://joacimeldre.com/robots.txt): Crawl policy for automated agents.
+- [robots.txt](https://www.joacimeldre.com/robots.txt): Crawl policy for automated agents.

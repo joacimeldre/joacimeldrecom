@@ -7,7 +7,7 @@ import mdx from "@astrojs/mdx";
 import { unified } from "@astrojs/markdown-remark";
 import rehypeExternalLinks from "rehype-external-links";
 
-const siteUrl = "https://joacimeldre.com";
+const siteUrl = "https://www.joacimeldre.com";
 const siteHostname = new URL(siteUrl).hostname;
 const usePassthroughImages = process.env.ASTRO_PASSTHROUGH_IMAGES === "1";
 

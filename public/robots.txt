@@ -20,4 +20,4 @@ Disallow: /
 User-agent: Google-Extended
 Disallow: /
 
-Sitemap: https://joacimeldre.com/sitemap-index.xml
+Sitemap: https://www.joacimeldre.com/sitemap-index.xml
