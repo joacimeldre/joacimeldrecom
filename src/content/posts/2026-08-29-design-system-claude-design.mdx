@@ -1,0 +1,89 @@
+---
+pubDate: 2026-08-29
+title: Design system for Claude Design
+description: "TLDR: /design-sync your message. Longer story: How I set up a design system for Claude Design from component based code, and some notes on using it."
+published: no
+image:
+tags: ["All", "Visual design"]
+---
+
+_Note: I chose to tag this as visual design, and yes this is technically not just visual design, it's also functional design. So it's design then? Yes. But design is so much, it's ambigious. What is and isn't design? Let's not go there. Maybe I'll update the tag sometime._
+
+_Disclaimer: I'm a designer who also know how to code (a bit). I think this is a useful combination of skills to have if you're setting this up for yourself or your company. Uh also, I can't show actual code and design here. Maybe I'll mock something up, probably not. You'll get the idea._
+
+I recently (two days ago) started exploring Claude Design. And let me share my exact thoughts on Claude Design, both from an inner monologue and from the perspective of a (primarily visual) designer.
+
+> _Pffhsssht, Claude Design, PFSHFHS! I design stuff with my hands and brain. Hurr herr hnnfh, everything was better before, ghrhrhg._
+
+Sorry, this is very simplified. But fuck artificial intelligence. I still design stuff with my hands, together with people.
+
+But!
+
+I didn't set Claude Design up for me. It's for a different team, with different people, different tools, and different budgets. So, using Claude Design, for them, makes some sense. I mean, they develop apps, and management don't see the value in design as a skill in their team. YES, that is bad. So Claude Design is a good (and can be even better if you talk to the developers and get in on their great secrets and mysteries) substitute for those kinds of use cases.
+
+No, I am not saying that you should replace people (with skills) with computers.
+
+Maybe you're saying that. And I think that's wrong.
+
+# Before you start
+
+Claude Design will only be as good as your design system. Your context. If you don't have this, you might want to consider setting up some of this before you set up Claude Design. But, it'll work on a bare minimum (colors, fonts) too, although wonky. Like if you were told to make pancakes, but you didn't know how, and you kind of had one egg, maybe some sugar, and no flour. Yep, good luck Gordon.
+
+## You should have
+
+- A component based (currently only supports React) codebase where the components are modular, reusable, and ideally well-documented. This is essentially a component library.
+- Token based scales for colors, spacing, and typography.
+- Additional some brand rules like typography, icon set (preferably also component based), logos, and additional figures or graphics.
+- Perhaps some rules on motion, tone and voice, but that's extra, and you're probably a big big big company if you have all that, and then maybe you don't really need Claude Design at all. Or you know, you care about craft, how your brand is perceived, so you choose not to use generative artificial intelligence at all (good on you, I admire you). But if you do have all these, that's great! Use all that as the foundation for your design system.
+
+Ok, you have all that? Awesome.
+
+You have more than I did. I had a component based codebase, some tokens for colors, spacing, and typography. I also had some visuals like an icon set (some components, some custom), and logos.
+
+# Code 🤝 Design
+
+Open Claude Code. Add your codebase. Write /design-sync [your message] (for example _Make a design system from the codebase, when you're unsure, ask questions_). Claude Code will analyze your codebase and generate a design system for you.
+
+Claude Design will pop up with your newly generated design system, and maybe ask you some follow up questions. Like your foundation that probably don't live inside the codebase.
+
+And voila, you have your design system in Claude Design!
+
+# Prototype
+
+Having your design system in Claude Design is powerful, because when generating designs, like functional prototypes, it'll look and feel pretty much like the code. So if something is off, the code is probably wrong, too.
+
+And when everyone is happy with the prototype, send it to Claude Code, and because this is based on the codebase, go from prototype to test.
+
+# Notes
+
+What did I learn from implementing a design system in Claude Design and using it for 1.5 days? Tweak and comment are great features.
+
+## Tweak
+
+Tweak lets you implement sliders and other interactive adjustments to your design system components directly within Claude Design. It's pretty great, and it lets you preview changes in configuration on the fly in the prototype.
+
+For example, lets say you have a pattern that's like I don't know, an alert message. You can then have a tweak that enables or disables that alert message, to view how it adds up in the prototype. Easier to do changes and view how everything fits together.
+
+## Comment
+
+Comment is like inspect in browser development tools, or Figma Dev Mode, but with the powers of chat on top. So you point to a group, or a single element like text, and you tell the chatbox what you want to do.
+
+## Edit
+
+There's also edit. Think of this like uh, I dunno, like if your code was visual, and you could input characters into fields that are human readable. Like a what you see is what you get (WYSIWYG) editor. It's honestly kind of neat. Especially if you're more of a visual than verbal thinker, like a lot of designers happen to be.
+
+## Model
+
+I've only mocked up some fairly simple and straightforward prototypes based on existing designs. They're not really simple, but they exist already, which makes it simpler. So my experience comes from Opus 5 Medium. I can run pretty intense back and forth work for 2-3 hours before running out of credits (Anthropic don't like this word, so they say usage) on a Team license. Most of the usage comes from ideating, adding features that aren't there today, but could (we haven't user tested the designs yet) improve the experience for the user.
+
+If you think that's good, I think it's because, with a very literal design system underneath, Claude Design don't need to guess a lot, more complex and more expensive models obviously helps (because this technology loves to earn money, overengineer and throw massive amounts of compute on everything without limiting you, the input), so the model literally knows all the rules and how they fit together. Because what Claude Design does is based on the code that make it all happen.
+
+It's kind of like if you had a human who know design. Imagine that.
+
+# Much ado
+
+I think Claud Design can be impressive for what it is, compute.
+
+I think what'll be interesting to experiment with, is how you better use a designer on your team now that you don't need the designer to push pixels for you. Ideally, I hope you let the designer dig into figuring out what you should make and why you should make it. Then you figure out how. Like in the old days when people talked to people and did all they could to make good stuff.
+
+I also think that Claude Design makes prototyping and testing faster. I don't know whether this is a good or a bad thing. There's a lot of teams and people who make a lot of shit, and simplifying output isn't necessarily good. So maybe mostly a bad thing, then.

@@ -15,28 +15,30 @@ So this artificial intelligence business (almost always generative, there's an i
 
 # Ollama
 
-Ollama is great. It's a software that runs any large language model locally on your machine. And you can set it up with other nifty stuff. It comes bundled with the most popular agents (that's a large language model with a bunch of functions on top) built right in to use.
+Ollama is great. It's software that runs any large language model locally (and through cloud) on your machine. And you can set it up with other nifty stuff. It comes bundled with the most popular agents (that's a large language model with a bunch of functions on top) built right in to use.
 
-So I installed Ollama, and I found a good ish model for my environment (a Macbook Pro, 24GB of RAM, M1 processor), qwen3 8b (I first tried qwen latest, but that was hilariously bad, I have never heard my MacBook make a sound, but oh boy did it).
+So I installed Ollama, and I found a good ish model for my environment (a Macbook Pro, 24GB of RAM, M1 processor), qwen3 8b (I first tried qwen latest, but that was too resource intensive, I have never heard my MacBook make a sound, but oh boy did it).
 
-All good, I thought.
+All good. I thought.
 
 The model was about 5 gigabyte of data. Downloaded and ready to go.
 
 Oh boy, Ollama has a plugin in Visual Studio Code, let's go! That's sorted out, I open some of my code, which I don't understand enough about to write fully on my own (hey, I know art and design, shh), which is why I'm experimenting with a local large language model in the first place, and I _ask chat_ like my kids would (not) say. Aaaaand...
 
-Chat is taking forever, and the whole computer is hogged. Nothing. Haha. Oh boy and oh no, and all the ohs. 98% CPU usage, 19GB of ram usage. And the funniest part? The chat didn't come back to me. No answer. It returned a _not enough context size_ error each time. 4 times in a row, after increasing context size each time. So.. I stopped there, and I don't think I'll go back. Maybe in 50 years when this shit works properly.
+Chat is taking forever, and the whole computer is hogged. Nothing. Haha. Oh boy, oh no, and all the ohs. 98% CPU usage, 19GB of ram usage. And the funniest part? The chat didn't come back to me. No answer. It returned a _not enough context size_ error each time. 4 times in a row, after increasing context size each time. So.. I stopped there, and I don't think I'll go back. Maybe in 50 years when this shit works properly on a shoestring computer.
 
-# What?
+# Now what?
 
 Yeah. What? What I learned from this, is..
 
-Running a _LARGE_ language model locally on your own computer, is incredibly resource intensive and you should not do it. Probably. Well maybe, but then you probably have a swarm of computers to do it. Like a, oh I don't know, a data center. Then we're back to square one, and the problem.
+Running a _LARGE_ language model locally on your own computer, is incredibly resource intensive and _you should not do it. Probably_. Well maybe, but then you probably have a swarm of computers to do it, or a crazy graphics card to offload your processor. Like a, oh I don't know, a data center. Then we're back to square one, and the problem with generative artificial intelligence.
 
 This technology (yes, we're still talking about generative artificial intelligence) is bad. Super bad.
 
-I mean, I can probably make it run a tiny bit better if I wrap it in a harness and call it an agent instead. But..
+I mean, I can maybe make the model run a tiny bit better if I wrap it in a harness so it becomes an agent. But..
 
-Nah. I'll be my own agent, or actually! Do you know what? I'll ask my friend and/or colleague to help me out with skills I don't have, so we can collaborate, like humans. And make good stuff.
+Nah.
 
-Wow. That's my second rant in a row on my website. I'm getting better at this, and I dunno, I should make something fun instead. But this is also fun. Anyway, thanks for reading my <a href="/tags/blaBla">bla bla</a>, I hope you had fun and maybe learned one thing! Enjoy your day!
+I'll be my own agent, or actually! Do you know what? I'll ask my friend and/or colleague to help me out with skills I don't have, so we can collaborate, like humans. And make good stuff.
+
+Wow. That's my second rant in a row on my website. I'm getting better at this, and I dunno, I should make something fun instead. But it's also fun to write angrily, with passionate anger. Anyway, thanks for reading my <a href="/tags/blaBla">bla bla</a>, I hope you had fun and maybe learned a thing or two! Enjoy your day!

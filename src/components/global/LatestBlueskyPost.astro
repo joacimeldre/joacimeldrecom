@@ -102,32 +102,24 @@ try {
                 <button
                   type="button"
                   class="bluesky-image__trigger"
-                  aria-label="Show larger image preview"
+                  aria-label="Toggle larger image preview"
                   aria-expanded="false"
                 >
                   <img
+                    class="bluesky-image__thumb"
                     src={latestPost.image.thumb}
                     alt={latestPost.image.alt}
                     width="40"
                     height="40"
                     loading="lazy"
                   />
-                  <span class="bluesky-image__close" aria-hidden="true">&times;</span>
-                </button>
-                <div class="bluesky-image__panel">
                   <img
                     class="bluesky-image__large"
                     src={latestPost.image.fullsize}
                     alt=""
                     loading="lazy"
                   />
-                </div>
-                <img
-                  class="bluesky-image__hover-preview"
-                  src={latestPost.image.fullsize}
-                  alt=""
-                  loading="eager"
-                />
+                </button>
               </div>
             )
           }
@@ -181,8 +173,6 @@ try {
     cursor: zoom-in;
     background: none;
     border: 0;
-    border-radius: 0.25rem;
-    box-shadow: 0 2px 5px 0 color-mix(in srgb, var(--color-base-950) 15%, transparent);
     touch-action: manipulation;
     -webkit-touch-callout: none;
   }
@@ -191,164 +181,53 @@ try {
     cursor: zoom-out;
   }
 
-  .bluesky-image__trigger img {
+  .bluesky-image__thumb {
+    display: block;
     width: 100%;
     height: 100%;
     margin: 0;
     border-radius: 0.25rem;
     object-fit: cover;
-  }
-
-  .bluesky-image__panel,
-  .bluesky-image__hover-preview {
-    position: fixed;
-    z-index: 1;
-    top: var(--preview-top, auto);
-    right: auto;
-    bottom: var(--preview-bottom, auto);
-    display: block;
-    left: var(--preview-left, 1rem);
-    width: var(--preview-width, min(26.5rem, calc((100vw - 4rem) * 0.6)));
-    max-width: calc(100vw - 4rem);
-    max-height: var(--preview-max-height, min(28rem, calc(100vh - 2rem)));
-    margin: 0;
-    transform-origin: bottom right;
-  }
-
-  .bluesky-image__panel {
-    z-index: 2;
-    display: none;
-  }
-
-  .bluesky-image.is-open .bluesky-image__panel {
-    display: block;
+    box-shadow: 0 2px 5px 0 color-mix(in srgb, var(--color-base-950) 15%, transparent);
   }
 
   .bluesky-image__large {
-    display: block;
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    object-fit: cover;
-    border-radius: 0.25rem;
-  }
-
-  .bluesky-image__close {
     position: absolute;
-    z-index: 3;
-    inset: 0;
+    z-index: 2;
+    top: 0;
+    left: 0;
     display: none;
-    pointer-events: none;
-    padding: 0;
-    color: var(--color-base-50);
-    font-size: 1.8rem;
-    line-height: 1;
-    place-items: center;
-    background: rgb(0 0 0 / 45%);
+    width: min(26.5rem, calc(100vw - 3rem));
+    /* Overrides the global max-width that would clamp this to the 2.5rem thumbnail box. */
+    max-width: none;
+    height: auto;
+    max-height: min(28rem, calc(100vh - 2rem));
+    margin: 0;
     border-radius: 0.25rem;
+    box-shadow: 0 2px 5px 0 color-mix(in srgb, var(--color-base-950) 15%, transparent);
   }
 
-  .bluesky-image.is-open .bluesky-image__close {
-    display: grid;
+  .bluesky-image.is-open .bluesky-image__thumb {
+    visibility: hidden;
   }
 
-  .bluesky-image__hover-preview {
-    border-radius: 0.25rem;
-    pointer-events: none;
-    opacity: 0;
-    transform: scale(0.9);
-    transition: opacity 160ms ease, transform 160ms ease;
+  .bluesky-image.is-open .bluesky-image__large {
+    display: block;
   }
-
-  .bluesky-image:not(.is-preview-dismissed):hover .bluesky-image__hover-preview,
-  .bluesky-image:not(.is-preview-dismissed):focus-within .bluesky-image__hover-preview {
-    opacity: 1;
-    transform: scale(1);
-  }
-
-  .bluesky-image.is-open .bluesky-image__hover-preview {
-    display: none;
-  }
-
 </style>
 
 <script>
-  const previewGap = 12;
-  const previewPadding = 16;
-
-  const positionPreviews = () => {
-    document.querySelectorAll<HTMLElement>(".bluesky-image").forEach((image) => {
-      const thumbnail = image.querySelector<HTMLElement>(".bluesky-image__trigger");
-      const preview = image.querySelector<HTMLImageElement>(".bluesky-image__hover-preview");
-
-      if (!thumbnail || !preview) return;
-
-      const thumbnailBounds = thumbnail.getBoundingClientRect();
-      const availableWidth = window.innerWidth - thumbnailBounds.right - previewGap - previewPadding;
-      const preferredWidth = Math.min(424, (window.innerWidth - 64) * 0.6);
-      const previewWidth = Math.max(0, Math.min(preferredWidth, availableWidth));
-      const spaceAbove = thumbnailBounds.top - previewGap - previewPadding;
-      const spaceBelow = window.innerHeight - thumbnailBounds.bottom - previewGap - previewPadding;
-      const showAbove = spaceAbove >= spaceBelow;
-      const availableHeight = Math.max(0, showAbove ? spaceAbove : spaceBelow);
-
-      image.style.setProperty("--preview-left", `${thumbnailBounds.right + previewGap}px`);
-      image.style.setProperty("--preview-top", showAbove ? "auto" : `${thumbnailBounds.bottom + previewGap}px`);
-      image.style.setProperty("--preview-bottom", showAbove ? `${window.innerHeight - thumbnailBounds.top + previewGap}px` : "auto");
-      image.style.setProperty("--preview-width", `${previewWidth}px`);
-      image.style.setProperty("--preview-max-height", `${availableHeight}px`);
-    });
-  };
-
   const closeImage = (image: HTMLElement) => {
     image.classList.remove("is-open");
-    image.classList.add("is-preview-dismissed");
     image.querySelector(".bluesky-image__trigger")?.setAttribute("aria-expanded", "false");
   };
 
   document.querySelectorAll<HTMLElement>(".bluesky-image").forEach((image) => {
     const trigger = image.querySelector<HTMLElement>(".bluesky-image__trigger");
-    const preview = image.querySelector(".bluesky-image__hover-preview");
-
-    trigger?.addEventListener("pointerenter", positionPreviews);
-    image.addEventListener("pointerleave", () => {
-      image.classList.remove("is-preview-dismissed");
-    });
-    trigger?.addEventListener("focus", positionPreviews);
-    preview?.addEventListener("load", positionPreviews);
 
     trigger?.addEventListener("click", () => {
       const isOpen = image.classList.toggle("is-open");
       trigger.setAttribute("aria-expanded", String(isOpen));
-      if (isOpen) {
-        image.classList.remove("is-preview-dismissed");
-        positionPreviews();
-      } else {
-        image.classList.add("is-preview-dismissed");
-      }
-    });
-  });
-
-  window.addEventListener("resize", positionPreviews);
-  window.addEventListener(
-    "scroll",
-    () => {
-      // Don't reposition an open preview mid-scroll — it can shift the close button out from under a tap.
-      if (document.querySelector(".bluesky-image.is-open")) return;
-      positionPreviews();
-    },
-    { passive: true },
-  );
-
-  document.addEventListener("click", (event) => {
-    const target = event.target;
-
-    if (!(target instanceof Element)) return;
-
-    document.querySelectorAll<HTMLElement>(".bluesky-image.is-open").forEach((image) => {
-      const trigger = image.querySelector(".bluesky-image__trigger");
-      // Close on any tap that isn't the trigger itself — including taps on the enlarged preview.
-      if (!trigger?.contains(target)) closeImage(image);
     });
   });
 
