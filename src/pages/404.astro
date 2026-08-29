@@ -2,6 +2,8 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { Image } from "astro:assets";
 import tomAndJerry from "../content/images/page/404/tomAndJerryAnimation.webp";
+
+export const prerender = true;
 ---
 
 <BaseLayout description="Oh, no! The page you're looking for doesn't exist.">

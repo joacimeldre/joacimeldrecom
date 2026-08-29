@@ -7,9 +7,8 @@ import mdx from "@astrojs/mdx";
 import { unified } from "@astrojs/markdown-remark";
 import rehypeExternalLinks from "rehype-external-links";
 
-const siteUrl = "https://joacimeldrecom.vercel.app";
+const siteUrl = "https://joacimeldre.com";
 const siteHostname = new URL(siteUrl).hostname;
-const includeDrafts = process.env.NODE_ENV !== "production";
 const usePassthroughImages = process.env.ASTRO_PASSTHROUGH_IMAGES === "1";
 
 function rehypeImageClassFromTitle() {
@@ -85,7 +84,6 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
   markdown: {
-    drafts: includeDrafts,
     processor: unified({
       rehypePlugins: [
         rehypeImageClassFromTitle,
@@ -110,12 +108,8 @@ export default defineConfig({
     }),
     shikiConfig: {
       theme: "css-variables",
+      wrap: true,
     },
-  },
-  shikiConfig: {
-    wrap: true,
-    skipInline: false,
-    drafts: includeDrafts,
   },
   site: siteUrl,
   integrations: [sitemap(), mdx()],

@@ -16,8 +16,10 @@ function markdownToCountableText(markdown: string): string {
     .replace(/<[^>]+>/g, " ");
 }
 
-export function estimateReadingStats(markdown: string): ReadingStats {
-  const cleaned = markdownToCountableText(markdown);
+export function estimateReadingStats(
+  markdown: string | undefined,
+): ReadingStats {
+  const cleaned = markdownToCountableText(markdown ?? "");
   const words = cleaned.match(WORD_REGEX)?.length ?? 0;
   const minutes = Math.max(1, Math.ceil(words / AVERAGE_WORDS_PER_MINUTE));
 

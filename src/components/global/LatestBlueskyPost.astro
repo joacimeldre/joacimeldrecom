@@ -104,47 +104,60 @@ const resolveMedia = (embed?: BlueskyEmbed): Media | undefined => {
 };
 
 const actor = "joacimeldre.com";
-let latestPost: LatestPost | undefined;
+const CACHE_TTL_MS = 15 * 60 * 1000;
 
-try {
-  const response = await fetch(
-    `https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed?actor=${actor}&limit=25&filter=posts_no_replies`,
-    { signal: AbortSignal.timeout(3_000) },
-  );
+// Survives per serverless instance, so warm invocations skip the Bluesky round-trip.
+const cache = ((globalThis as Record<string, unknown>).__blueskyLatestPost ??= {
+  expiresAt: 0,
+}) as { expiresAt: number; post?: LatestPost };
 
-  if (response.ok) {
-    const { feed = [] } = (await response.json()) as BlueskyFeedResponse;
-    const item = feed.find(
-      (candidate) =>
-        !candidate.reason &&
-        !candidate.reply &&
-        candidate.post.author.handle === actor &&
-        candidate.post.uri.startsWith("at://") &&
-        candidate.post.record.createdAt,
+let latestPost: LatestPost | undefined = cache.post;
+
+if (Date.now() >= cache.expiresAt) {
+  try {
+    const response = await fetch(
+      `https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed?actor=${actor}&limit=25&filter=posts_no_replies`,
+      { signal: AbortSignal.timeout(3_000) },
     );
-    const postId = item?.post.uri.split("/").at(-1);
 
-    if (item && postId) {
-      latestPost = {
-        text: item.post.record.text?.trim() || "View this post on Bluesky.",
-        dateTime: item.post.record.createdAt!,
-        publishedDate: new Intl.DateTimeFormat("en-GB", {
-          day: "numeric",
-          month: "long",
-          year: "numeric",
-          timeZone: "Europe/Oslo",
-        }).format(new Date(item.post.record.createdAt!)),
-        publishedTime: new Intl.DateTimeFormat("en-GB", {
-          hour: "2-digit",
-          minute: "2-digit",
-          timeZone: "Europe/Oslo",
-        }).format(new Date(item.post.record.createdAt!)),
-        url: `https://bsky.app/profile/${actor}/post/${postId}`,
-        media: resolveMedia(item.post.embed),
-      };
+    if (response.ok) {
+      const { feed = [] } = (await response.json()) as BlueskyFeedResponse;
+      const item = feed.find(
+        (candidate) =>
+          !candidate.reason &&
+          !candidate.reply &&
+          candidate.post.author.handle === actor &&
+          candidate.post.uri.startsWith("at://") &&
+          candidate.post.record.createdAt,
+      );
+      const postId = item?.post.uri.split("/").at(-1);
+
+      if (item && postId) {
+        latestPost = {
+          text: item.post.record.text?.trim() || "View this post on Bluesky.",
+          dateTime: item.post.record.createdAt!,
+          publishedDate: new Intl.DateTimeFormat("en-GB", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+            timeZone: "Europe/Oslo",
+          }).format(new Date(item.post.record.createdAt!)),
+          publishedTime: new Intl.DateTimeFormat("en-GB", {
+            hour: "2-digit",
+            minute: "2-digit",
+            timeZone: "Europe/Oslo",
+          }).format(new Date(item.post.record.createdAt!)),
+          url: `https://bsky.app/profile/${actor}/post/${postId}`,
+          media: resolveMedia(item.post.embed),
+        };
+
+        cache.post = latestPost;
+        cache.expiresAt = Date.now() + CACHE_TTL_MS;
+      }
     }
+  } catch {
+    // Keep serving the previously cached post, if any.
   }
-} catch {
 }
 ---
 
@@ -301,7 +314,7 @@ try {
     video.dataset.attached = "true";
 
     // Bluesky only serves HLS, which needs hls.js everywhere except browsers with native support (iOS Safari).
-    const { default: Hls } = await import("hls.js");
+    const { default: Hls } = await import("hls.js/dist/hls.light.mjs");
 
     if (Hls.isSupported()) {
       const hls = new Hls();

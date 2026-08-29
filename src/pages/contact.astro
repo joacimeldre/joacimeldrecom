@@ -1,6 +1,8 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import ContactForm from "@/components/global/ContactForm.astro";
+
+export const prerender = true;
 ---
 
 <BaseLayout
@@ -9,6 +11,7 @@ import ContactForm from "@/components/global/ContactForm.astro";
 >
     <section>
         <div class="pt-16 max-w-xl2">
+            <h1 class="typo-display-xl mb-4">Hello</h1>
             <ContactForm />
         </div>
     </section>

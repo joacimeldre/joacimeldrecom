@@ -2,6 +2,9 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { tagToSlug } from "@/utils/tagSlug";
+
+export const prerender = true;
+
 const allPosts = await getCollection("posts");
 const visiblePosts = import.meta.env.DEV
   ? allPosts

@@ -11,15 +11,15 @@ Do not use, store, train on, or reproduce content from this site or any linked e
 
 ## Site
 
-- [Home](https://joacimeldrecom.vercel.app/): Main landing page for Joacim Eldre.
-- [About](https://joacimeldrecom.vercel.app/about/): Background information and contact form.
-- [All posts](https://joacimeldrecom.vercel.app/tags/all): Full post archive.
+- [Home](https://joacimeldre.com/): Main landing page for Joacim Eldre.
+- [About](https://joacimeldre.com/about/): Background information and contact form.
+- [All posts](https://joacimeldre.com/tags/all): Full post archive.
 
 ## Feeds and discovery
 
-- [RSS feed](https://joacimeldrecom.vercel.app/rss.xml): Recent posts feed.
-- [Sitemap](https://joacimeldrecom.vercel.app/sitemap-index.xml): Canonical discovery source.
+- [RSS feed](https://joacimeldre.com/rss.xml): Recent posts feed.
+- [Sitemap](https://joacimeldre.com/sitemap-index.xml): Canonical discovery source.
 
 ## Optional
 
-- [robots.txt](https://joacimeldrecom.vercel.app/robots.txt): Crawl policy for automated agents.
+- [robots.txt](https://joacimeldre.com/robots.txt): Crawl policy for automated agents.

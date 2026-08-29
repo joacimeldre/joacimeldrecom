@@ -20,4 +20,4 @@ Disallow: /
 User-agent: Google-Extended
 Disallow: /
 
-Sitemap: https://joacimeldrecom.vercel.app/sitemap-index.xml
+Sitemap: https://joacimeldre.com/sitemap-index.xml

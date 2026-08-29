@@ -142,7 +142,10 @@ export const GET: APIRoute = async ({ params }) => {
 
     return new Response(JSON.stringify({ count }), {
       status: 200,
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "public, max-age=30, s-maxage=60",
+      },
     });
   } catch (error) {
     console.error("Error fetching claps:", error);

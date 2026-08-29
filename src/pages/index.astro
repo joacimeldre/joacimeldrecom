@@ -3,6 +3,13 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import BlogEntries from "@/components/entries/BlogEntry.astro";
 import LatestBlueskyPost from "@/components/global/LatestBlueskyPost.astro";
 import { getCollection } from "astro:content";
+
+// Short CDN TTL so the Bluesky post stays reasonably fresh without rendering per request.
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, max-age=0, s-maxage=300, stale-while-revalidate=86400",
+);
+
 const allPosts = await getCollection("posts");
 const visiblePosts = import.meta.env.DEV
   ? allPosts
@@ -22,9 +29,9 @@ const sortedPosts = visiblePosts.sort(
       <h1 class="typo-display-xl">
         Hei! <a href="/about/" class="decoration-1 underline-offset-4">I'm Joacim</a>.
       </h1>
-      <h1 class="mt-8 typo-display-xl">
+      <p class="mt-8 typo-display-xl">
         I design software in public healthcare, once in a while I draw icons, logos, and apps for people. And make tiny video games.
-      </h1>
+      </p>
       <h2 class="mt-8 typo-display-lg">
         These days I'm
       </h2>
@@ -33,8 +40,8 @@ const sortedPosts = visiblePosts.sort(
         <li>drawing a <i>simple knitting guide</i>.</li>
         <li>making <i>Knitris</i>. A tiny video game about knitting.</li>
         <li>designing a <i>logo</i> for a local lumberjack. There be trees.</li>
-        <li>reading <i>Dungeon Crawler Carl</i>. Go Donut! 🐈</li>
-        <li>noodling ideas of <i>worms</i> & <i>bombs</i> for tiny video games. 🐛💣</li>
+        <li>reading <i>Dungeon Crawler Carl</i>. Go Donut!</li>
+        <li>noodling ideas of <i>worms</i> & <i>bombs</i> & <i>snacks</i> for tiny video games.</li>
       </ul>
       <LatestBlueskyPost />
       <h2 class="mt-8 typo-display-lg">

@@ -50,6 +50,14 @@ const shouldRateLimitPath = (pathname: string) => {
 
 const applyRateLimit = (key: string, now: number) => {
   const store = getRateLimitStore();
+
+  // Entries are only ever overwritten on revisit, so drop stale keys to bound memory.
+  if (store.size > 5_000) {
+    for (const [storedKey, entry] of store) {
+      if (entry.resetAt <= now) store.delete(storedKey);
+    }
+  }
+
   const existing = store.get(key);
 
   if (!existing || existing.resetAt <= now) {
@@ -70,7 +78,8 @@ const applyRateLimit = (key: string, now: number) => {
 };
 
 export const onRequest = defineMiddleware(async (context, next) => {
-  if (import.meta.env.DEV) {
+  // Prerendered routes run this at build time, where request headers don't exist.
+  if (import.meta.env.DEV || context.isPrerendered) {
     return next();
   }
 
