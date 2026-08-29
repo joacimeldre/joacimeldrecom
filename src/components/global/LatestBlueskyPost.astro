@@ -7,6 +7,25 @@ interface BlueskyImage {
   alt: string;
 }
 
+interface BlueskyAspectRatio {
+  width: number;
+  height: number;
+}
+
+interface BlueskyEmbed {
+  $type?: string;
+  images?: BlueskyImage[];
+  playlist?: string;
+  thumbnail?: string;
+  alt?: string;
+  aspectRatio?: BlueskyAspectRatio;
+  external?: {
+    uri?: string;
+    title?: string;
+    thumb?: string;
+  };
+}
+
 interface BlueskyFeedItem {
   reason?: unknown;
   reply?: unknown;
@@ -19,15 +38,21 @@ interface BlueskyFeedItem {
       text?: string;
       createdAt?: string;
     };
-    embed?: {
-      $type?: string;
-      images?: BlueskyImage[];
-    };
+    embed?: BlueskyEmbed;
   };
 }
 
 interface BlueskyFeedResponse {
   feed?: BlueskyFeedItem[];
+}
+
+interface Media {
+  kind: "image" | "gif" | "video";
+  thumb: string;
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number;
 }
 
 interface LatestPost {
@@ -36,8 +61,47 @@ interface LatestPost {
   publishedTime: string;
   dateTime: string;
   url: string;
-  image?: BlueskyImage;
+  media?: Media;
 }
+
+const isGifUrl = (uri: string) => {
+  try {
+    return new URL(uri).pathname.toLowerCase().endsWith(".gif");
+  } catch {
+    return false;
+  }
+};
+
+const resolveMedia = (embed?: BlueskyEmbed): Media | undefined => {
+  if (embed?.$type === "app.bsky.embed.images#view") {
+    const image = embed.images?.[0];
+    return image && { kind: "image", thumb: image.thumb, src: image.fullsize, alt: image.alt ?? "" };
+  }
+
+  if (embed?.$type === "app.bsky.embed.video#view" && embed.playlist && embed.thumbnail) {
+    return {
+      kind: "video",
+      thumb: embed.thumbnail,
+      src: embed.playlist,
+      alt: embed.alt ?? "",
+      width: embed.aspectRatio?.width,
+      height: embed.aspectRatio?.height,
+    };
+  }
+
+  const external = embed?.$type === "app.bsky.embed.external#view" ? embed.external : undefined;
+
+  if (external?.uri && external.thumb && isGifUrl(external.uri)) {
+    return {
+      kind: "gif",
+      thumb: external.thumb,
+      src: external.uri,
+      alt: external.title?.replace(/^ALT:\s*/i, "") ?? "",
+    };
+  }
+
+  return undefined;
+};
 
 const actor = "joacimeldre.com";
 let latestPost: LatestPost | undefined;
@@ -61,7 +125,6 @@ try {
     const postId = item?.post.uri.split("/").at(-1);
 
     if (item && postId) {
-      const embed = item.post.embed;
       latestPost = {
         text: item.post.record.text?.trim() || "View this post on Bluesky.",
         dateTime: item.post.record.createdAt!,
@@ -77,10 +140,7 @@ try {
           timeZone: "Europe/Oslo",
         }).format(new Date(item.post.record.createdAt!)),
         url: `https://bsky.app/profile/${actor}/post/${postId}`,
-        image:
-          embed?.$type === "app.bsky.embed.images#view"
-            ? embed.images?.[0]
-            : undefined,
+        media: resolveMedia(item.post.embed),
       };
     }
   }
@@ -97,28 +157,42 @@ try {
         </p>
         <div class="bluesky-post__line">
           {
-            latestPost.image && (
+            latestPost.media && (
               <div class="bluesky-image">
                 <button
                   type="button"
                   class="bluesky-image__trigger"
-                  aria-label="Toggle larger image preview"
+                  aria-label="Toggle larger media preview"
                   aria-expanded="false"
                 >
                   <img
                     class="bluesky-image__thumb"
-                    src={latestPost.image.thumb}
-                    alt={latestPost.image.alt}
+                    src={latestPost.media.thumb}
+                    alt={latestPost.media.alt}
                     width="40"
                     height="40"
                     loading="lazy"
                   />
-                  <img
-                    class="bluesky-image__large"
-                    src={latestPost.image.fullsize}
-                    alt=""
-                    loading="lazy"
-                  />
+                  {latestPost.media.kind === "video" ? (
+                    <video
+                      class="bluesky-image__large"
+                      data-src={latestPost.media.src}
+                      poster={latestPost.media.thumb}
+                      width={latestPost.media.width}
+                      height={latestPost.media.height}
+                      preload="none"
+                      playsinline
+                      muted
+                      loop
+                    />
+                  ) : (
+                    <img
+                      class="bluesky-image__large"
+                      data-src={latestPost.media.src}
+                      alt=""
+                      loading="lazy"
+                    />
+                  )}
                 </button>
               </div>
             )
@@ -214,20 +288,64 @@ try {
   .bluesky-image.is-open .bluesky-image__large {
     display: block;
   }
+
+  video.bluesky-image__large {
+    background: var(--color-base-950);
+  }
 </style>
 
 <script>
+  const attachVideo = async (video: HTMLVideoElement, src: string) => {
+    if (video.dataset.attached) return;
+
+    video.dataset.attached = "true";
+
+    // Bluesky only serves HLS, which needs hls.js everywhere except browsers with native support (iOS Safari).
+    const { default: Hls } = await import("hls.js");
+
+    if (Hls.isSupported()) {
+      const hls = new Hls();
+      hls.loadSource(src);
+      hls.attachMedia(video);
+      return;
+    }
+
+    if (video.canPlayType("application/vnd.apple.mpegurl")) video.src = src;
+  };
+
+  const loadMedia = async (large: Element) => {
+    const src = large instanceof HTMLElement ? large.dataset.src : undefined;
+
+    if (!src) return;
+
+    if (large instanceof HTMLVideoElement) {
+      await attachVideo(large, src);
+      large.play().catch(() => {});
+      return;
+    }
+
+    if (large instanceof HTMLImageElement && !large.src) large.src = src;
+  };
+
   const closeImage = (image: HTMLElement) => {
     image.classList.remove("is-open");
+    image.querySelector<HTMLVideoElement>("video.bluesky-image__large")?.pause();
     image.querySelector(".bluesky-image__trigger")?.setAttribute("aria-expanded", "false");
   };
 
   document.querySelectorAll<HTMLElement>(".bluesky-image").forEach((image) => {
     const trigger = image.querySelector<HTMLElement>(".bluesky-image__trigger");
+    const large = image.querySelector(".bluesky-image__large");
 
     trigger?.addEventListener("click", () => {
       const isOpen = image.classList.toggle("is-open");
       trigger.setAttribute("aria-expanded", String(isOpen));
+
+      if (isOpen && large) {
+        loadMedia(large);
+      } else if (large instanceof HTMLVideoElement) {
+        large.pause();
+      }
     });
   });
 
