@@ -197,9 +197,9 @@ try {
     top: 0;
     left: 0;
     display: none;
-    width: min(26.5rem, calc(100vw - 3rem));
-    /* Overrides the global max-width that would clamp this to the 2.5rem thumbnail box. */
-    max-width: none;
+    /* Never upscale: natural size, capped at the content column via the .bluesky-post inline-size container. */
+    width: auto;
+    max-width: 100cqw;
     height: auto;
     max-height: min(28rem, calc(100vh - 2rem));
     margin: 0;
