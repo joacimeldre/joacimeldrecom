@@ -614,8 +614,9 @@ if (hasBootedInSession && cachedState) {
   cursor: grabbing !important;
 }
 .ballsling-hover,
-.ballsling-hover body {
-  cursor: grab;
+.ballsling-hover body,
+.ballsling-hover body * {
+  cursor: grab !important;
 }
 .floating-element circle {
   stroke: none;
