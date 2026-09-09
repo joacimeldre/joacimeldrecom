@@ -439,7 +439,15 @@ function updateHoverState() {
   if (dragState || lastPointerClientX === null || lastPointerClientY === null) return;
   const local = toLocalPoint(lastPointerClientX, lastPointerClientY);
   const h = !!findBodyAtPoint(local.x, local.y);
-  h !== hoveringBall && (hoveringBall = h, document.documentElement.classList.toggle("ballsling-hover", h));
+  if (h === hoveringBall) return;
+  hoveringBall = h;
+  const root = document.documentElement;
+  root.classList.toggle("ballsling-hover", h);
+  // Firefox can leave the OS cursor icon stale when this class flips from
+  // the physics rAF loop (e.g. a ball drifts under a motionless pointer)
+  // rather than from a native mouse event. Forcing a synchronous reflow
+  // makes it re-evaluate and repaint the cursor immediately.
+  void root.offsetHeight;
 }
 function startDrag(e) {
   const local = toLocalPoint(e.clientX, e.clientY), hit = findBodyAtPoint(local.x, local.y);
