@@ -128,9 +128,14 @@ function observeAnchorChanges() {
   if (typeof ResizeObserver !== "function") return;
   const footerEl = document.querySelector("footer");
 
-  if (footerEl && !footerResizeObserver) {
+  if (!footerResizeObserver) {
     footerResizeObserver = new ResizeObserver(() => scheduleAnchorUpdate());
-    footerResizeObserver.observe(footerEl);
+    // Watch the footer itself for its own size changes, and the body for any
+    // layout shift elsewhere on the page (e.g. a server island like
+    // LatestBlueskyPost swapping its skeleton for taller real content),
+    // since that moves the footer down without resizing the footer itself.
+    footerEl && footerResizeObserver.observe(footerEl);
+    document.body && footerResizeObserver.observe(document.body);
   }
 }
 const toLocalPoint = (cx, cy) => {
