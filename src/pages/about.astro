@@ -3,6 +3,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import { Image } from "astro:assets";
 import ContactForm from "@/components/global/ContactForm.astro";
 import Adventure from "../content/images/page/about/Adventure.webp";
+import heyjoacimeldre from "../content/images/page/about/heyjoacimeldre.svg";
 
 export const prerender = true;
 ---
@@ -20,6 +21,14 @@ export const prerender = true;
                 I like doing. Designing. Drawing. Coding. Discovering. Writing.
                 Sharing. Helping. Learning. Adventuring. Laughing. Living.
                 Loving.
+            </p>
+            <Image
+                src={heyjoacimeldre}
+                alt="A self portrait of me drawn by me, a boy with fuzzy hair, waving at you"
+                class="mt-6 w-80"
+            />
+            <p class="mt-6 typo-main">
+                I like to find and solve problems. Figuring out why something doesn't work, and how to fix it.
             </p>
             <p class="mt-6 typo-main">
                 I'm formally educated as a visual designer and game designer, and I have a strong interest in and some work experience with code. I'm exploring how to become more proficient in writing code, and I bring a design mindset into that journey, reiterating fast to get something, test, and change or improve.
