@@ -82,6 +82,11 @@ export default defineConfig({
     : {}),
   vite: {
     plugins: [tailwindcss()],
+    optimizeDeps: {
+      // Only reachable via a dynamic import() inside a server island's script,
+      // which Vite's dependency scanner never crawls, so it must be pre-bundled explicitly.
+      include: ["hls.js/dist/hls.light.mjs"],
+    },
   },
   markdown: {
     processor: unified({
