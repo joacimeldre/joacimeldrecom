@@ -1,7 +1,7 @@
 ---
 pubDate: 2026-09-28
-title: Stack a Snack
-description: "Stack a Snack is a tiny video game about stacking snacks."
+title: Stack a Snack (Falling Block Jam 2026)
+description: "Stack a Snack is a tiny video game about stacking snacks, made during Falling Block Jam 2026."
 published: yes
 image:
   url: "../images/posts/stackasnack.webp"
@@ -9,7 +9,7 @@ image:
 tags: ["All", "Game Development"]
 ---
 
-I made Stack a Snack during Falling Block Jam. It's a tiny video game about stacking snacks, made in PICO-8.
+I made Stack a Snack during Falling Block Jam (September 18-28, 2026). It's a tiny video game about stacking snacks, made in PICO-8.
 
 You can play Stack a Snack in your browser.
 
@@ -29,28 +29,40 @@ Or download the Stack a Snack cartridge to play on your PICO-8 emulator device.
 
 I'm not entirely sure where the idea for Stack a Snack came from. It's a mix of everything that floats around in my head.
 
-The idea took shape in my head before Falling Block Jam, and I didn't know Falling Block Jam was a thing until I had seriously started to go into make mode. So that was a happy coincident. A bit sad about not being able to officially join the jam, the jam has a zero generative artificial intelligence policy, and I have no idea how to make a game like this with my own hands. Fair enough. Although it feels wrong to even say that I participated in the Falling Block Jam, then? Since generated code isn't allowed.
+The idea took shape in my head before Falling Block Jam, and I didn't know this jam was a thing until I had gone into think mode (drawing dots and lines on a piece of paper).
 
-I had fun anyway though! I like to draw pixels, and design games.
+So that this happened coincidentally was fun.
 
-Anyway, I've always liked cake.
+A bit sad about not being able to officially join the jam, they have a zero generative artificial intelligence policy (which I like, don't get me wrong). Fair enough. Since I don't know how to code a game like this, I used Claude to help me. And in many ways it feels wrong to say that I participated in the Falling Block Jam? So I'll just say I made my game alogside the jam. I'm happy the jam pushed me though. Without it, I would not have released it as soon.
 
-So that was it for the collectibles in the game.
+I had fun! I like to draw pixels, and design games. Coding is mythical to me, and I'm slowly working on understanding more. A goal of mine is to hand code a game on my own. Maybe my next idea.
 
-I also like bunnies, who doesn't? So that was the player and enemy characters sorted. The big blue one is quite derpy, and I love that. I like wonky, uneven, different. I try to find that feeling in most of what I make. Also pleased with the simple animations, 2-3 sprites at most.
+Anyway, I've always liked cake. 
+
+So for the falling block part, cake it is. Falling cake.
+
+I also like bunnies. Who doesn't?
+
+So that was the player and non player characters sorted. The big blue one is quite silly. I love that. I like wonky, uneven, different. I try to find that feeling in everything I make. I'm also happy with the simple animations, 2-3 sprites at most. Gets the point across and is lightweight.
 
 # Sprite (pixels)
 
-I drew all the game sprites in 8x8 using [Pixelorama](https://pixelorama.org/), which is a really great pixel editing software. The label image is drawn as 128x128 and imported into the label section.
+I drew all the game sprites in 8x8 pixels using [Pixelorama](https://pixelorama.org/), which is a nifty little pixel editing software. The label image is drawn in 128x128 pixels and imported into the label section.
 
-Gray bunny (player sprite) is made up of 4 sprites (head, body, tail, mouth). See image below for anatomy lesson.
+Gray bunny (player) is made up of 9 sprites, 4 tiles. The tail and open mouth sprites are placed on the left or right side, depending on the direction you're facing and moving. I really like the expression of the open mouth, haha.
 
-![Gray bunny](../images/posts/graybunny.webp "Gray bunny exploded and assembled view")
+![Gray bunny](../images/posts/graybunny.webp "Gray bunny exploded and assembled view.")
 
-Blue bunny is made up of 13 sprites where 1 is a slot and only show when chewing (right cheek, left on screen).
+Blue bunny (non player) is made up of 13 sprites, 13 tiles. Where 1 tile only show when chewing (right cheek, left on screen).
 
-Cakes are made up of 3 sprites at most (3 layer cake stack), they're 6x2 pixels in size. There's a pink and a blue version, with the equal patterns.
+![Blue bunny](../images/posts/bluebunny.webp "Blue assembled views with alternating mouths open, closed, and chewing.")
 
-# Zzz
+Cakes (non player) are made up of 6 sprites (pink and blue variant), 3 tiles at most (in a 3 layer cake stack).
 
-I'll write more later. :)
+# Gameplay
+
+I'll dive into the small details on how the game plays and what, apart from the obvious falling blocks theme, inspired the game play later.
+
+# Code 
+
+I'll insert some of the more interesting code sections and explain what the code does in my own words. Even if it's generated by artificial intelligence, I think exploring the code will make me understand more.
