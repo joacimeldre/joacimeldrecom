@@ -1,6 +1,4 @@
 ---
-import SmartLink from "@/components/global/SmartLink.astro";
-
 interface BlueskyImage {
   thumb: string;
   fullsize: string;
@@ -166,7 +164,7 @@ if (Date.now() >= cache.expiresAt) {
     <section class="mt-8" aria-label="Latest post on Bluesky">
       <article class="bluesky-post">
         <p class="text-sm text-base-700">
-          <SmartLink href={latestPost.url} class="bluesky-post__source-link" aria-label="Open on Bluesky"><span aria-hidden="true">εїз</span> <time datetime={latestPost.dateTime}>{latestPost.publishedDate}, {latestPost.publishedTime}</time></SmartLink>
+          <a href={latestPost.url} class="bluesky-post__source-link" aria-label="Open on Bluesky"><span aria-hidden="true">εїз</span> <time datetime={latestPost.dateTime}>{latestPost.publishedDate}, {latestPost.publishedTime}</time></a>
         </p>
         <div class="bluesky-post__line">
           {

@@ -1,7 +1,6 @@
 ---
 import BallSling from "@/components/global/BallSling.astro";
 import GoToTop from "@/components/global/GoToTop.astro";
-import SmartLink from "@/components/global/SmartLink.astro";
 import { buildContactMailtoHref } from "@/utils/contact";
 
 interface Props {
@@ -23,14 +22,14 @@ const contactHref = buildContactMailtoHref();
         human being made of <span class="inline-highlight inline-highlight-chip bg-green-50" style="--selection-highlight: var(--color-green-50);">jelly</span>.
         </p>
         <p class="typo-nav text-balance text-center">
-        Say hi on <SmartLink
+        Say hi on <a
           href={contactHref}
           class="transition duration-200"
         >
-          hei@joacimeldre.com</SmartLink
+          hei@joacimeldre.com</a
         >.
         </p>
-        <p class="typo-nav text-balance text-center">Oh and maybe visit my <SmartLink href="https://www.redbubble.com/people/ThingsWithFaces/shop" class="transition duration-200">print on demand shop</SmartLink> with clothes, stickers, and such.</p>
+        <p class="typo-nav text-balance text-center">Oh and maybe visit my <a href="https://www.redbubble.com/people/ThingsWithFaces/shop" class="transition duration-200">print on demand shop</a> with clothes, stickers, and such.</p>
     </div>
   </div>
   {showBallSling && <BallSling />}
