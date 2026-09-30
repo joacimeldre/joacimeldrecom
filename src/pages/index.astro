@@ -2,6 +2,7 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import BlogEntries from "@/components/entries/BlogEntry.astro";
 import LatestBlueskyPost from "@/components/global/LatestBlueskyPost.astro";
+import SmartLink from "@/components/global/SmartLink.astro";
 import { getCollection } from "astro:content";
 
 // Short CDN TTL so the Bluesky post stays reasonably fresh without rendering per request.
@@ -39,7 +40,7 @@ const sortedPosts = visiblePosts.sort(
         <li>playing <i>Rime</i> and <i>Naiad</i>.</li>
         <li>designing a <i>logo</i> for a local lumberjack. There be trees! /\</li>
         <li>reading <i>Dungeon Crawler Carl</i>. Go Donut!</li>
-        <li>reading <a href="https://seldo.com/posts/we-are-all-product-engineers-now/">We are all Product Engineers now</a>.</li>
+        <li>reading <SmartLink href="https://seldo.com/posts/we-are-all-product-engineers-now/">We are all Product Engineers now</SmartLink>.</li>
         <li>tinkering with <i>worms</i> & <i>bombs</i> for tiny video games.</li>
       </ul>
       <LatestBlueskyPost server:defer>
