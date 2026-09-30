@@ -69,6 +69,16 @@ function rehypeImageClassFromTitle() {
   };
 }
 
+function transformerLineNumberDigits() {
+  return {
+    name: "line-number-digits",
+    pre(hast) {
+      const digits = String(this.lines.length).length;
+      hast.properties.style = `${hast.properties.style ?? ""};--line-number-digits:${digits}`;
+    },
+  };
+}
+
 // https://astro.build/config
 export default defineConfig({
   output: "server",
@@ -114,6 +124,7 @@ export default defineConfig({
     shikiConfig: {
       theme: "css-variables",
       wrap: true,
+      transformers: [transformerLineNumberDigits()],
     },
   },
   site: siteUrl,
