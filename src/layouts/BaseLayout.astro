@@ -71,9 +71,43 @@ const { title, description, image, type, publishedTime, showBallSling = true } =
         });
       };
 
+      const internalHostnames = new Set([
+        "joacimeldre.com",
+        "www.joacimeldre.com",
+        "joacimeldrecom.vercel.app",
+        window.location.hostname,
+      ]);
+
+      const applySmartLinks = () => {
+        const links = document.querySelectorAll("a[href]");
+
+        links.forEach((link) => {
+          const href = link.getAttribute("href");
+          if (!href) return;
+
+          const isSpecialProtocol = /^(mailto:|tel:|sms:)/i.test(href);
+          const isRelative = /^(\/|#|\.\/|\.\.\/)/.test(href);
+          if (isSpecialProtocol || isRelative) return;
+
+          let isExternal = false;
+          try {
+            const url = new URL(href, window.location.href);
+            isExternal = /^https?:$/i.test(url.protocol) && !internalHostnames.has(url.hostname);
+          } catch {
+            isExternal = false;
+          }
+
+          if (!isExternal) return;
+
+          if (!link.hasAttribute("target")) link.setAttribute("target", "_blank");
+          if (!link.hasAttribute("rel")) link.setAttribute("rel", "noreferrer noopener");
+        });
+      };
+
       const applyRuntimeEnhancements = () => {
         assignRotatingLinkColors();
         makeIframesResponsive();
+        applySmartLinks();
       };
 
       if (document.readyState === "loading") {
