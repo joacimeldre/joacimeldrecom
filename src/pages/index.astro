@@ -26,37 +26,37 @@ const sortedPosts = visiblePosts.sort(
 >
   <section>
     <div class="pt-16">
-      <h1 class="typo-display-xl text-balance">
+    <h1 class="typo-display-xl text-balance">
         Hei! <a href="/about/" class="decoration-1 underline-offset-4">I'm Joacim</a>.
-      </h1>
-      <p class="mt-8 typo-display-xl text-balance">
+    </h1>
+    <p class="mt-8 typo-display-xl text-balance">
         I place pixels and write words. Once in a while I draw icons and logos for people. And make tiny video games.
-      </p>
-      <h2 class="mt-8 typo-display-lg">
+    </p>
+    <h2 class="mt-8 typo-display-lg">
         These days I'm
-      </h2>
-      <ul class="list-disc list-outside mt-3 pl-6 typo-main space-y-2">
-        <li>playing <i>Rime</i>.</li>
-        <li>designing a <i>logo</i> for a local lumberjack. There be trees! /\</li>
-        <li>reading <i>Annihilation</i>, and <i>Slow Productivity</i>.</li>
-        <li>tinkering with <i>worms</i> & <i>bombs</i> for tiny video games.</li>
-      </ul>
-      <LatestBlueskyPost server:defer>
+    </h2>
+    <ul class="list-disc list-outside mt-3 pl-6 typo-main space-y-2">
+        <li>making a <i>logo</i> for a local lumberjack. There be trees! /\</li>
+        <li>reading <i>Annihilation</i>, <i>Psych</i>, & <i>Slow Productivity</i>.</li>
+        <li>making <i>oio</i>, a tiny video game.</li>
+        <li>playing <i>It Takes Two</i>.</li>
+    </ul>
+    <LatestBlueskyPost server:defer>
         <div slot="fallback" class="mt-8" aria-hidden="true">
-          <div class="h-4 w-40 animate-pulse motion-reduce:animate-none rounded bg-base-900/10"></div>
-          <div class="mt-2 flex items-center gap-3">
-            <div class="h-10 w-10 flex-none animate-pulse motion-reduce:animate-none rounded bg-base-900/10"></div>
-            <div class="flex-1 space-y-2">
-              <div class="h-4 w-full animate-pulse motion-reduce:animate-none rounded bg-base-900/10"></div>
-              <div class="h-4 w-2/3 animate-pulse motion-reduce:animate-none rounded bg-base-900/10"></div>
+            <div class="h-4 w-40 animate-pulse motion-reduce:animate-none rounded bg-base-900/10"></div>
+            <div class="mt-2 flex items-center gap-3">
+                <div class="h-10 w-10 flex-none animate-pulse motion-reduce:animate-none rounded bg-base-900/10"></div>
+                <div class="flex-1 space-y-2">
+                    <div class="h-4 w-full animate-pulse motion-reduce:animate-none rounded bg-base-900/10"></div>
+                    <div class="h-4 w-2/3 animate-pulse motion-reduce:animate-none rounded bg-base-900/10"></div>
+                </div>
             </div>
-          </div>
         </div>
-      </LatestBlueskyPost>
-      <h2 class="mt-8 typo-display-lg">
+    </LatestBlueskyPost>
+    <h2 class="mt-8 typo-display-lg">
         Recent writings
-      </h2>
-      <ul class="mt-4">
+    </h2>
+    <ul class="mt-4">
         {
           sortedPosts
             .slice(0, 5)
