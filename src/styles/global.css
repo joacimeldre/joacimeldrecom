@@ -31,7 +31,7 @@
 @font-face {
   font-family: "Atkinson Hyperlegible Next";
   font-style: normal;
-  font-weight: 400 700;
+  font-weight: 200 800;
   font-display: swap;
   src: url("/fonts/AtkinsonHyperlegibleNext-normal-latin-ext.woff2")
     format("woff2");
@@ -44,7 +44,7 @@
 @font-face {
   font-family: "Atkinson Hyperlegible Next";
   font-style: normal;
-  font-weight: 400 700;
+  font-weight: 200 800;
   font-display: swap;
   src: url("/fonts/AtkinsonHyperlegibleNext-normal-latin.woff2") format("woff2");
   unicode-range:
@@ -56,7 +56,7 @@
 @font-face {
   font-family: "Atkinson Hyperlegible Next";
   font-style: italic;
-  font-weight: 400 700;
+  font-weight: 200 800;
   font-display: swap;
   src: url("/fonts/AtkinsonHyperlegibleNext-italic-latin-ext.woff2")
     format("woff2");
@@ -69,7 +69,7 @@
 @font-face {
   font-family: "Atkinson Hyperlegible Next";
   font-style: italic;
-  font-weight: 400 700;
+  font-weight: 200 800;
   font-display: swap;
   src: url("/fonts/AtkinsonHyperlegibleNext-italic-latin.woff2") format("woff2");
   unicode-range:
@@ -308,11 +308,11 @@ a.logo-link {
   }
 
   .typo-display-xl {
-    @apply text-4xl text-balance font-medium font-display text-base-900 leading-[1.12] tracking-[-0.01em];
+    @apply text-4xl text-balance font-normal font-display text-base-900 leading-[1.12] tracking-[-0.01em];
   }
 
   .typo-display-lg {
-    @apply text-3xl text-balance font-medium font-display text-base-900 leading-[1.18] tracking-[-0.005em];
+    @apply text-3xl text-balance font-semibold font-display text-base-900 leading-[1.18] tracking-[-0.005em];
   }
 
   /* Main: long-form and primary content */
