@@ -131,20 +131,25 @@ if (Date.now() >= cache.expiresAt) {
       const postId = item?.post.uri.split("/").at(-1);
 
       if (item && postId) {
+        const createdAt = new Date(item.post.record.createdAt!);
+
         latestPost = {
           text: item.post.record.text?.trim() || "View this post on Bluesky.",
           dateTime: item.post.record.createdAt!,
-          publishedDate: new Intl.DateTimeFormat("en-GB", {
-            day: "numeric",
+          // "October 28 2026" - en-US gives us the month-first order, we just drop the comma.
+          publishedDate: new Intl.DateTimeFormat("en-US", {
             month: "long",
+            day: "numeric",
             year: "numeric",
             timeZone: "Europe/Oslo",
-          }).format(new Date(item.post.record.createdAt!)),
+          })
+            .format(createdAt)
+            .replace(",", ""),
           publishedTime: new Intl.DateTimeFormat("en-GB", {
             hour: "2-digit",
             minute: "2-digit",
             timeZone: "Europe/Oslo",
-          }).format(new Date(item.post.record.createdAt!)),
+          }).format(createdAt),
           url: `https://bsky.app/profile/${actor}/post/${postId}`,
           media: resolveMedia(item.post.embed),
         };
@@ -161,54 +166,66 @@ if (Date.now() >= cache.expiresAt) {
 
 {
   latestPost && (
-    <section class="mt-8" aria-label="Latest post on Bluesky">
+    <section class="mt-10" aria-label="Latest post on Bluesky">
       <article class="bluesky-post">
-        <p class="typo-nav  text-base-700">
-          <a href={latestPost.url} class="bluesky-post__source-link" aria-label="Open on Bluesky"><span aria-hidden="true">ʚɞ</span> <time datetime={latestPost.dateTime}>{latestPost.publishedDate}, {latestPost.publishedTime}</time></a>
-        </p>
-        <div class="bluesky-post__line">
-          {
-            latestPost.media && (
-              <div class="bluesky-image">
-                <button
-                  type="button"
-                  class="bluesky-image__trigger"
-                  aria-label="Toggle larger media preview"
-                  aria-expanded="false"
-                >
-                  <img
-                    class="bluesky-image__thumb"
-                    src={latestPost.media.thumb}
-                    alt={latestPost.media.alt}
-                    width="40"
-                    height="40"
-                    loading="lazy"
-                  />
-                  {latestPost.media.kind === "video" ? (
-                    <video
-                      class="bluesky-image__large"
-                      data-src={latestPost.media.src}
-                      poster={latestPost.media.thumb}
-                      width={latestPost.media.width}
-                      height={latestPost.media.height}
-                      preload="none"
-                      playsinline
-                      muted
-                      loop
-                    />
-                  ) : (
+        <img
+          class="bluesky-post__avatar"
+          src="/blob.svg"
+          width="107"
+          height="127"
+          alt=""
+          aria-hidden="true"
+        />
+        <div class="bluesky-post__card">
+          <p class="bluesky-post__meta typo-nav text-base-500">
+            <a href={latestPost.url} target="_blank" rel="noreferrer noopener" aria-label="Open on Bluesky">
+              <time datetime={latestPost.dateTime}>{latestPost.publishedTime} {latestPost.publishedDate}</time>, I posted
+            </a>
+          </p>
+          <div class="bluesky-post__body">
+            {
+              latestPost.media && (
+                <div class="bluesky-image">
+                  <button
+                    type="button"
+                    class="bluesky-image__trigger"
+                    aria-label="Toggle larger media preview"
+                    aria-expanded="false"
+                  >
                     <img
-                      class="bluesky-image__large"
-                      data-src={latestPost.media.src}
-                      alt=""
+                      class="bluesky-image__thumb"
+                      src={latestPost.media.thumb}
+                      alt={latestPost.media.alt}
+                      width="56"
+                      height="56"
                       loading="lazy"
                     />
-                  )}
-                </button>
-              </div>
-            )
-          }
-          <p>{latestPost.text}</p>
+                    {latestPost.media.kind === "video" ? (
+                      <video
+                        class="bluesky-image__large"
+                        data-src={latestPost.media.src}
+                        poster={latestPost.media.thumb}
+                        width={latestPost.media.width}
+                        height={latestPost.media.height}
+                        preload="none"
+                        playsinline
+                        muted
+                        loop
+                      />
+                    ) : (
+                      <img
+                        class="bluesky-image__large"
+                        data-src={latestPost.media.src}
+                        alt=""
+                        loading="lazy"
+                      />
+                    )}
+                  </button>
+                </div>
+              )
+            }
+            <p class="bluesky-post__text typo-main">{latestPost.text}</p>
+          </div>
         </div>
       </article>
     </section>
@@ -217,36 +234,52 @@ if (Date.now() >= cache.expiresAt) {
 
 <style>
   .bluesky-post {
-    margin-top: 0.75rem;
-    container-type: inline-size;
+    position: relative;
+    padding-top: 4rem;
   }
 
-  .bluesky-post__line {
+  .bluesky-post__avatar {
+    position: absolute;
+    top: 0;
+    left: 1.75rem;
+    z-index: 0;
+    width: 5.25rem;
+    height: auto;
+    margin: 0;
+    pointer-events: none;
+  }
+
+  .bluesky-post__card {
+    position: relative;
+    z-index: 1;
+    container-type: inline-size;
+    background: #fff;
+    border-radius: 1.25rem;
+    padding: 1.5rem 1.75rem 1.75rem;
+  }
+
+  .bluesky-post__meta {
+    margin: 0;
+  }
+
+  .bluesky-post__body {
     margin-top: 0.4rem;
     display: flex;
-    gap: 0.75rem;
-    align-items: center;
+    gap: 0.9rem;
+    align-items: flex-start;
   }
 
-  .bluesky-post__line > p {
+  .bluesky-post__text {
     flex: 1 1 auto;
     min-width: 0;
-  }
-
-  .bluesky-post__source-link,
-  .bluesky-post__source-link:hover,
-  .bluesky-post__source-link:active,
-  .bluesky-post__source-link:focus-visible {
-    color: inherit !important;
-    font-style: normal !important;
-    text-decoration: none !important;
+    margin: 0;
   }
 
   .bluesky-image {
     position: relative;
     flex: 0 0 auto;
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 3.5rem;
+    height: 3.5rem;
   }
 
   .bluesky-image__trigger {

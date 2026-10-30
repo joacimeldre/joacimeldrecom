@@ -112,12 +112,11 @@ const formattedDate = (() => {
           <div class="group inline-flex items-center gap-3 rounded-md border border-base-900/25 px-3 py-2 transition-colors duration-200 hover:border-base-900/60 hover:cursor-pointer" data-clap-button role="button" tabindex="0">
             <button
               type="button"
-              class="clap-button relative inline-flex items-center gap-2 px-0 py-0 typo-ui text-base-900/70 transition duration-200 hover:text-base-900 cursor-pointer disabled:cursor-default disabled:text-base-900/50"
+              class="clap-button relative inline-flex items-center gap-1 px-0 py-0 typo-ui text-base-900/70 transition duration-200 hover:text-base-900 cursor-pointer disabled:cursor-default disabled:text-base-900/50"
               aria-live="polite"
             >
               <span aria-hidden="true">👏🏻</span>
-              <span data-clap-count class="inline-block min-w-[3ch] text-center tabular-nums">0</span>
-              <span class="sr-only">claps</span>
+              <span class="ml-1"><span data-clap-count class="tabular-nums">0</span> <span data-clap-label>claps</span></span>
               <span class="clap-burst" data-clap-burst aria-hidden="true">
                 <span class="clap-line clap-line-1"></span>
                 <span class="clap-line clap-line-2"></span>
@@ -138,9 +137,10 @@ const formattedDate = (() => {
       "[data-clap-button]",
     ) as HTMLElement | null;
     const clapCount = document.querySelector("[data-clap-count]");
+    const clapLabel = document.querySelector("[data-clap-label]");
     const clapBurst = document.querySelector("[data-clap-burst]");
 
-    if (clapContainer && clapCount && clapBurst) {
+    if (clapContainer && clapCount && clapLabel && clapBurst) {
       const isDev = import.meta.env.DEV;
 
       // Extract slug from pathname (e.g., /posts/my-post-title/ -> my-post-title)
@@ -154,6 +154,7 @@ const formattedDate = (() => {
 
       const renderClaps = () => {
         clapCount.textContent = String(claps);
+        clapLabel.textContent = claps === 1 ? "clap" : "claps";
         const isDisabled = !isDev && hasClappedLocally;
         clapContainer.setAttribute("aria-label", `Clap for this post (${claps} claps)`);
         clapContainer.setAttribute("aria-disabled", String(isDisabled));
@@ -248,7 +249,7 @@ const formattedDate = (() => {
     document.querySelectorAll('.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6').forEach((heading) => {
       if (heading.closest('#table-of-contents')) return;
       const headingEl = heading as HTMLElement;
-      
+
       // Skip if already has an anchor
       if (!headingEl.querySelector('a.heading-link')) {
         // Generate ID if not present
@@ -259,7 +260,7 @@ const formattedDate = (() => {
             headingEl.id = slug;
           }
         }
-        
+
         if (headingEl.id) {
           const link = document.createElement('a');
           link.href = `#${headingEl.id}`;
