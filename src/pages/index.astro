@@ -41,18 +41,6 @@ const sortedPosts = visiblePosts.sort(
         <li>making <i>oio</i>, a tiny video game.</li>
         <li>playing <i>It Takes Two</i>.</li>
     </ul>
-    <LatestBlueskyPost server:defer>
-        <div slot="fallback" class="mt-8" aria-hidden="true">
-            <div class="h-4 w-40 animate-pulse motion-reduce:animate-none rounded bg-base-900/10"></div>
-            <div class="mt-2 flex items-center gap-3">
-                <div class="h-10 w-10 flex-none animate-pulse motion-reduce:animate-none rounded bg-base-900/10"></div>
-                <div class="flex-1 space-y-2">
-                    <div class="h-4 w-full animate-pulse motion-reduce:animate-none rounded bg-base-900/10"></div>
-                    <div class="h-4 w-2/3 animate-pulse motion-reduce:animate-none rounded bg-base-900/10"></div>
-                </div>
-            </div>
-        </div>
-    </LatestBlueskyPost>
     <h2 class="mt-8 typo-display-lg">
         Recent writings
     </h2>
@@ -73,6 +61,18 @@ const sortedPosts = visiblePosts.sort(
       <p class="mt-4 typo-main">
         Or see <a href="/tags/all">all posts</a>.
       </p>
+    <LatestBlueskyPost server:defer>
+        <div slot="fallback" class="mt-8" aria-hidden="true">
+            <div class="h-4 w-40 animate-pulse motion-reduce:animate-none rounded bg-base-900/10"></div>
+            <div class="mt-2 flex items-center gap-3">
+                <div class="h-10 w-10 flex-none animate-pulse motion-reduce:animate-none rounded bg-base-900/10"></div>
+                <div class="flex-1 space-y-2">
+                    <div class="h-4 w-full animate-pulse motion-reduce:animate-none rounded bg-base-900/10"></div>
+                    <div class="h-4 w-2/3 animate-pulse motion-reduce:animate-none rounded bg-base-900/10"></div>
+                </div>
+            </div>
+        </div>
+    </LatestBlueskyPost>
     </div>
   </section>
 </BaseLayout>
