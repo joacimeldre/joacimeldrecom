@@ -4,6 +4,7 @@ import { Image } from "astro:assets";
 import ContactForm from "@/components/global/ContactForm.astro";
 import Adventure from "../content/images/page/about/Adventure.webp";
 import heyjoacimeldre from "../content/images/page/about/heyjoacimeldre.svg";
+import play from "../content/images/page/about/play.svg"
 
 export const prerender = true;
 ---
@@ -32,9 +33,9 @@ export const prerender = true;
             <Image
                 src={heyjoacimeldre}
                 alt="A very accurate self portrait, a yellow head with two eyes and a slightly smiling mouth, one eye and a bit of the mouth is outside of the head."
-                class="mt-10 w-50"
+                class="mt-8 w-50"
             />
-            <p class="mt-10 typo-main">
+            <p class="mt-8 typo-main">
                 I'm formally educated as a visual designer and game designer. Throughout my life so far I've always felt at home with structure and limitation. Functional and practical systems. I think that my strongest skill is visualization, to form written and spoken language into shapes and figures. I'm a visual thinker who tend to fall into what some people call unicorn positions. I like unicorns. Things and people who are different. Being curious is a core value in me.
             </p>
             <p class="mt-6 typo-main">
@@ -47,7 +48,7 @@ export const prerender = true;
                 src={Adventure}
                 alt="A photo of my son and me on a hiking adventure in a forest, I've drawn a bunch doodles around us."
                 title="My son and me on an adventure"
-                class="mt-12 rounded-lg mx-auto"
+                class="mt-8 rounded-lg mx-auto"
             />
             <h2
                 class="mt-8 typo-display-lg mb-4"
@@ -72,11 +73,14 @@ export const prerender = true;
             <p class="mt-6 typo-main">
                 My kids and I like to play. The ground is lava is a favourite. A fun way to get time, and distance to pass! We step on small rocks and grass patches, and balance along fallen trees to stay alive. I think that everyone should play a lot more, be friendly to your inner child, it feels good.
             </p>
-            <p class="mt-6 typo-main">
-                I also make tiny video games (see <a href="/posts/2026-06-12-bloob-final/">Bloob</a>, <a href="/posts/2026-07-22-shapedrifter/">Shapedrifter</a>, and <a href="/posts/2026-09-28-stack-a-snack/">Stack a Snack</a>) for my kids and me to play.
-            </p>
-            <p class="mt-6 typo-main">
-                They push me to have more fun, and I love that!
+            <Image
+                src={play}
+                alt="A bunch of chunky lines in bright colors, a line ends where another line begins, a playful art piece."
+                title="Be playful"
+                class="mt-8 mx-auto"
+            />
+            <p class="mt-8 typo-main">
+                I also make <a href="/tags/gameDevelopment">tiny video games</a> for my kids and me to play. They push me to have more fun, and I love that!
             </p>
         </div>
     </section>
