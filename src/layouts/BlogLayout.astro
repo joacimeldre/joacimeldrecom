@@ -108,11 +108,16 @@ const formattedDate = (() => {
           <slot />
         </div>
 
-        <div class="mx-auto mt-12 text-base-900/70">
-          <div class="group inline-flex items-center gap-3 rounded-md border border-base-900/25 px-3 py-2 transition-colors duration-200 hover:border-base-900/60 hover:cursor-pointer" data-clap-button role="button" tabindex="0">
+        <div class="mx-auto mt-8">
+          <div
+            class="button-link inline-flex items-center gap-3 border border-white/80 bg-white text-base-900 typo-nav py-2 px-4 rounded-full transition duration-200 hover:border-base-900/80 hover:bg-base-900 hover:text-base-50 active:border-base-900/80 active:bg-base-900 active:text-base-50 cursor-pointer"
+            data-clap-button
+            role="button"
+            tabindex="0"
+          >
             <button
               type="button"
-              class="clap-button relative inline-flex items-center gap-1 px-0 py-0 typo-ui text-base-900/70 transition duration-200 hover:text-base-900 cursor-pointer disabled:cursor-default disabled:text-base-900/50"
+              class="clap-button relative inline-flex items-center gap-1 px-0 py-0 cursor-pointer"
               aria-live="polite"
             >
               <span aria-hidden="true">👏🏻</span>
