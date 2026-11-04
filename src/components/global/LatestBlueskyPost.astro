@@ -179,7 +179,7 @@ if (Date.now() >= cache.expiresAt) {
         <div class="bluesky-post__card">
           <p class="bluesky-post__meta typo-nav text-base-500">
             <a href={latestPost.url} target="_blank" rel="noreferrer noopener" aria-label="Open on Bluesky">
-              <time datetime={latestPost.dateTime}>{latestPost.publishedTime} {latestPost.publishedDate}</time>, I posted
+              <time datetime={latestPost.dateTime}>{latestPost.publishedTime}, {latestPost.publishedDate}</time>, I posted on Bluesky
             </a>
           </p>
           <div class="bluesky-post__body">
