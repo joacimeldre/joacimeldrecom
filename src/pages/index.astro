@@ -39,7 +39,6 @@ const sortedPosts = visiblePosts.sort(
         <li>making a <i>logo</i> for a local lumberjack. There be trees! /\</li>
         <li>reading <i>Annihilation</i>, <i>Psych</i>, & <i>Slow Productivity</i>.</li>
         <li>making <i>oio</i>, a tiny video game.</li>
-        <li>playing <i>It Takes Two</i>.</li>
     </ul>
     <LatestBlueskyPost server:defer>
         <div slot="fallback" class="relative mt-10 pt-16" aria-hidden="true">
@@ -59,7 +58,7 @@ const sortedPosts = visiblePosts.sort(
     <ul class="mt-2">
         {
           sortedPosts
-            .slice(0, 5)
+            .slice(0, 3)
             .map((post) => (
               <BlogEntries
                 url={"/posts/" + post.id.replace(/\.(md|mdx)$/i, "")}
@@ -71,7 +70,7 @@ const sortedPosts = visiblePosts.sort(
         }
       </ul>
       <p class="mt-2 typo-main">
-        Or see <a href="/tags/all">all posts</a>.
+        Or see <a href="/tags/all">all posts</a> and tags.
       </p>
     </div>
   </section>
