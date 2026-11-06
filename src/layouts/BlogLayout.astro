@@ -121,7 +121,7 @@ const formattedDate = (() => {
               aria-live="polite"
             >
               <span aria-hidden="true">👏🏻</span>
-              <span class="ml-1"><span data-clap-count class="tabular-nums">0</span> <span data-clap-label>claps</span></span>
+              <span class="ml-1"><span data-clap-count class="tabular-nums">0</span> <span data-clap-label>claps</span> <span data-clap-already class="hidden opacity-70">(you've already clapped)</span></span>
               <span class="clap-burst" data-clap-burst aria-hidden="true">
                 <span class="clap-line clap-line-1"></span>
                 <span class="clap-line clap-line-2"></span>
@@ -143,9 +143,10 @@ const formattedDate = (() => {
     ) as HTMLElement | null;
     const clapCount = document.querySelector("[data-clap-count]");
     const clapLabel = document.querySelector("[data-clap-label]");
+    const clapAlready = document.querySelector("[data-clap-already]");
     const clapBurst = document.querySelector("[data-clap-burst]");
 
-    if (clapContainer && clapCount && clapLabel && clapBurst) {
+    if (clapContainer && clapCount && clapLabel && clapAlready && clapBurst) {
       const isDev = import.meta.env.DEV;
 
       // Extract slug from pathname (e.g., /posts/my-post-title/ -> my-post-title)
@@ -161,6 +162,7 @@ const formattedDate = (() => {
         clapCount.textContent = String(claps);
         clapLabel.textContent = claps === 1 ? "clap" : "claps";
         const isDisabled = !isDev && hasClappedLocally;
+        clapAlready.classList.toggle("hidden", !isDisabled);
         clapContainer.setAttribute("aria-label", `Clap for this post (${claps} claps)`);
         clapContainer.setAttribute("aria-disabled", String(isDisabled));
       };
