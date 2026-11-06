@@ -12,13 +12,25 @@ let elements = [];
 const CLUE_CONSUMED_KEY = "ballslingClueConsumed";
 const IS_POST_PAGE = window.location.pathname.startsWith("/posts/");
 const PREFERS_REDUCED_MOTION = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-const GRAVITY = 2e3, GYRO_GRAVITY_FACTOR = 0.95, AIR_DRAG = 0.997, FLOOR_BOUNCE = 0.62, FLOOR_AIRTIME_BONUS = 0.42, AIRTIME_FOR_MAX_BOUNCE = 0.95, WALL_BOUNCE = 0.84, FLOOR_FRICTION = 0.96, BODY_BOUNCE = 0.72, BODY_AIRTIME_BONUS = 0.24, ANGULAR_DRAG = 0.991, COM_RESTORE = 4.2, MAX_LINEAR_SPEED = 2600, MAX_ANGULAR_SPEED = 3.2, GROUND_IMPACT_MIN_SPEED = 210, GROUND_IMPACT_STRENGTH = 0.6, GROUND_IMPACT_RADIUS = 380, IMPACT_SQUASH_MAX = 0.1, ANTICIPATION_HEIGHT = 90, ANTICIPATION_SPEED = 240, GEL_LOW_IMPACT_SPEED = 170, RESTING_SQUASH = 0.022, ROLL_SPEED_FOR_MAX_GLIDE = 320, ROLL_FRICTION_FAST = 0.99935, ROLL_FRICTION_SLOW = 0.982, ROLL_STOP_SPEED = 0.024, ROLL_BACK_TRIGGER = 0.11, ROLL_SETTLE_SPRING = 12, ROLL_SETTLE_DAMPING = 4.8, ROLL_SETTLE_LOOKAHEAD = 0.16, FLING_SAMPLE_WINDOW_MS = 72, FLING_GAIN = 1.22, COLLISION_ITERATIONS = IS_POST_PAGE ? 5 : 7, PENETRATION_SLOP = 0.15, POSITION_CORRECTION_PERCENT = 0.9, FIXED_DT = PREFERS_REDUCED_MOTION ? 1 / 45 : IS_POST_PAGE ? 1 / 72 : 1 / 96, MAX_SUBSTEPS = IS_POST_PAGE ? 4 : 5;
-let viewportWidth = window.innerWidth, viewportHeight = window.innerHeight, bodies = [], lastTs = performance.now(), accumulator = 0, shapeCount = 0, dragState = null, pendingImpactPulses = [], hoveringBall = false, gravityX = 0, gravityY = GRAVITY, gravityTargetX = 0, gravityTargetY = GRAVITY, gyroPermissionAttempted = false, hasUserInteracted = sessionStorage.getItem(CLUE_CONSUMED_KEY) === "1", clueActivatedByFooter = false, clueBall = null, clueAnchorX = 0, clueHopClock = 0, clueNextHopAt = 0, lastPointerClientX = null, lastPointerClientY = null;
+const GRAVITY = 2e3, GYRO_GRAVITY_FACTOR = 0.95, AIR_DRAG = 0.997, FLOOR_BOUNCE = 0.62, FLOOR_AIRTIME_BONUS = 0.42, AIRTIME_FOR_MAX_BOUNCE = 0.95, WALL_BOUNCE = 0.84, FLOOR_FRICTION = 0.96, BODY_BOUNCE = 0.72, BODY_AIRTIME_BONUS = 0.24, ANGULAR_DRAG = 0.991, COM_RESTORE = 4.2, MAX_LINEAR_SPEED = 2600, MAX_ANGULAR_SPEED = 3.2, GROUND_IMPACT_MIN_SPEED = 210, GROUND_IMPACT_STRENGTH = 0.6, GROUND_IMPACT_RADIUS = 380, IMPACT_SQUASH_MAX = 0.1, ANTICIPATION_HEIGHT = 90, ANTICIPATION_SPEED = 240, GEL_LOW_IMPACT_SPEED = 170, RESTING_SQUASH = 0.022, ROLL_SPEED_FOR_MAX_GLIDE = 320, ROLL_FRICTION_FAST = 0.99935, ROLL_FRICTION_SLOW = 0.982, ROLL_STOP_SPEED = 0.024, ROLL_BACK_TRIGGER = 0.11, ROLL_SETTLE_SPRING = 12, ROLL_SETTLE_DAMPING = 4.8, ROLL_SETTLE_LOOKAHEAD = 0.16, FLING_SAMPLE_WINDOW_MS = 72, FLING_GAIN = 1.22, COLLISION_ITERATIONS = IS_POST_PAGE ? 5 : 7, PENETRATION_SLOP = 0.15, POSITION_CORRECTION_PERCENT = 0.9, GENTLE_PUSH_IMPULSE_CAP = 140, DROP_ON_BALL_BOUNCE = 0.5, FACET_SETTLE_SPRING = 10, FACET_SETTLE_DAMPING = 4.2, STACK_SETTLE_SPRING = 10, STACK_SETTLE_DAMPING = 5, GROUND_FRICTION_ANCHOR = 0.12, PIVOT_RESTORE_SPRING = 20, PIVOT_RESTORE_DAMPING = 3.4, FIXED_DT = PREFERS_REDUCED_MOTION ? 1 / 45 : IS_POST_PAGE ? 1 / 72 : 1 / 96, MAX_SUBSTEPS = IS_POST_PAGE ? 4 : 5;
+const BALL_FACET_COUNT = 10, BALL_FACET_ANGLE = Math.PI * 2 / BALL_FACET_COUNT;
+const BALL_LOCAL_VERTS = Array.from({ length: BALL_FACET_COUNT }, (_, k) => {
+  const theta = Math.PI / 2 - Math.PI / BALL_FACET_COUNT + k * BALL_FACET_ANGLE;
+  return { x: Math.cos(theta), y: Math.sin(theta) };
+});
+const BALL_POLY_POINTS = BALL_LOCAL_VERTS.map((v) => `${(50 + 40 * v.x).toFixed(2)},${(50 + 40 * v.y).toFixed(2)}`).join(" ");
+function getWorldVerts(b) {
+  const c = Math.cos(b.angle), s = Math.sin(b.angle);
+  return BALL_LOCAL_VERTS.map((v) => ({
+    x: b.x + b.radius * (v.x * c - v.y * s),
+    y: b.y + b.radius * (v.x * s + v.y * c),
+  }));
+}
+let viewportWidth = window.innerWidth, viewportHeight = window.innerHeight, bodies = [], lastTs = performance.now(), accumulator = 0, shapeCount = 0, dragState = null, pendingImpactPulses = [], hoveringBall = false, gravityX = 0, gravityY = GRAVITY, gravityTargetX = 0, gravityTargetY = GRAVITY, gyroPermissionAttempted = false, hasUserInteracted = sessionStorage.getItem(CLUE_CONSUMED_KEY) === "1", clueActivatedByFooter = false, clueBall = null, clueAnchorX = 0, clueHopClock = 0, clueNextHopAt = 0, lastPointerClientX = null, lastPointerClientY = null, anchorTop = 0;
 const HAS_BOOTED_KEY = "ballslingBooted";
 let footerResizeObserver = null, anchorUpdateScheduled = false;
 const SLING_BURST_MIN_SPEED = 230;
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
-const pageLighting = getLightingFromLocalTime();
 function scheduleAnchorUpdate() {
   if (anchorUpdateScheduled) return;
   anchorUpdateScheduled = true;
@@ -26,71 +38,6 @@ function scheduleAnchorUpdate() {
     anchorUpdateScheduled = false;
     updateBottomAnchor();
   });
-}
-function getLightingFromLocalTime(now = new Date()) {
-  const h = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
-  const solar = (h - 6) / 12 * Math.PI;
-  const sunArc = Math.sin(solar);
-  const elevation = Math.max(0, sunArc);
-  const dayMix = clamp(elevation * 1.08, 0, 1);
-  const sunriseWarmth = clamp(1 - Math.abs(h - 6.7) / 2.2, 0, 1);
-  const sunsetWarmth = clamp(1 - Math.abs(h - 18.7) / 2.4, 0, 1);
-  const sunriseGlow = Math.pow(sunriseWarmth, 1.1) * 0.8;
-  const sunsetGlow = Math.pow(sunsetWarmth, 0.85) * 1.35;
-  const twilightWarmth = clamp(sunriseGlow + sunsetGlow, 0, 1.4);
-  const nightCoolness = Math.pow(1 - dayMix, 1.08);
-  const azimuth = Math.cos(solar);
-  const lightCx = clamp(50 - azimuth * 22, 16, 84);
-  const lightCy = clamp(74 - dayMix * 42, 22, 78);
-  const shadowCx = clamp(100 - lightCx + (azimuth >= 0 ? 4 : -4), 18, 86);
-  const shadowCy = clamp(100 - lightCy + 12, 36, 90);
-  const baseR = Math.round(clamp(238 + dayMix * 11 + twilightWarmth * 10 - nightCoolness * 7, 228, 252));
-  const baseG = Math.round(clamp(234 + dayMix * 9 + twilightWarmth * 3.2 - nightCoolness * 5, 223, 246));
-  const baseB = Math.round(clamp(226 + dayMix * 7 - twilightWarmth * 5.4 + nightCoolness * 11, 216, 246));
-  const shadeR = Math.round(clamp(18 + twilightWarmth * 2.8 - nightCoolness * 6, 9, 25));
-  const shadeG = Math.round(clamp(18 + twilightWarmth * 0.9 - nightCoolness * 4, 10, 24));
-  const shadeB = Math.round(clamp(20 + nightCoolness * 9, 18, 31));
-  return {
-    lightCx,
-    lightCy,
-    shadowCx,
-    shadowCy,
-    highlightOpacity: (0.2 + dayMix * 0.44).toFixed(3),
-    shadowOpacity: (0.82 - dayMix * 0.26).toFixed(3),
-    noiseOpacity: (0.18 - dayMix * 0.05).toFixed(3),
-    fillStopOpacity: (0.14 + dayMix * 0.1).toFixed(3),
-    baseR: baseR.toString(),
-    baseG: baseG.toString(),
-    baseB: baseB.toString(),
-    shadeR: shadeR.toString(),
-    shadeG: shadeG.toString(),
-    shadeB: shadeB.toString()
-  };
-}
-function applyTimeOfDayLighting(lighting) {
-  if (!elements.length) return;
-  const l = lighting;
-  for (const el of elements) {
-    const fill = el.querySelector(".ball-fill-gradient");
-    const hi = el.querySelector(".ball-highlight-gradient");
-    const sh = el.querySelector(".ball-shadow-gradient");
-    fill && (fill.setAttribute("cx", `${l.lightCx}%`), fill.setAttribute("cy", `${l.lightCy}%`));
-    hi && (hi.setAttribute("cx", `${l.lightCx}%`), hi.setAttribute("cy", `${l.lightCy}%`));
-    sh && (sh.setAttribute("cx", `${l.shadowCx}%`), sh.setAttribute("cy", `${l.shadowCy}%`));
-  }
-  for (const target of [container, overlayContainer]) {
-    if (!target) continue;
-    target.style.setProperty("--ballsling-highlight-opacity", l.highlightOpacity);
-    target.style.setProperty("--ballsling-shadow-opacity", l.shadowOpacity);
-    target.style.setProperty("--ballsling-noise-opacity", l.noiseOpacity);
-    target.style.setProperty("--ballsling-fill-stop-opacity", l.fillStopOpacity);
-    target.style.setProperty("--ballsling-base-r", l.baseR);
-    target.style.setProperty("--ballsling-base-g", l.baseG);
-    target.style.setProperty("--ballsling-base-b", l.baseB);
-    target.style.setProperty("--ballsling-shade-r", l.shadeR);
-    target.style.setProperty("--ballsling-shade-g", l.shadeG);
-    target.style.setProperty("--ballsling-shade-b", l.shadeB);
-  }
 }
 function updateViewportSize() {
   const vv = window.visualViewport;
@@ -100,7 +47,7 @@ function updateBottomAnchor() {
   updateViewportSize();
   const footerEl = document.querySelector("footer");
   const doc = document.documentElement;
-  let anchorTop = Math.max(0, doc.scrollHeight - viewportHeight);
+  anchorTop = Math.max(0, doc.scrollHeight - viewportHeight);
   if (footerEl) {
     const footerGapSource = footerEl.querySelector("[data-balls-gap]") || footerEl;
     const footerGap = Number.parseFloat(
@@ -138,10 +85,18 @@ function observeAnchorChanges() {
     document.body && footerResizeObserver.observe(document.body);
   }
 }
-const toLocalPoint = (cx, cy) => {
-  const r = container?.getBoundingClientRect();
-  return r ? { x: cx - r.left, y: cy - r.top } : { x: cx, y: cy };
-}, shapeAndSizeForIndex = (i) => ({
+const toLocalPoint = (cx, cy) => ({
+  // The container is absolutely positioned against the document (its top is
+  // set to `anchorTop` document-relative pixels, not viewport-relative), so
+  // convert the viewport-relative pointer coordinates to document-relative
+  // ones via scroll offset instead of calling getBoundingClientRect(). Doing
+  // that read here would force a synchronous layout recalculation right
+  // after renderBodies() writes transforms every animation frame, which can
+  // stall/coalesce mousemove delivery and make hover detection lag behind
+  // the real cursor position.
+  x: cx + (window.scrollX || window.pageXOffset || 0),
+  y: cy + (window.scrollY || window.pageYOffset || 0) - anchorTop
+}), shapeAndSizeForIndex = (i) => ({
   kind: "circle",
   size: i % 2 === 0 ? viewportWidth <= 768 ? 68 : 96 : viewportWidth <= 768 ? 48 : 72
 }), getTargetShapeCount = (w) => w <= 768 ? 6 : IS_POST_PAGE ? 8 : 12;
@@ -151,7 +106,7 @@ function createShapeElement(index) {
   const n = index;
   return el.innerHTML = `
       <defs>
-        <clipPath id="bc-${n}" clipPathUnits="userSpaceOnUse"><circle cx="50" cy="50" r="40"/></clipPath>
+        <clipPath id="bc-${n}" clipPathUnits="userSpaceOnUse"><polygon points="${BALL_POLY_POINTS}"/></clipPath>
         <radialGradient class="ball-fill-gradient" id="bf-${n}" cx="34%" cy="28%" r="74%">
           <stop offset="0%" stop-color="#fff" stop-opacity="var(--ballsling-fill-stop-opacity, .2)"/>
           <stop offset="42%" stop-color="currentColor"/>
@@ -168,7 +123,7 @@ function createShapeElement(index) {
         <filter id="bnf-${n}" x="-24%" y="-24%" width="148%" height="148%" color-interpolation-filters="sRGB">
           <feTurbulence type="fractalNoise" baseFrequency="1.8" numOctaves="2" seed="${17 + n * 7}" stitchTiles="noStitch" result="noise"/>
           <feColorMatrix in="noise" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0.1 0.1 0 0" result="grainAlpha"/>
-          <feGaussianBlur in="grainAlpha" stdDeviation="0.17" result="grainSoft"/>
+          <feGaussianBlur in="grainAlpha" stdDeviation=".17" result="grainSoft"/>
           <feTurbulence type="fractalNoise" baseFrequency="0.46" numOctaves="1" seed="${103 + n * 11}" stitchTiles="noStitch" result="speckNoise"/>
           <feColorMatrix in="speckNoise" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.5 0.5 0.5 0 0" result="speckAlpha"/>
           <feComponentTransfer in="speckAlpha" result="speckMask">
@@ -179,14 +134,18 @@ function createShapeElement(index) {
         </filter>
       </defs>
       <g class="ball-lighting-layer" clip-path="url(#bc-${n})">
-        <circle class="ball-base"      cx="50" cy="50" r="40" fill="url(#bf-${n})"/>
-        <circle class="ball-shadow"    cx="50" cy="50" r="40" fill="url(#bs-${n})"/>
-        <circle class="ball-highlight" cx="50" cy="50" r="40" fill="url(#bh-${n})"/>
+        <g class="ball-lighting-content">
+          <polygon class="ball-base"      points="${BALL_POLY_POINTS}" fill="url(#bf-${n})"/>
+          <polygon class="ball-shadow"    points="${BALL_POLY_POINTS}" fill="url(#bs-${n})"/>
+          <polygon class="ball-highlight" points="${BALL_POLY_POINTS}" fill="url(#bh-${n})"/>
+        </g>
       </g>
       <g class="ball-noise-layer" clip-path="url(#bc-${n})">
-        <circle class="ball-noise" cx="50" cy="50" r="40" fill="#000" filter="url(#bnf-${n})"/>
+        <g class="ball-noise-content">
+          <polygon class="ball-noise" points="${BALL_POLY_POINTS}" fill="#000" filter="url(#bnf-${n})"/>
+        </g>
       </g>
-      <circle class="ball-outline" cx="50" cy="50" r="40" fill="none"/>`, el;
+      <polygon class="ball-outline" points="${BALL_POLY_POINTS}" fill="none"/>`, el;
 }
 function ensureShapePopulation() {
   if (!container) return;
@@ -247,7 +206,8 @@ function initializeBodies(restoreState) {
       didGroundOverstep: false,
       settlingRoll: false,
       settleAnchorX: x,
-      slingBurstArmed: false
+      slingBurstArmed: false,
+      inFlight: false
     };
     if (restoreState?.[i]) {
       const s = restoreState[i];
@@ -256,7 +216,6 @@ function initializeBodies(restoreState) {
     return b;
   });
   !hasUserInteracted && clueActivatedByFooter && setClueBall(pickClueBall());
-  applyTimeOfDayLighting(pageLighting);
 }
 function applyGroundImpactImpulseAt(srcX, srcY, srcMass, speed, src) {
   if (speed < GROUND_IMPACT_MIN_SPEED) return;
@@ -293,22 +252,49 @@ function spawnSlingBurst(x, y) {
   window.setTimeout(() => burst.remove(), 330);
 }
 function clampInsideViewport(b) {
-  const e = b.radius;
-  b.x - e < 0 && (b.x = e, b.vx = Math.abs(b.vx) * WALL_BOUNCE, b.av += Math.abs(b.vy) * 9e-4), b.x + e > viewportWidth && (b.x = viewportWidth - e, b.vx = -Math.abs(b.vx) * WALL_BOUNCE, b.av -= Math.abs(b.vy) * 9e-4), b.y - e < 0 && (b.y = e, b.vy = Math.abs(b.vy) * WALL_BOUNCE, b.av += b.vx * 12e-4);
-  const floorY = viewportHeight - e;
-  if (b.touchingFloor = false, b.y > floorY) {
+  const verts = getWorldVerts(b);
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  for (const v of verts) {
+    v.x < minX && (minX = v.x), v.x > maxX && (maxX = v.x), v.y < minY && (minY = v.y), v.y > maxY && (maxY = v.y);
+  }
+  minX < 0 && (b.x += -minX, b.vx = Math.abs(b.vx) * WALL_BOUNCE, b.av += Math.abs(b.vy) * 9e-4), maxX > viewportWidth && (b.x -= maxX - viewportWidth, b.vx = -Math.abs(b.vx) * WALL_BOUNCE, b.av -= Math.abs(b.vy) * 9e-4), minY < 0 && (b.y += -minY, b.vy = Math.abs(b.vy) * WALL_BOUNCE, b.av += b.vx * 12e-4);
+  b.touchingFloor = false;
+  if (maxY > viewportHeight) {
     const impactSpeed = Math.abs(b.vy);
-    b.y = floorY;
+    b.y -= maxY - viewportHeight;
     const rest = Math.min(0.92, FLOOR_BOUNCE + FLOOR_AIRTIME_BONUS * Math.min(1, b.airTime / AIRTIME_FOR_MAX_BOUNCE) + clamp((impactSpeed - 440) / 1e3, 0, 0.16));
     b.vy = -Math.abs(b.vy) * rest, b.squash = Math.max(b.squash, Math.min(IMPACT_SQUASH_MAX, impactSpeed / 2e3)), b.av += b.vx * 18e-4, b.vx *= FLOOR_FRICTION, b.av *= FLOOR_FRICTION, b.didGroundOverstep = false, impactSpeed < GEL_LOW_IMPACT_SPEED && (b.vy *= 0.28, b.vx *= 0.97, b.av *= 0.55), b.touchingFloor = true, b.airTime = 0, Math.abs(b.vy) < 14 && (b.vy = 0), Math.abs(b.vx) < 0.02 && (b.vx = 0), Math.abs(b.av) < 2e-3 && (b.av = 0), applyGroundImpactImpulse(b, impactSpeed), queueImpactPulseCurve(b, impactSpeed), b.slingBurstArmed && (impactSpeed >= SLING_BURST_MIN_SPEED && spawnSlingBurst(b.x, b.y - b.radius - Math.max(4, b.radius * 0.2)), b.slingBurstArmed = false);
-  } else b.y >= floorY - 0.5 && b.vy >= -8 && (b.y = floorY, b.touchingFloor = true, Math.abs(b.vy) < 8 && (b.vy = 0));
+  } else viewportHeight - maxY < 0.5 && b.vy >= -8 && (b.y += viewportHeight - maxY, b.touchingFloor = true, Math.abs(b.vy) < 8 && (b.vy = 0));
+  b.touchingFloor && (b.inFlight = false);
+}
+// Single-axis SAT against the real rotated facet geometry (not a circle approximation), so
+// floor/wall/ball contacts line up with the polygon's actual silhouette.
+function polygonSAT(vertsA, vertsB) {
+  let minOverlap = Infinity, minAxis = null;
+  for (const poly of [vertsA, vertsB]) {
+    for (let i = 0; i < poly.length; i++) {
+      const p1 = poly[i], p2 = poly[(i + 1) % poly.length];
+      let nx = -(p2.y - p1.y), ny = p2.x - p1.x;
+      const len = Math.hypot(nx, ny) || 1;
+      nx /= len, ny /= len;
+      let minA = Infinity, maxA = -Infinity;
+      for (const v of vertsA) { const p = v.x * nx + v.y * ny; p < minA && (minA = p), p > maxA && (maxA = p); }
+      let minB = Infinity, maxB = -Infinity;
+      for (const v of vertsB) { const p = v.x * nx + v.y * ny; p < minB && (minB = p), p > maxB && (maxB = p); }
+      const overlap = Math.min(maxA, maxB) - Math.max(minA, minB);
+      if (overlap <= 0) return null;
+      overlap < minOverlap && (minOverlap = overlap, minAxis = { nx, ny });
+    }
+  }
+  const cx = (arr) => arr.reduce((s, v) => s + v.x, 0) / arr.length, cy = (arr) => arr.reduce((s, v) => s + v.y, 0) / arr.length;
+  const dirX = cx(vertsB) - cx(vertsA), dirY = cy(vertsB) - cy(vertsA);
+  dirX * minAxis.nx + dirY * minAxis.ny < 0 && (minAxis.nx *= -1, minAxis.ny *= -1);
+  return { nx: minAxis.nx, ny: minAxis.ny, overlap: minOverlap };
 }
 function getCollisionInfo(a, b) {
-  const dx = b.x - a.x, dy = b.y - a.y, minDist = a.radius + b.radius, dSq = dx * dx + dy * dy;
-  if (dSq >= minDist * minDist) return null;
-  if (dSq < 1e-8) return { nx: a.x + a.y > b.x + b.y ? 1 : -1, ny: 0, overlap: minDist };
-  const dist = Math.sqrt(dSq);
-  return { nx: dx / dist, ny: dy / dist, overlap: minDist - dist };
+  const dx = b.x - a.x, dy = b.y - a.y, maxDist = a.radius + b.radius;
+  if (dx * dx + dy * dy >= maxDist * maxDist) return null;
+  return polygonSAT(getWorldVerts(a), getWorldVerts(b));
 }
 function updateBodyContactState() {
   for (const b of bodies) b.touchingBody = false;
@@ -320,6 +306,9 @@ function updateBodyContactState() {
     dx * dx + dy * dy <= m * m && (a.touchingBody = true, b.touchingBody = true);
   }
 }
+// Central (non-torque) impulse response against the real polygon normal/overlap — the torque-
+// arm rigid-body version caused energetic instability (bodies launching on contact), so this
+// keeps the proven-stable resolution while still using accurate polygon geometry for direction.
 function resolveBodyCollisions(dt) {
   const held = dragState?.body ?? null;
   for (let iter = 0; iter < COLLISION_ITERATIONS; iter++)
@@ -334,15 +323,41 @@ function resolveBodyCollisions(dt) {
       a.x -= nx * corr * (a.invMass / invSum), a.y -= ny * corr * (a.invMass / invSum), b.x += nx * corr * (b.invMass / invSum), b.y += ny * corr * (b.invMass / invSum);
       const rvx = b.vx - a.vx, rvy = b.vy - a.vy, vaN = rvx * nx + rvy * ny;
       if (vaN > 0) continue;
-      const airtimeMix = Math.min(1, (a.airTime + b.airTime) / (2 * AIRTIME_FOR_MAX_BOUNCE)), impulse = -(1 + BODY_BOUNCE + BODY_AIRTIME_BONUS * airtimeMix) * vaN / invSum, ix = impulse * nx, iy = impulse * ny;
+      const gentle = a.inFlight || b.inFlight;
+      const verticalness = Math.abs(ny);
+      const airtimeMix = Math.min(1, (a.airTime + b.airTime) / (2 * AIRTIME_FOR_MAX_BOUNCE)), restitution = gentle ? DROP_ON_BALL_BOUNCE * verticalness : BODY_BOUNCE + BODY_AIRTIME_BONUS * airtimeMix;
+      let impulse = -(1 + restitution) * vaN / invSum;
+      gentle && (impulse = clamp(impulse, -GENTLE_PUSH_IMPULSE_CAP / Math.max(0.03, 1 - verticalness), GENTLE_PUSH_IMPULSE_CAP / Math.max(0.03, 1 - verticalness)));
+      const ix = impulse * nx, iy = impulse * ny;
       a.vx -= ix * a.invMass, a.vy -= iy * a.invMass, b.vx += ix * b.invMass, b.vy += iy * b.invMass;
-      const tx = -ny, ty = nx, vaT = rvx * tx + rvy * ty, fi = clamp(-vaT / invSum, -impulse * 0.16, impulse * 0.16);
-      a.vx -= fi * tx * a.invMass, a.vy -= fi * ty * a.invMass, b.vx += fi * tx * b.invMass, b.vy += fi * ty * b.invMass;
+      const aFricInv = a.touchingFloor ? a.invMass * GROUND_FRICTION_ANCHOR : a.invMass, bFricInv = b.touchingFloor ? b.invMass * GROUND_FRICTION_ANCHOR : b.invMass, invSumFric = Math.max(1e-6, aFricInv + bFricInv);
+      const tx = -ny, ty = nx, vaT = rvx * tx + rvy * ty, fi = clamp(-vaT / invSumFric, -Math.abs(impulse) * 0.16, Math.abs(impulse) * 0.16);
+      a.vx -= fi * tx * aFricInv, a.vy -= fi * ty * aFricInv, b.vx += fi * tx * bFricInv, b.vy += fi * ty * bFricInv;
       const spinKick = (rvx * -ny + rvy * nx) * 22e-5;
       a.av -= spinKick * a.invInertia, b.av += spinKick * b.invInertia;
       const damp = Math.max(0, 1 - 0.12 * dt);
       a.vx *= damp, b.vx *= damp;
     }
+}
+// Gentle, continuous centering nudge for near-vertical stacks — much tighter tolerance than the
+// old version, so stacks that drift beyond a modest offset are left alone to topple naturally
+// via gravity + collision instead of being magnet-held in alignment across a wide range.
+function applyStackStabilization(dt) {
+  const held = dragState?.body ?? null;
+  for (let i = 0; i < bodies.length; i++) for (let j = i + 1; j < bodies.length; j++) {
+    const a = bodies[i], b = bodies[j];
+    if (held && (a === held || b === held)) continue;
+    const dx = b.x - a.x, dy = b.y - a.y, minDist = a.radius + b.radius, distSq = dx * dx + dy * dy;
+    if (distSq > (minDist * 1.06) ** 2) continue;
+    const dist = Math.sqrt(Math.max(distSq, 1e-6)), ny = dy / dist;
+    if (Math.abs(ny) < 0.86) continue;
+    const upper = ny > 0 ? a : b, lower = ny > 0 ? b : a;
+    if (upper.invMass <= 0) continue;
+    if (Math.abs(upper.vy - lower.vy) > 70) continue;
+    const xError = upper.x - lower.x;
+    if (Math.abs(xError) > (upper.radius + lower.radius) * 0.32) continue;
+    upper.vx += (-STACK_SETTLE_SPRING * xError - STACK_SETTLE_DAMPING * (upper.vx - lower.vx)) * dt;
+  }
 }
 function step(dt) {
   const d = Math.min(0.02, dt);
@@ -355,7 +370,15 @@ function step(dt) {
   updateBodyContactState(), gravityX += (gravityTargetX - gravityX) * Math.min(1, d * 4.5), gravityY += (gravityTargetY - gravityY) * Math.min(1, d * 4.5);
   for (const b of bodies) {
     if (dragState?.body === b) {
-      b.x = dragState.pointerX + dragState.grabOffsetX, b.y = dragState.pointerY + dragState.grabOffsetY, b.vx = 0, b.vy = 0, b.av *= 0.8, b.anticipation = 0, b.squash *= Math.pow(0.82, d * 60), clampInsideViewport(b);
+      const r = dragState.grabR;
+      if (r > 1e-3) {
+        const theta = b.angle + dragState.grabPhi + Math.PI / 2;
+        b.av += (-PIVOT_RESTORE_SPRING * (r / b.radius) * Math.sin(theta) - PIVOT_RESTORE_DAMPING * b.av) * d;
+      } else b.av *= 0.8;
+      b.angle += b.av * d;
+      const worldGrabX = r * Math.cos(b.angle + dragState.grabPhi), worldGrabY = r * Math.sin(b.angle + dragState.grabPhi);
+      const newX = dragState.pointerX - worldGrabX, newY = dragState.pointerY - worldGrabY;
+      b.vx = (newX - b.x) / d, b.vy = (newY - b.y) / d, b.x = newX, b.y = newY, b.anticipation = 0, b.squash *= Math.pow(0.82, d * 60), clampInsideViewport(b);
       continue;
     }
     b.touchingFloor || (b.airTime = Math.min(3, b.airTime + d), b.didGroundOverstep = false, b.settlingRoll = false), b.vx += gravityX * d, b.vy += gravityY * d;
@@ -371,6 +394,7 @@ function step(dt) {
     }
     const floorDist = Math.max(0, viewportHeight - b.radius - b.y), anticipTarget = !b.touchingFloor && b.vy > ANTICIPATION_SPEED && floorDist < ANTICIPATION_HEIGHT ? Math.min(0.032, (1 - floorDist / ANTICIPATION_HEIGHT) * (b.vy / 1150) * 0.032) : 0;
     b.anticipation += (anticipTarget - b.anticipation) * Math.min(1, d * 14), b.vx *= Math.pow(AIR_DRAG, d * 60), b.vy < -30 ? b.vy *= Math.pow(0.96, d * 60) : Math.abs(b.vy) < 90 ? b.vy *= Math.pow(0.93, d * 60) : b.vy > 120 && (b.vy += GRAVITY * d * 0.22), b.av += -COM_RESTORE * (b.comOffset / b.radius) * Math.sin(b.angle + b.comAngle - Math.PI / 2) * b.invInertia * d, b.av *= Math.pow(ANGULAR_DRAG, d * 60), b.squash *= Math.pow(0.76, d * 60);
+    (b.touchingFloor || b.touchingBody) && (b.av += (-FACET_SETTLE_SPRING * (b.angle - Math.round(b.angle / BALL_FACET_ANGLE) * BALL_FACET_ANGLE) - FACET_SETTLE_DAMPING * b.av) * d);
     const settled = b.touchingFloor && Math.abs(b.vy) < 10 && Math.abs(b.vx) < 18;
     b.squash += ((settled ? RESTING_SQUASH : 0) - b.squash) * Math.min(1, d * (settled ? 8 : 4)), b.x += b.vx * d, b.y += b.vy * d, b.angle += b.av * d;
     const spd = Math.hypot(b.vx, b.vy);
@@ -396,6 +420,7 @@ function step(dt) {
     }
   }
   resolveBodyCollisions(d);
+  applyStackStabilization(d);
   for (const b of bodies) {
     if (!hasUserInteracted && clueActivatedByFooter && b === clueBall) b.x = clueAnchorX, b.vx = 0, b.av = 0;
     clampInsideViewport(b);
@@ -440,31 +465,47 @@ function findBodyAtPoint(x, y) {
   }
   return null;
 }
+// Firefox (and occasionally other browsers) can leave the OS cursor icon
+// stale when the `cursor` CSS value changes purely via a class toggle from
+// script (e.g. the physics rAF loop flipping ballsling-hover while a ball
+// drifts under a motionless pointer), since no real input event occurred to
+// prompt a hit-test/cursor re-evaluation. Dispatching a synthetic mousemove
+// at the pointer's current position forces every browser we care about to
+// recompute and repaint the cursor immediately.
+function forceCursorRepaint(x, y) {
+  const px = x ?? lastPointerClientX, py = y ?? lastPointerClientY;
+  if (px === null || py === null) return;
+  window.dispatchEvent(new MouseEvent("mousemove", {
+    bubbles: true,
+    cancelable: true,
+    view: window,
+    clientX: px,
+    clientY: py
+  }));
+}
 function updateHoverState() {
   if (dragState || lastPointerClientX === null || lastPointerClientY === null) return;
   const local = toLocalPoint(lastPointerClientX, lastPointerClientY);
   const h = !!findBodyAtPoint(local.x, local.y);
   if (h === hoveringBall) return;
   hoveringBall = h;
-  const root = document.documentElement;
-  root.classList.toggle("ballsling-hover", h);
-  // Firefox can leave the OS cursor icon stale when this class flips from
-  // the physics rAF loop (e.g. a ball drifts under a motionless pointer)
-  // rather than from a native mouse event. Forcing a synchronous reflow
-  // makes it re-evaluate and repaint the cursor immediately.
-  void root.offsetHeight;
+  document.documentElement.classList.toggle("ballsling-hover", h);
+  forceCursorRepaint();
 }
 function startDrag(e) {
   const local = toLocalPoint(e.clientX, e.clientY), hit = findBodyAtPoint(local.x, local.y);
-  return hit ? (dragState = {
+  if (!hit) return false;
+  const gx = local.x - hit.x, gy = local.y - hit.y, c0 = Math.cos(hit.angle), s0 = Math.sin(hit.angle);
+  const localGX = gx * c0 + gy * s0, localGY = -gx * s0 + gy * c0;
+  return dragState = {
     body: hit,
     pointerId: e.pointerId,
     pointerX: local.x,
     pointerY: local.y,
-    grabOffsetX: hit.x - local.x,
-    grabOffsetY: hit.y - local.y,
+    grabR: Math.hypot(localGX, localGY),
+    grabPhi: Math.atan2(localGY, localGX),
     samples: [{ x: local.x, y: local.y, t: performance.now() }]
-  }, markUserInteracted(), overlayContainer?.appendChild(hit.el), hit.el.classList.add("is-dragging"), document.documentElement.classList.add("ballsling-dragging"), hit.vx = 0, hit.vy = 0, hit.av = 0, true) : false;
+  }, markUserInteracted(), overlayContainer?.appendChild(hit.el), hit.el.classList.add("is-dragging"), hoveringBall = false, document.documentElement.classList.remove("ballsling-hover"), document.documentElement.classList.add("ballsling-dragging"), forceCursorRepaint(e.clientX, e.clientY), hit.vx = 0, hit.vy = 0, hit.av = 0, true;
 }
 function updateDrag(e) {
   if (!dragState || e.pointerId !== dragState.pointerId) return;
@@ -496,7 +537,7 @@ function endDrag(e) {
     fvx *= 1 - 0.72 * vd;
   }
   bvy < -40 && (fvy -= Math.min(210, 36 + Math.abs(bvy) * 0.06));
-  dragState.body.vx = clamp(fvx, -MAX_LINEAR_SPEED, MAX_LINEAR_SPEED), dragState.body.vy = clamp(fvy, -MAX_LINEAR_SPEED, MAX_LINEAR_SPEED), dragState.body.av = clamp(dragState.body.vx * 31e-4, -MAX_ANGULAR_SPEED, MAX_ANGULAR_SPEED), dragState.body.slingBurstArmed = true, container?.appendChild(dragState.body.el), dragState.body.el.classList.remove("is-dragging"), document.documentElement.classList.remove("ballsling-dragging"), dragState = null, e.preventDefault();
+  dragState.body.vx = clamp(fvx, -MAX_LINEAR_SPEED, MAX_LINEAR_SPEED), dragState.body.vy = clamp(fvy, -MAX_LINEAR_SPEED, MAX_LINEAR_SPEED), dragState.body.av = clamp(dragState.body.vx * 31e-4, -MAX_ANGULAR_SPEED, MAX_ANGULAR_SPEED), dragState.body.slingBurstArmed = true, dragState.body.inFlight = true, container?.appendChild(dragState.body.el), dragState.body.el.classList.remove("is-dragging"), document.documentElement.classList.remove("ballsling-dragging"), dragState = null, forceCursorRepaint(e.clientX, e.clientY), e.preventDefault();
 }
 async function tryEnableGyro() {
   if (gyroPermissionAttempted) return;
@@ -619,30 +660,41 @@ if (hasBootedInSession && cachedState) {
   will-change: transform;
   overflow: hidden;
 }
-.ballsling-dragging,
-.ballsling-dragging body,
-.ballsling-dragging body * {
+.ballsling-hover,
+.ballsling-hover body,
+.ballsling-hover body * {
+  /* Firefox lets the native text-selection I-beam cursor win over an author
+     `cursor` value whenever the pointer is over selectable text (unlike
+     Chrome/Safari), which is exactly the footer copy/links the balls float
+     over. Disabling selection here (mirroring .ballsling-dragging below)
+     stops Firefox from overriding the grab cursor in that area. */
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grab !important;
+}
+/* Higher specificity than .ballsling-hover's `body *` selector (which ties
+   on class+tag count otherwise), so dragging always wins the cascade if both
+   classes are ever present at once (e.g. a stray hover toggle racing a drag
+   start). */
+html.ballsling-dragging,
+html.ballsling-dragging body,
+html.ballsling-dragging body * {
   user-select: none;
   -webkit-user-select: none;
   cursor: grabbing !important;
 }
-.ballsling-hover,
-.ballsling-hover body,
-.ballsling-hover body * {
-  cursor: grab !important;
-}
-.floating-element circle {
+.floating-element circle, .floating-element polygon {
   stroke: none;
 }
 .floating-element .ball-base {
   fill: currentColor;
 }
-.floating-element .ball-lighting-layer {
+.floating-element .ball-lighting-content {
   transform-origin: 50% 50%;
   transform-box: fill-box;
   transform: rotate(var(--lighting-counter-rotation, 0rad));
 }
-.floating-element .ball-noise-layer {
+.floating-element .ball-noise-content {
   transform-origin: 50% 50%;
   transform-box: fill-box;
   transform: rotate(calc(var(--lighting-counter-rotation, 0rad) + var(--noise-rotation, 0rad)));
