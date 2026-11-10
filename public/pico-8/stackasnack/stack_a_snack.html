@@ -641,7 +641,11 @@
 
 		// add #playing for touchscreen devices (allows back button to close)
 		// X button can also be used to trigger this 
-		if (p8_touch_detected)
+		// Only when this page is the top-level document: when embedded in an
+		// iframe (e.g. the blog's game embeds), hijacking back-button/hash
+		// changes here would unexpectedly reload the embed while a reader is
+		// just navigating the surrounding page.
+		if (p8_touch_detected && window.self === window.top)
 		{
 			window.location.hash = "#playing";
 			window.onhashchange = function()

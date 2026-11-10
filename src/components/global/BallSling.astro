@@ -49,13 +49,14 @@ function updateBottomAnchor() {
   const doc = document.documentElement;
   anchorTop = Math.max(0, doc.scrollHeight - viewportHeight);
   if (footerEl) {
-    const footerGapSource = footerEl.querySelector("[data-balls-gap]") || footerEl;
-    const footerGap = Number.parseFloat(
-      getComputedStyle(footerGapSource).paddingBottom,
-    ) || 0;
+    // footerEl.offsetHeight already includes the footer's own bottom padding
+    // (the pb-20 on [data-balls-gap]), so the container's bottom edge here
+    // lands exactly on the footer's real bottom edge, i.e. the true bottom of
+    // the page. Adding that padding again used to push the floor past the
+    // page's actual end, leaving extra blank scrollable space below the balls.
     anchorTop = Math.max(
       0,
-      footerEl.offsetTop + footerEl.offsetHeight - viewportHeight + footerGap,
+      footerEl.offsetTop + footerEl.offsetHeight - viewportHeight,
     );
     const rect = footerEl.getBoundingClientRect();
     const footerVisible = rect.top < viewportHeight && rect.bottom > 0;
