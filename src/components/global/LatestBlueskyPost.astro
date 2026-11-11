@@ -1,4 +1,10 @@
+
 ---
+
+import butterflyhandSrc from "../../content/images/page/home/butterflyhand.svg";
+
+const butterflyhand = typeof butterflyhandSrc === "string" ? butterflyhandSrc : butterflyhandSrc.src;
+
 interface BlueskyImage {
   thumb: string;
   fullsize: string;
@@ -170,7 +176,7 @@ if (Date.now() >= cache.expiresAt) {
       <article class="bluesky-post">
         <img
           class="bluesky-post__avatar"
-          src="/src/content/images/page/home/butterflyhand.svg"
+          src={butterflyhand}
           width="174"
           height="258"
           alt=""
