@@ -30,6 +30,18 @@ interface BlueskyEmbed {
   };
 }
 
+interface BlueskyFacetFeature {
+  $type: string;
+  uri?: string;
+  did?: string;
+  tag?: string;
+}
+
+interface BlueskyFacet {
+  index: { byteStart: number; byteEnd: number };
+  features: BlueskyFacetFeature[];
+}
+
 interface BlueskyFeedItem {
   reason?: unknown;
   reply?: unknown;
@@ -41,6 +53,7 @@ interface BlueskyFeedItem {
     record: {
       text?: string;
       createdAt?: string;
+      facets?: BlueskyFacet[];
     };
     embed?: BlueskyEmbed;
   };
@@ -60,13 +73,65 @@ interface Media {
 }
 
 interface LatestPost {
-  text: string;
+  segments: TextSegment[];
   publishedDate: string;
   publishedTime: string;
   dateTime: string;
   url: string;
   media?: Media;
 }
+
+interface TextSegment {
+  text: string;
+  href?: string;
+}
+
+// Bluesky stores a shortened display string in record.text (e.g. "example.com/very-long-…")
+// and keeps the real destination (plus mentions/tags) in facets. Walk the facets to rebuild
+// the post as a series of plain-text and linked segments, with full URLs restored.
+const buildTextSegments = (text: string, facets?: BlueskyFacet[]): TextSegment[] => {
+  const encoder = new TextEncoder();
+  const decoder = new TextDecoder();
+  const bytes = encoder.encode(text);
+
+  const entries = (facets ?? [])
+    .map((facet) => {
+      const link = facet.features.find((feature) => feature.$type === "app.bsky.richtext.facet#link");
+      if (link?.uri) return { facet, href: link.uri, display: link.uri };
+
+      const mention = facet.features.find((feature) => feature.$type === "app.bsky.richtext.facet#mention");
+      if (mention?.did) return { facet, href: `https://bsky.app/profile/${mention.did}` };
+
+      const tag = facet.features.find((feature) => feature.$type === "app.bsky.richtext.facet#tag");
+      if (tag?.tag) return { facet, href: `https://bsky.app/hashtag/${encodeURIComponent(tag.tag)}` };
+
+      return undefined;
+    })
+    .filter((entry): entry is { facet: BlueskyFacet; href: string; display?: string } => Boolean(entry))
+    .sort((a, b) => a.facet.index.byteStart - b.facet.index.byteStart);
+
+  const segments: TextSegment[] = [];
+  let cursor = 0;
+
+  for (const { facet, href, display } of entries) {
+    const { byteStart, byteEnd } = facet.index;
+    // Skip malformed/overlapping facets rather than risk corrupting the text.
+    if (byteStart < cursor || byteEnd > bytes.length || byteStart > byteEnd) continue;
+
+    if (byteStart > cursor) {
+      segments.push({ text: decoder.decode(bytes.slice(cursor, byteStart)) });
+    }
+
+    segments.push({ text: display ?? decoder.decode(bytes.slice(byteStart, byteEnd)), href });
+    cursor = byteEnd;
+  }
+
+  if (cursor < bytes.length) {
+    segments.push({ text: decoder.decode(bytes.slice(cursor)) });
+  }
+
+  return segments.length ? segments : [{ text }];
+};
 
 const isGifUrl = (uri: string) => {
   try {
@@ -111,7 +176,9 @@ const actor = "joacimeldre.com";
 const CACHE_TTL_MS = 15 * 60 * 1000;
 
 // Survives per serverless instance, so warm invocations skip the Bluesky round-trip.
-const cache = ((globalThis as Record<string, unknown>).__blueskyLatestPost ??= {
+// Bump the key's suffix whenever LatestPost's shape changes, so stale cached objects
+// from a previous dev-server session (or warm serverless instance) can't leak through.
+const cache = ((globalThis as Record<string, unknown>).__blueskyLatestPostV2 ??= {
   expiresAt: 0,
 }) as { expiresAt: number; post?: LatestPost };
 
@@ -139,8 +206,12 @@ if (Date.now() >= cache.expiresAt) {
       if (item && postId) {
         const createdAt = new Date(item.post.record.createdAt!);
 
+        const rawText = item.post.record.text ?? "";
+
         latestPost = {
-          text: item.post.record.text?.trim() || "View this post on Bluesky.",
+          segments: rawText.trim()
+            ? buildTextSegments(rawText, item.post.record.facets)
+            : [{ text: "View this post on Bluesky." }],
           dateTime: item.post.record.createdAt!,
           // "October 28 2026" - en-US gives us the month-first order, we just drop the comma.
           publishedDate: new Intl.DateTimeFormat("en-US", {
@@ -230,7 +301,19 @@ if (Date.now() >= cache.expiresAt) {
                 </div>
               )
             }
-            <p class="bluesky-post__text typo-main">{latestPost.text}</p>
+            <p class="bluesky-post__text typo-main">
+              {
+                (latestPost.segments ?? []).map((segment) =>
+                  segment.href ? (
+                    <a href={segment.href} target="_blank" rel="noreferrer noopener">
+                      {segment.text}
+                    </a>
+                  ) : (
+                    segment.text
+                  ),
+                )
+              }
+            </p>
           </div>
         </div>
       </article>
