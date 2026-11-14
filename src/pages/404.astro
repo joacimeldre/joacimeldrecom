@@ -9,24 +9,20 @@ export const prerender = true;
 <BaseLayout
     title="404 - Page not found"
     description="Oh, no! The page you're looking for doesn't exist."
-    >
-    <div class="py-24">
+>
+<section>
+    <div class="pt-16">
         <h1
-            class="text-center typo-display-xl max-w-xl mb-2 mx-auto"
+            class="typo-display-xl mb-2"
         >
             404
         </h1>
-        <p class="text-center typo-main mb-8 text-balance">
+        <p class="typo-main mb-8">
             Oh, no! The page you're looking for doesn't exist.
         </p>
-        <div class="text-center">
-            <a
-                href="/"
-                class="button-link border border-accent/80 py-2 px-6 bg-accent text-base-900 typo-ui-size rounded-full hover:border-base-900/80 hover:bg-base-900 hover:text-base-50 transition duration-200"
-            >
-                Return to base!
-            </a>
-        </div>
+        <p class="typo-main mb-8">
+            <a href="/">Return to base!</a>
+        </p>
         <Image
             src={tomAndJerry}
             alt="An animation of Tom the cat laying on a yellow couch, using Jerry the mouse as a ball with a ping pong racket"
@@ -34,4 +30,5 @@ export const prerender = true;
             class="mt-12 max-w-3/4 rounded-lg mx-auto"
         />
     </div>
+</section>
 </BaseLayout>
