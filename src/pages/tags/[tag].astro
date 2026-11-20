@@ -47,7 +47,10 @@ const { posts, tag } = Astro.props as {
 };
 ---
 
-<BaseLayout title={`${tag} posts - Joacim Eldre`}>
+<BaseLayout
+    title={`${tag} posts - Joacim Eldre`}
+    description={`All posts tagged with ${tag}.`}
+>
   <section>
     <div class="pt-16">
       <h1
