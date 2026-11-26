@@ -1,9 +1,9 @@
 
 ---
 
-import butterflyhandSrc from "../../content/images/page/home/butterflyhand.svg";
+import thumbUpSrc from "../../content/images/page/home/thumbup.svg";
 
-const butterflyhand = typeof butterflyhandSrc === "string" ? butterflyhandSrc : butterflyhandSrc.src;
+const thumbUp = typeof thumbUpSrc === "string" ? thumbUpSrc : thumbUpSrc.src;
 
 interface BlueskyImage {
   thumb: string;
@@ -247,7 +247,7 @@ if (Date.now() >= cache.expiresAt) {
       <article class="bluesky-post">
         <img
           class="bluesky-post__avatar"
-          src={butterflyhand}
+          src={thumbUp}
           width="174"
           height="258"
           alt=""
@@ -262,7 +262,7 @@ if (Date.now() >= cache.expiresAt) {
           <div class="bluesky-post__body">
             {
               latestPost.media && (
-                <div class="bluesky-image">
+                <div class="bluesky-image mt-1">
                   <button
                     type="button"
                     class="bluesky-image__trigger"
